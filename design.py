@@ -1,4 +1,4 @@
-from PySide6 import QtGui, QtCore, QtWidgets
+from PySide2 import QtGui, QtCore, QtWidgets
 
 from api.se_data.se_data import SEData
 #https://www.pythonguis.com/tutorials/creating-your-own-custom-widgets/
@@ -13,7 +13,10 @@ class WeatherWidget(QtWidgets.QWidget):
         self.layout.addWidget(self.search_bar)
 
         se_data = SEData()
-        self.search_bar.setCompleter(QtWidgets.QCompleter(se_data.get_names()))
+        completer = QtWidgets.QCompleter(se_data.get_names())
+        completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        completer.setFilterMode(QtCore.Qt.MatchContains)
+        self.search_bar.setCompleter(completer)
 
 class SmartHomeHubUi(QtWidgets.QMainWindow):
 
