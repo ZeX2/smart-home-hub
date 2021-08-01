@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone, tzinfo
 
 from requests import Session, Request
 from requests.adapters import HTTPAdapter
@@ -33,21 +33,24 @@ class SMHIForecastApi(SMHIApi):
         data = self.get_request_data(request)
         return data['parameter']
     
-    def get_point_weather_data(self, lon, lat, parameter):
+    def get_point_weather_data(self, lat, lon, parameter):
         request = Request('GET', f'{self.API}/geotype/point/lon/{lon}/lat/{lat}/data.json')
         data = self.get_request_data(request)
 
         weather_data = []
         for point_data in data['timeSeries']:
             time = point_data['validTime']
+            time = datetime.fromisoformat(time.replace('Z', '+00:00'))
+            time = time.replace(tzinfo=timezone.utc).astimezone().replace(tzinfo=None)
+
             for parameter_data in point_data['parameters']:
                 if parameter_data['name'] == parameter:
                     weather_data.append((time, parameter_data['values'][0]))
         
         return weather_data
 
-    def get_temperatures(self, lon, lat):
-        return self.get_point_weather_data(lon, lat, 't')
+    def get_temperatures(self, lat, lon):
+        return self.get_point_weather_data(lat, lon, 't')
 
 class SMHIObservationApi(SMHIApi):
     def __init__(self):
@@ -104,10 +107,11 @@ class SMHIObservationApi(SMHIApi):
 
         return temperatures
 
+
 #print(SMHIObservationApi().get_parameters())
 #print(len(SMHIObservationApi().get_stations(1)))
 #print(SMHIObservationApi().get_temperatures(71420, 'day'))
 #print([(datetime.fromtimestamp(x[0]), x[1]) for x in SMHIObservationApi().get_temperatures(71420, 'hour')])
 
 #print(SMHIForecastApi().get_parameters())
-#print(SMHIForecastApi().get_temperatures(12,57.71667))
+#temps = SMHIForecastApi().get_temperatures(57.71667, 12)

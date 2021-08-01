@@ -24,5 +24,8 @@ class SEData():
     def get_names(self):
         return self.data['name']
 
+    def get_name(self, name):
+        return self.data.loc[self.data['name'] == name]
+
     def search_names(self, name, max_returns):
         return process.extract(name, self.data['name'], limit=max_returns, scorer=fuzz.token_sort_ratio)
