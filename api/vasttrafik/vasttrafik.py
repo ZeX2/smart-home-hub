@@ -1,14 +1,14 @@
 import os
 import base64
-from xml.etree import ElementTree
+from xml.etree import ElementTree as ET
 from xml.dom import minidom
 from datetime import datetime, timedelta, timezone, tzinfo
 
+import pandas as pd
 from requests import Session, Request
-import requests
 from requests.adapters import HTTPAdapter, SSLError
 
-from key_and_secret import KEY, SECRET
+from .key_and_secret import KEY, SECRET
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 STOPS_PATH = os.path.join(FILE_DIR, 'stops.xml')
@@ -67,16 +67,84 @@ class VasttrafikApi():
 class VasttrafikReseplanerarenApi(VasttrafikApi):
     def __init__(self):
         super().__init__()
+        self.stops_data = None
+
+        self.set_stops_data()
     
-    def get_stops(self):
-        if not os.path.exists(STOPS_PATH):
+    def set_stops_data(self):
+        def get_stops_data():
             request = Request('GET', f'{API}/location.allstops', headers=self.headers)
             response = self.send(request).content
-            with open(STOPS_PATH, 'w') as f:
-                f.write(minidom.parseString(response).toprettyxml())
-        #data = ElementTree.fromstring(response)
+            data = ET.fromstring(response)
+            for stop in data.findall('StopLocation'):
+                if 'track' in stop.attrib:
+                    data.remove(stop)
+            with open(STOPS_PATH, 'w', encoding='utf-8') as f:
+                f.write(minidom.parseString(ET.tostring(data)).toprettyxml())
 
-    def get_departures(self, stop_id, date=None, time=None):
+        try:
+            stop_locations = ET.parse(STOPS_PATH).getroot()
+        except:
+            get_stops_data()
+            stop_locations = ET.parse(STOPS_PATH).getroot()
+
+        date = stop_locations.attrib['serverdate']
+        time = stop_locations.attrib['servertime']
+        last_modified = datetime.strptime(f'{date} {time}', '%Y-%m-%d %H:%M')
+
+        if datetime.now() - last_modified > timedelta(weeks=1):
+            get_stops_data()
+            stop_locations = ET.parse(STOPS_PATH).getroot()
+
+        self.stops_data = ((stop_location.attrib['name'], stop_location.attrib['id']) for stop_location in stop_locations)
+        self.stops_data = pd.DataFrame(self.stops_data, columns=['name', 'id'])
+        self.stops_data.set_index('id', inplace=True)
+
+    def get_stop_names(self):
+        return list(self.stops_data['name'])
+
+    def get_stop_id(self, stop_name):
+        return self.stops_data.loc[self.stops_data['name'] == stop_name].index[0]
+
+    def get_departure_table(self, stop_name):
+        departures_data = self.get_departures_data(stop_name=stop_name)
+        departures_table = dict()
+
+        for departure in departures_data:
+            track = departure.attrib['track']
+            if track not in departures_table:
+                departures_table[track] = dict()
+
+            tram = f'{departure.attrib["name"]} {departure.attrib["direction"]}'
+            if tram not in departures_table[track]:
+                departures_table[track][tram] = dict()
+                departures_table[track][tram]['name'] = departure.attrib['name']
+                departures_table[track][tram]['short_name'] = departure.attrib['sname']
+                departures_table[track][tram]['type'] = departure.attrib['type']
+                departures_table[track][tram]['direction'] = departure.attrib['direction']
+                departures_table[track][tram]['fg_color'] = departure.attrib['fgColor']
+                departures_table[track][tram]['bg_color'] = departure.attrib['bgColor']
+                departures_table[track][tram]['stroke'] = departure.attrib['stroke']
+                departures_table[track][tram]['time'] = []
+                departures_table[track][tram]['rt_time'] = []
+
+            time = datetime.strptime(f'{departure.attrib["date"]} {departure.attrib["time"]}', '%Y-%m-%d %H:%M')
+            if 'cancelled' in departure.attrib:
+                rt_time = None
+            else:
+                rt_time = datetime.strptime(f'{departure.attrib["rtDate"]} {departure.attrib["rtTime"]}', '%Y-%m-%d %H:%M')
+            departures_table[track][tram]['time'].append(time)
+            departures_table[track][tram]['rt_time'].append(rt_time)
+        
+        return departures_table
+
+    def get_departures_data(self, stop_id=None, stop_name=None, date=None, time=None):
+        if stop_name:
+            stop_id = self.get_stop_id(stop_name)
+
+        return self._get_departures_data(stop_id, date, time)
+
+    def _get_departures_data(self, stop_id, date=None, time=None):
         if not date:
             date = datetime.now().strftime('%Y-%m-%d')
         if not time:
@@ -84,11 +152,6 @@ class VasttrafikReseplanerarenApi(VasttrafikApi):
 
         params = {'id': stop_id, 'date': date, 'time': time}
         request = Request('GET', f'{API}/departureBoard', headers=self.headers, params=params)
-        print(self.send(request).content)
-        data = ElementTree.fromstring(self.send(request).content)
+        data = ET.fromstring(self.send(request).content)
 
         return data
-
-vasttrafik_api = VasttrafikReseplanerarenApi()
-vasttrafik_api.get_stops()
-print(vasttrafik_api.get_departures('9022014005160001'))

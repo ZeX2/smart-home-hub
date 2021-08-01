@@ -1,9 +1,9 @@
-
 from PySide2 import QtGui, QtCore, QtWidgets
 
 from widgets.analog_clock_widget import AnalogClock
 from widgets.digital_clock_widget import DigitalClockWidget
 from widgets.weather_widget import WeatherWidget
+from widgets.vasttrafik_widget import VasttrafikWidget
 
 # https://www.pythonguis.com/tutorials/creating-your-own-custom-widgets/
 # Jävligt nice widget?!
@@ -31,9 +31,7 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         self.page_one_layout = QtWidgets.QHBoxLayout()
         self.page_one_widget.setLayout(self.page_one_layout)
 
-        ac = AnalogClock()
-        self.page_one_layout.addWidget(ac)
-        ac.show()
+        self.page_one_layout.addWidget(AnalogClock())
         self.page_one_layout.addWidget(WeatherWidget())
 
         # Page 2
@@ -44,3 +42,4 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         self.page_two_widget.setLayout(self.page_two_layout)
 
         self.page_two_layout.addWidget(QtWidgets.QLabel('PAGE TWO'))
+        self.page_two_layout.addWidget(VasttrafikWidget())
