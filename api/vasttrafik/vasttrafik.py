@@ -2,7 +2,7 @@ import os
 import base64
 from xml.etree import ElementTree as ET
 from xml.dom import minidom
-from datetime import datetime, timedelta, timezone, tzinfo
+from datetime import datetime, timedelta
 
 import pandas as pd
 from requests import Session, Request
@@ -107,7 +107,7 @@ class VasttrafikReseplanerarenApi(VasttrafikApi):
         return self.stops_data.loc[self.stops_data['name'] == stop_name].index[0]
 
     def get_departure_table(self, stop_name):
-        departures_data = self.get_departures_data(stop_name=stop_name)
+        departures_data = self.get_departures_data(stop_name=stop_name, time_span_minutes=60)
         departures_table = dict()
 
         for departure in departures_data:
@@ -131,6 +131,8 @@ class VasttrafikReseplanerarenApi(VasttrafikApi):
             time = datetime.strptime(f'{departure.attrib["date"]} {departure.attrib["time"]}', '%Y-%m-%d %H:%M')
             if 'cancelled' in departure.attrib:
                 rt_time = None
+            elif 'rtDate' not in departure.attrib or 'rtTime' not in departure.attrib:
+                rt_time = time
             else:
                 rt_time = datetime.strptime(f'{departure.attrib["rtDate"]} {departure.attrib["rtTime"]}', '%Y-%m-%d %H:%M')
             departures_table[track][tram]['time'].append(time)
@@ -138,19 +140,19 @@ class VasttrafikReseplanerarenApi(VasttrafikApi):
         
         return departures_table
 
-    def get_departures_data(self, stop_id=None, stop_name=None, date=None, time=None):
+    def get_departures_data(self, stop_id=None, stop_name=None, date=None, time=None, time_span_minutes=None):
         if stop_name:
             stop_id = self.get_stop_id(stop_name)
 
-        return self._get_departures_data(stop_id, date, time)
+        return self._get_departures_data(stop_id, date, time, time_span_minutes)
 
-    def _get_departures_data(self, stop_id, date=None, time=None):
+    def _get_departures_data(self, stop_id, date=None, time=None, time_span_minutes=None):
         if not date:
             date = datetime.now().strftime('%Y-%m-%d')
         if not time:
             time = datetime.now().strftime('%H:%M')
 
-        params = {'id': stop_id, 'date': date, 'time': time}
+        params = {'id': stop_id, 'date': date, 'time': time, 'timeSpan': time_span_minutes}
         request = Request('GET', f'{API}/departureBoard', headers=self.headers, params=params)
         data = ET.fromstring(self.send(request).content)
 
