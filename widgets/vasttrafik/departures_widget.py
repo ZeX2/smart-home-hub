@@ -70,6 +70,8 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
                 html_label.append(f'<td><p style="color:red; text-decoration: line-through;">{arrival[0]}</p></td>')
             elif arrival[0] == 'nu':
                 html_label.append(f'<td><b>nu</b></td>')
+            elif arrival[0] < 0:
+                continue
             else:
                 html_label.append(f'<td>{arrival[0]}</td>')
         html_label.append('</tr> </table>')

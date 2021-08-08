@@ -81,11 +81,11 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
         self.update_web_map()
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update_web_map)
-        #self.timer.start(1000)
+        self.timer.start(5000)
 
     def update_web_map(self):
         vehicles = self.reseplaneraren.get_live_map_vehicles(11760200, 12167400, 57605300, 57733500)
-        map = folium.Map(title='LIVE MAP', location=[57.65, 11.9], zoom_start=13)
+        map = folium.Map(title='LIVE MAP', location=[57.7143678, 11.9944993], zoom_start=15) #57.65, 11.9
 
         for vehicle in vehicles:
             name = vehicle["name"].replace('Bus ', '').replace('Spå ', '')
@@ -103,14 +103,14 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
         map_data = io.BytesIO()
         map.save(map_data, close_file=False)
         map_html = map_data.getvalue().decode()
-        map_var = re.search(r'var\s(\S+)\s=\sL.map', map_html).group(1)
-        print(map_var)
-        self.web_map.setPage(WebEnginePage(map_var))
         self.web_map.setHtml(map_html)
+        #map_var = re.search(r'var\s(\S+)\s=\sL.map', map_html).group(1)
+        #self.web_map.setPage(WebEnginePage(map_var))
+
         #channel = QWebChannel()
         #self.web_map.page().setWebChannel(channel)
         #channel.registerObject('{map_var}', self)
 
-        def test_func():
-            print(self.web_map.page().runJavaScript(f'{map_var}.getZoom()', ))
-        self.web_map.loadFinished.connect(test_func)
+        #def test_func():
+        #    print(self.web_map.page().runJavaScript(f'{map_var}.getZoom()', ))
+        #self.web_map.loadFinished.connect(test_func)

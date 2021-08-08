@@ -1,4 +1,5 @@
 import sys
+
 from hub import SmartHomeHub
 
 from PySide2.QtWidgets import QApplication

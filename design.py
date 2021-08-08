@@ -15,7 +15,11 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
     def setup_ui(self):
 
         # Show fullscreen and background
-        self.showFullScreen()
+        screen_size = QtWidgets.QApplication.primaryScreen().size()
+        if (screen_size.width(), screen_size.height()) > (800, 480):
+            self.setFixedSize(800, 480)
+        else:
+            self.showFullScreen()
 
         self.background_palette = QtGui.QPalette()
         self.background_palette.setColor(QtGui.QPalette.Window, QtGui.QColor(100,0,0))
@@ -43,6 +47,6 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         self.page_two_layout = QtWidgets.QVBoxLayout()
         self.page_two_widget.setLayout(self.page_two_layout)
 
-        self.page_two_layout.addWidget(QtWidgets.QLabel('PAGE TWO'))
+        #self.page_two_layout.addWidget(QtWidgets.QLabel('PAGE TWO'))
         self.page_two_layout.addWidget(VasttrafikDeparturesWidget(self.reseplaneraren))
         self.page_two_layout.addWidget(VasttrafikLiveMapWidget(self.reseplaneraren))
