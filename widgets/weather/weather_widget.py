@@ -30,10 +30,10 @@ class WeatherUi(QtWidgets.QWidget):
 
 class WeatherWidget(WeatherUi):
 
-    def __init__(self):
+    def __init__(self, se_data, smhi_forecast):
         super().__init__()
-        self.se_data = SEData()
-        self.smhi_forecast = SMHIForecastApi()
+        self.se_data = se_data
+        self.smhi_forecast = smhi_forecast
         self.setup_ui()
     
     def search_bar_updated(self):

@@ -1,9 +1,11 @@
+
 from PySide2 import QtGui, QtCore, QtWidgets
 
-from widgets.analog_clock_widget import AnalogClock
-from widgets.digital_clock_widget import DigitalClockWidget
-from widgets.weather_widget import WeatherWidget
-from widgets.vasttrafik_widget import VasttrafikWidget
+from widgets.clocks.analog_clock_widget import AnalogClockWidget
+from widgets.clocks.digital_clock_widget import DigitalClockWidget
+from widgets.weather.weather_widget import WeatherWidget
+from widgets.vasttrafik.departures_widget import  VasttrafikDeparturesWidget
+from widgets.vasttrafik.livemap_widget import VasttrafikLiveMapWidget
 
 # https://www.pythonguis.com/tutorials/creating-your-own-custom-widgets/
 # Jävligt nice widget?!
@@ -31,8 +33,8 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         self.page_one_layout = QtWidgets.QHBoxLayout()
         self.page_one_widget.setLayout(self.page_one_layout)
 
-        self.page_one_layout.addWidget(AnalogClock())
-        self.page_one_layout.addWidget(WeatherWidget())
+        self.page_one_layout.addWidget(AnalogClockWidget())
+        self.page_one_layout.addWidget(WeatherWidget(self.se_data, self.smhi_forecast))
 
         # Page 2
         self.page_two_widget = QtWidgets.QWidget()
@@ -42,4 +44,5 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         self.page_two_widget.setLayout(self.page_two_layout)
 
         self.page_two_layout.addWidget(QtWidgets.QLabel('PAGE TWO'))
-        self.page_two_layout.addWidget(VasttrafikWidget())
+        self.page_two_layout.addWidget(VasttrafikDeparturesWidget(self.reseplaneraren))
+        self.page_two_layout.addWidget(VasttrafikLiveMapWidget(self.reseplaneraren))

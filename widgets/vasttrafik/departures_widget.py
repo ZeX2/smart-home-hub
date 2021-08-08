@@ -2,8 +2,6 @@ from datetime import datetime
 
 from PySide2 import QtGui, QtCore, QtWidgets
 
-from api.vasttrafik.vasttrafik import VasttrafikReseplanerarenApi
-
 VECHILE_TYPE_SORT_ORDER = {'TRAM': 0, 'BUS': 1}
 
 def get_tram_sort_key(tram_data):
@@ -14,18 +12,16 @@ def get_tram_sort_key(tram_data):
     )
 
 class LineIcon(QtWidgets.QLabel):
+
     def __init__(self, short_name, fg_color, bg_color):
         super().__init__(short_name)
-        #size_policy = self.sizePolicy()
-        #size_policy.setHorizontalPolicy(QtWidgets.QSizePolicy.MinimumExpanding)
-        #self.setSizePolicy(size_policy)
         self.setAlignment(QtCore.Qt.AlignCenter)
         self.setMinimumSize(20, 20)
-        self.setStyleSheet(f''' border: 2px solid transparent; border-radius: 5px; 
+        self.setStyleSheet(f''' border: 2px solid transparent; border-radius: 5px; font-weight: bold;
             color: {fg_color}; background-color: {bg_color}; font-size: 17px; min-height: 20px; min-width: 20px;''')
         # margin-right: 0.3125rem; margin-bottom: 0.3125rem; padding: 1px 3px; 
 
-class VasttrafikUi(QtWidgets.QTabWidget):
+class VasttrafikDeparturesUi(QtWidgets.QWidget):
 
     def setup_ui(self):
         self.layout = QtWidgets.QVBoxLayout(self)
@@ -46,11 +42,11 @@ class VasttrafikUi(QtWidgets.QTabWidget):
         #self.departure_table.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.layout.addWidget(self.departure_table)
 
-class VasttrafikWidget(VasttrafikUi):
+class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
 
-    def __init__(self):
+    def __init__(self, reseplaneraren):
         super().__init__()
-        self.reseplaneraren = VasttrafikReseplanerarenApi()
+        self.reseplaneraren = reseplaneraren
         self.setup_ui()
         
         self.timer = QtCore.QTimer()

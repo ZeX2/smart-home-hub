@@ -157,3 +157,10 @@ class VasttrafikReseplanerarenApi(VasttrafikApi):
         data = ET.fromstring(self.send(request).content)
 
         return data
+
+    def get_live_map_vehicles(self, minx, maxx, miny, maxy, real_time=True):
+        params = {'minx': minx, 'maxx': maxx, 'miny': miny, 'maxy': maxy, 'onlyRealtime': real_time}
+        request = Request('GET', f'{API}/livemap', headers=self.headers, params=params)
+        data = self.send(request).json()['livemap']['vehicles']
+
+        return data

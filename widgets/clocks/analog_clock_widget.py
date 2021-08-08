@@ -6,7 +6,7 @@ from PySide2 import QtGui, QtCore, QtWidgets
 # https://gitpress.io/u/1155/pyqt-example-analogclock
 # https://www.pythonguis.com/tutorials/qml-animations-transformations/
 
-class AnalogClock(QtWidgets.QWidget):
+class AnalogClockWidget(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
