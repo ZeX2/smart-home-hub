@@ -2,66 +2,7 @@ import io
 import re
 
 import folium
-from PySide2 import QtGui, QtCore, QtWidgets, QtWebEngineWidgets, QtWebChannel
-
-class Backend(QtCore.QObject):
-    htmlChanged = QtCore.Signal()
-
-    def __init__(self, parent=None):
-        super(Backend, self).__init__(parent)
-        self._html = ""
-
-    @QtCore.Slot(str)
-    def toHtml(self, html):
-        self._html = html
-        print(html)
-        self.htmlChanged.emit()
-
-    @property
-    def html(self):
-        return self._html
-
-class WebEnginePage(QtWebEngineWidgets.QWebEnginePage):
-    def __init__(self, map_var, parent=None):
-        super(WebEnginePage, self).__init__(parent)
-        self.map_var = map_var
-        self.loadFinished.connect(self.onLoadFinished)
-        self._backend = Backend()
-        self.backend.htmlChanged.connect(self.handle_htmlChanged)
-
-    @property
-    def backend(self):
-        return self._backend
-
-    @QtCore.Slot(bool)
-    def onLoadFinished(self, ok):
-        if ok:
-            self.load_qwebchannel()
-            self.load_object()
-
-    def load_qwebchannel(self):
-        file = QtCore.QFile(":/qtwebchannel/qwebchannel.js")
-        if file.open(QtCore.QIODevice.ReadOnly):
-            content = file.readAll()
-            file.close()
-            self.runJavaScript(content.data().decode())
-        if self.webChannel() is None:
-            channel = QtWebChannel.QWebChannel(self)
-            self.setWebChannel(channel)
-
-    def load_object(self):
-        if self.webChannel() is not None:
-            self.webChannel().registerObject(self.map_var, self.backend)
-            script = fr"""
-            new QWebChannel(qt.webChannelTransport, function (channel) {'{'}
-                var backend = channel.objects.backend;
-                var html = {self.map_var}.getZoom();
-                backend.toHtml(html);
-            {'}'});"""
-            self.runJavaScript(script)
-
-    def handle_htmlChanged(self):
-        print(self.backend.html)
+from PySide2 import QtGui, QtCore, QtWidgets, QtWebEngineWidgets
 
 class VasttrafikLiveMapUi(QtWidgets.QWidget):
 
@@ -84,6 +25,9 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
         self.timer.start(5000)
 
     def update_web_map(self):
+        if self.visibleRegion().isEmpty():
+            return
+
         vehicles = self.reseplaneraren.get_live_map_vehicles(11760200, 12167400, 57605300, 57733500)
         map = folium.Map(title='LIVE MAP', location=[57.7143678, 11.9944993], zoom_start=15) #57.65, 11.9
 
@@ -102,15 +46,4 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
         
         map_data = io.BytesIO()
         map.save(map_data, close_file=False)
-        map_html = map_data.getvalue().decode()
-        self.web_map.setHtml(map_html)
-        #map_var = re.search(r'var\s(\S+)\s=\sL.map', map_html).group(1)
-        #self.web_map.setPage(WebEnginePage(map_var))
-
-        #channel = QWebChannel()
-        #self.web_map.page().setWebChannel(channel)
-        #channel.registerObject('{map_var}', self)
-
-        #def test_func():
-        #    print(self.web_map.page().runJavaScript(f'{map_var}.getZoom()', ))
-        #self.web_map.loadFinished.connect(test_func)
+        self.web_map.setHtml(map_data.getvalue().decode())

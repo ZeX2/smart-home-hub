@@ -22,17 +22,22 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
             self.showFullScreen()
 
         self.background_palette = QtGui.QPalette()
-        self.background_palette.setColor(QtGui.QPalette.Window, QtGui.QColor(100,0,0))
+        self.background_palette.setColor(QtGui.QPalette.Window, QtGui.QColor(255,255,255))
         self.setPalette(self.background_palette)
 
         # Main widget and layout
-        self.central_widget = QtWidgets.QTabWidget(self)
-        self.setStyleSheet('QTabWidget::tab-bar {alignment: center;}')
-        self.setCentralWidget(self.central_widget)
+        self.tab_widget = QtWidgets.QTabWidget(self)
+        self.tab_widget.currentChanged.connect(self.tab_changed)
+        self.setStyleSheet('''QTabWidget::tab-bar {alignment: left; margin: 2px; background: white; border: none;}
+        QTabWidget::pane {border: none; background: white;}
+        QTabBar::tab {border: none; padding: 10px; color: gray; background: white; font-size: 15px; font-family: "Lucida Console"; min-width: 100px; min-height: 20px; font-weight: 450}
+        QTabBar::tab:selected {color: black;}
+        ''')
+        self.setCentralWidget(self.tab_widget)
 
         # Page 1
         self.page_one_widget = QtWidgets.QWidget()
-        self.central_widget.insertTab(0, self.page_one_widget, 'Page One')
+        self.tab_widget.insertTab(0, self.page_one_widget, 'Page One')
 
         self.page_one_layout = QtWidgets.QHBoxLayout()
         self.page_one_widget.setLayout(self.page_one_layout)
@@ -42,11 +47,18 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
 
         # Page 2
         self.page_two_widget = QtWidgets.QWidget()
-        self.central_widget.insertTab(1, self.page_two_widget, 'Page Two')
+        self.tab_widget.insertTab(1, self.page_two_widget, 'Page Two')
 
         self.page_two_layout = QtWidgets.QVBoxLayout()
         self.page_two_widget.setLayout(self.page_two_layout)
 
-        #self.page_two_layout.addWidget(QtWidgets.QLabel('PAGE TWO'))
         self.page_two_layout.addWidget(VasttrafikDeparturesWidget(self.reseplaneraren))
-        self.page_two_layout.addWidget(VasttrafikLiveMapWidget(self.reseplaneraren))
+
+        # Page 3
+        self.page_three_widget = QtWidgets.QWidget()
+        self.tab_widget.insertTab(2, self.page_three_widget, 'Page Three')
+
+        self.page_three_layout = QtWidgets.QVBoxLayout()
+        self.page_three_widget.setLayout(self.page_three_layout)
+
+        self.page_three_layout.addWidget(VasttrafikLiveMapWidget(self.reseplaneraren))

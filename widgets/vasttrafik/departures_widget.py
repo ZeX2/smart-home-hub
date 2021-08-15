@@ -77,11 +77,13 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
         html_label.append('</tr> </table>')
 
         arrival_label = QtWidgets.QLabel(' '.join(html_label))
-        #arrival_label.setStyleSheet('font-weight: bold;')
         
         return arrival_label
 
     def update_departure_table(self):
+        if self.visibleRegion().isEmpty():
+                return
+
         departure_data = self.reseplaneraren.get_departure_table(stop_name=self.search_bar.text())
 
         self.departure_table.clear()
@@ -103,4 +105,4 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
             return
 
         self.update_departure_table()
-        self.timer.start(35*1000)
+        self.timer.start(20*1000)

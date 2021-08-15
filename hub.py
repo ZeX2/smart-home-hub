@@ -18,3 +18,6 @@ class SmartHomeHub(SmartHomeHubUi):
 
         self.setup_ui()
         self.show()
+
+    def tab_changed(self, index):
+        print(self.tab_widget.currentWidget())
