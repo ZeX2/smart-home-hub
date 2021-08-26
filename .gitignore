@@ -1,6 +1,8 @@
 __pycache__
 .vscode
 key_and_secret.py
+spotify_tokens.py
 test.py
 
+.cache
 map.html

@@ -20,4 +20,4 @@ class SmartHomeHub(SmartHomeHubUi):
         self.show()
 
     def tab_changed(self, index):
-        print(self.tab_widget.currentWidget())
+        pass #print(self.tab_widget.currentWidget())

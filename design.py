@@ -1,4 +1,3 @@
-
 from PySide2 import QtGui, QtCore, QtWidgets
 
 from widgets.clocks.analog_clock_widget import AnalogClockWidget
@@ -6,6 +5,7 @@ from widgets.clocks.digital_clock_widget import DigitalClockWidget
 from widgets.weather.weather_widget import WeatherWidget
 from widgets.vasttrafik.departures_widget import  VasttrafikDeparturesWidget
 from widgets.vasttrafik.livemap_widget import VasttrafikLiveMapWidget
+from widgets.spotify.spotify_widget import SpotifyWidget
 
 # https://www.pythonguis.com/tutorials/creating-your-own-custom-widgets/
 # Jävligt nice widget?!
@@ -37,7 +37,7 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
 
         # Page 1
         self.page_one_widget = QtWidgets.QWidget()
-        self.tab_widget.insertTab(0, self.page_one_widget, 'Page One')
+        self.tab_widget.insertTab(0, self.page_one_widget, 'Hemma')
 
         self.page_one_layout = QtWidgets.QHBoxLayout()
         self.page_one_widget.setLayout(self.page_one_layout)
@@ -47,7 +47,7 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
 
         # Page 2
         self.page_two_widget = QtWidgets.QWidget()
-        self.tab_widget.insertTab(1, self.page_two_widget, 'Page Two')
+        self.tab_widget.insertTab(1, self.page_two_widget, 'Reseplaneraren')
 
         self.page_two_layout = QtWidgets.QVBoxLayout()
         self.page_two_widget.setLayout(self.page_two_layout)
@@ -56,9 +56,12 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
 
         # Page 3
         self.page_three_widget = QtWidgets.QWidget()
-        self.tab_widget.insertTab(2, self.page_three_widget, 'Page Three')
+        self.tab_widget.insertTab(2, self.page_three_widget, 'Västtrafik Live Map')
 
         self.page_three_layout = QtWidgets.QVBoxLayout()
         self.page_three_widget.setLayout(self.page_three_layout)
 
         self.page_three_layout.addWidget(VasttrafikLiveMapWidget(self.reseplaneraren))
+
+        # Page 4
+        self.tab_widget.insertTab(3, SpotifyWidget(), 'Spotify')
