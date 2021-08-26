@@ -73,7 +73,7 @@ class SMHIForecastApi(SMHIApi):
     def get_point_weather_data(self, lat, lon, *parameters):
         request = Request('GET', f'{self.API}/geotype/point/lon/{lon}/lat/{lat}/data.json')
         data = self.get_request_data(request)
-        print(data)
+
         weather_data = []
         for point_data in data['timeSeries']:
             time = point_data['validTime']
@@ -154,5 +154,5 @@ class SMHIObservationApi(SMHIApi):
 #print([(datetime.fromtimestamp(x[0]), x[1]) for x in SMHIObservationApi().get_temperatures(71420, 'hour')])
 
 #print(SMHIForecastApi().get_parameters())
-temps = SMHIForecastApi().get_temperatures(57.71667, 12)
-print(temps)
+#temps = SMHIForecastApi().get_temperatures(57.71667, 12)
+#print(temps)
