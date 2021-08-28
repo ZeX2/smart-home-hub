@@ -1,9 +1,11 @@
 from PySide2 import QtGui, QtCore, QtWidgets
 
-class CurrentWeatherUi(QtWidgets.QWidget):
+class CurrentWeatherUi(QtWidgets.QFrame):
     
     def setup_ui(self):
         self.setFixedSize(300, 150)
+        self.setObjectName('CurrentWeather')
+        self.setStyleSheet('QFrame#CurrentWeather {border: 1px solid black}')
 
         self.layout = QtWidgets.QHBoxLayout(self)
         self.temp_label = QtWidgets.QLabel('N/A')
