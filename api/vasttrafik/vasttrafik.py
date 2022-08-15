@@ -1,4 +1,5 @@
 import os
+import json
 import base64
 from xml.etree import ElementTree as ET
 from xml.dom import minidom
@@ -11,10 +12,11 @@ from requests.adapters import HTTPAdapter, SSLError
 from .key_and_secret import KEY, SECRET
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
-STOPS_PATH = os.path.join(FILE_DIR, 'stops.xml')
+STOPS_PATH_JSON = os.path.join(FILE_DIR, 'stops.json')
 TIMEOUT = 100
 TOKEN_API = 'https://api.vasttrafik.se/token'
 API = 'https://api.vasttrafik.se/bin/rest.exe/v2'
+GEO_API = 'https://api.vasttrafik.se/geo/v2'
 
 class VasttrafikApi():
     def __init__(self):
@@ -70,33 +72,34 @@ class VasttrafikReseplanerarenApi(VasttrafikApi):
         self.stops_data = None
 
         self.set_stops_data()
-    
+
     def set_stops_data(self):
         def get_stops_data():
-            request = Request('GET', f'{API}/location.allstops', headers=self.headers)
-            response = self.send(request).content
-            data = ET.fromstring(response)
-            for stop in data.findall('StopLocation'):
-                if 'track' in stop.attrib:
-                    data.remove(stop)
-            with open(STOPS_PATH, 'w', encoding='utf-8') as f:
-                f.write(minidom.parseString(ET.tostring(data)).toprettyxml())
+            request = Request('GET', f'{GEO_API}/StopPoints', headers=self.headers)
+            data = self.send(request).json()
+            data = data['stopPoints']
+
+            data = list({elem['stopAreaGid']: elem for elem in data}.values())
+
+            with open(os.path.join(FILE_DIR, 'stops.json'), 'w', encoding='utf-8') as f:
+                f.write(json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False))
 
         try:
-            stop_locations = ET.parse(STOPS_PATH).getroot()
+            with open(STOPS_PATH_JSON, encoding='utf-8') as f:
+                stop_locations = json.load(f)
         except:
             get_stops_data()
-            stop_locations = ET.parse(STOPS_PATH).getroot()
+            with open(STOPS_PATH_JSON, encoding='utf-8') as f:
+                stop_locations = json.load(f)
 
-        date = stop_locations.attrib['serverdate']
-        time = stop_locations.attrib['servertime']
-        last_modified = datetime.strptime(f'{date} {time}', '%Y-%m-%d %H:%M')
+        last_modified = datetime.fromtimestamp(os.path.getmtime(STOPS_PATH_JSON))
 
         if datetime.now() - last_modified > timedelta(weeks=1):
             get_stops_data()
-            stop_locations = ET.parse(STOPS_PATH).getroot()
+            with open(STOPS_PATH_JSON, encoding='utf-8') as f:
+                stop_locations = json.load(f)
 
-        self.stops_data = ((stop_location.attrib['name'], stop_location.attrib['id']) for stop_location in stop_locations)
+        self.stops_data = ((stop_location['name'], stop_location['stopAreaGid']) for stop_location in stop_locations)
         self.stops_data = pd.DataFrame(self.stops_data, columns=['name', 'id'])
         self.stops_data.set_index('id', inplace=True)
 

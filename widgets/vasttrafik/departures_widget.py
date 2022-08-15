@@ -96,7 +96,7 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
                 tram_item = QtWidgets.QTreeWidgetItem()
                 track_item.addChild(tram_item)
                 self.departure_table.setItemWidget(tram_item, 0, LineIcon(tram_data['short_name'], tram_data['fg_color'], tram_data['bg_color']))
-                self.departure_table.setItemWidget(tram_item, 1, QtWidgets.QLabel(f'{tram_data["name"]} mot {tram_data["direction"]}'))
+                self.departure_table.setItemWidget(tram_item, 1, QtWidgets.QLabel(f' {tram_data["direction"]}'))
                 self.departure_table.setItemWidget(tram_item, 2, self.get_arrival_times_label(tram_data['time'], tram_data['rt_time']))
 
     def get_and_update_departure_table(self):

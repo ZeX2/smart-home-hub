@@ -15,6 +15,7 @@ SCOPES = ['user-library-read', 'user-read-recently-played',
 
 # Inspo: https://chowdera.com/2021/05/20210506082607288s.html#4__281
 # https://programmer.group/python-developing-music-player-pyqt-making-music-player-main-interface.html
+# https://stackoverflow.com/questions/44264852/pyside-pyqt-overlay-widget
 
 class QLabelButton(QtWidgets.QLabel):
     clicked = QtCore.Signal()
@@ -47,28 +48,44 @@ class SpotifyUi(QtWidgets.QWidget):
         self.layout.addWidget(self.song_info_label)
 
         self.music_controls_layout = QtWidgets.QHBoxLayout()
-        left_spacer = QtWidgets.QSpacerItem(100, 10)
-        right_spacer = QtWidgets.QSpacerItem(100, 10)
+        outer_left_spacer = QtWidgets.QSpacerItem(100, 10)
+        outer_right_spacer = QtWidgets.QSpacerItem(100, 10)
+        left_spacer = QtWidgets.QSpacerItem(20, 10)
+        right_spacer = QtWidgets.QSpacerItem(20, 10)
+        self.shuffle_button = QLabelButton()
+        self.shuffle_button.clicked.connect(self.shuffle_button_clicked)
+        self.shuffle_button.setFixedSize(25, 25)
+        self.shuffle_button.setScaledContents(True)
+        self.shuffle_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, 'shuffle_off.png')))
         self.prev_button = QLabelButton()
         self.prev_button.clicked.connect(self.prev_button_clicked)
-        self.prev_button.setFixedSize(30, 30)
+        self.prev_button.setFixedSize(40, 30)
         self.prev_button.setScaledContents(True)
         self.prev_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, 'prev_btn.png')))
         self.play_button = QLabelButton()
         self.play_button.clicked.connect(self.play_button_clicked)
-        self.play_button.setFixedSize(30, 30)
+        self.play_button.setFixedSize(35, 35)
         self.play_button.setScaledContents(True)
         self.play_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, 'play_btn.png')))
         self.next_button = QLabelButton()
         self.next_button.clicked.connect(self.next_button_clicked)
-        self.next_button.setFixedSize(39, 30)
+        self.next_button.setFixedSize(40, 30)
         self.next_button.setScaledContents(True)
         self.next_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, 'next_btn.png')))
+        self.repeat_button = QLabelButton()
+        self.repeat_button.clicked.connect(self.repeat_button_clicked)
+        self.repeat_button.setFixedSize(25, 25)
+        self.repeat_button.setScaledContents(True)
+        self.repeat_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, 'repeat_off.png')))
+        self.music_controls_layout.addSpacerItem(outer_left_spacer)
+        self.music_controls_layout.addWidget(self.shuffle_button)
         self.music_controls_layout.addSpacerItem(left_spacer)
         self.music_controls_layout.addWidget(self.prev_button)
         self.music_controls_layout.addWidget(self.play_button)
         self.music_controls_layout.addWidget(self.next_button)
         self.music_controls_layout.addSpacerItem(right_spacer)
+        self.music_controls_layout.addWidget(self.repeat_button)
+        self.music_controls_layout.addSpacerItem(outer_right_spacer)
         self.layout.addLayout(self.music_controls_layout)
 
         self.music_slider_layout = QtWidgets.QHBoxLayout()
@@ -164,7 +181,8 @@ class SpotifyWidget(SpotifyUi):
 
     def update_currently_playing(self):
         prev_playing = self.curr_playing
-        self.curr_playing = self.sp.current_playback()
+        curr_playing = self.sp.current_playback()
+        self.curr_playing = {} if not curr_playing else curr_playing
         self.curr_playing_last_updated = datetime.now()
 
         if not self.curr_playing or not self.curr_playing['item']:
@@ -234,6 +252,12 @@ class SpotifyWidget(SpotifyUi):
         if duration_ms - progress_ms < 1500:
             self.update_currently_playing()
 
+    def update_shuffle_button(self):
+        pass
+
+    def update_repeat_button(self):
+        pass
+
     def music_slider_started_moving(self):
         self.music_slider_timer.stop()
 
@@ -256,7 +280,7 @@ class SpotifyWidget(SpotifyUi):
             self.progress_time_label.setText(progress_str[2:])
     
     def play_button_clicked(self):
-        if self.curr_playing['is_playing']:
+        if self.curr_playing.get('is_playing'):
             self.music_slider_timer.stop()
             self.curr_playing['is_playing'] = False
             self.sp.pause_playback()
@@ -276,3 +300,9 @@ class SpotifyWidget(SpotifyUi):
         self.sp.previous_track()
         self.update_progress_time(0)
         self.update_currently_playing()
+
+    def shuffle_button_clicked(self):
+        pass
+
+    def repeat_button_clicked(self):
+        pass
