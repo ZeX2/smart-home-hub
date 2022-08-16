@@ -29,10 +29,12 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         # Main widget and layout
         self.tab_widget = QtWidgets.QTabWidget(self)
         self.tab_widget.currentChanged.connect(self.tab_changed)
-        self.setStyleSheet('''QTabWidget::tab-bar {alignment: left; margin: 2px; background: white; border: none;}
-        QTabWidget::pane {border: none; background: white;}
-        QTabBar::tab {border: none; padding: 10px; color: gray; background: white; font-size: 15px; font-family: "Lucida Console"; min-width: 100px; min-height: 20px; font-weight: 450}
-        QTabBar::tab:selected {color: black;}
+        self.setStyleSheet('''
+            QTabBar {font: 15px "Lucida Console"; font-weight: 450}
+            QTabBar::tab {border: none; padding: 10px; color: gray; background: white}
+            QTabBar::tab:selected {color: black;}
+            QTabWidget::tab-bar {background: white;}
+            QTabWidget::pane {border: none; background: white}
         ''')
         self.setCentralWidget(self.tab_widget)
 

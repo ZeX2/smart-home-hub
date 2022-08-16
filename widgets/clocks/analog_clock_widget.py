@@ -11,7 +11,8 @@ class AnalogClockWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setMinimumSize(300, 300)
+        self.setMinimumSize(250, 250)
+        self.setFixedSize(250, 250)
 
         self.hour_pointer = QtGui.QPolygon([QtCore.QPoint(3, 7),
                                         QtCore.QPoint(-3, 7),

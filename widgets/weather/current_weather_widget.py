@@ -3,23 +3,23 @@ from PySide2 import QtGui, QtCore, QtWidgets
 class CurrentWeatherUi(QtWidgets.QFrame):
     
     def setup_ui(self):
-        self.setFixedSize(300, 150)
+        self.setFixedSize(275, 150)
         self.setObjectName('CurrentWeather')
-        self.setStyleSheet('QFrame#CurrentWeather {border: 1px solid black}')
+        self.setStyleSheet('QFrame#CurrentWeather {border: 0px solid black; border-radius: 25px}')
 
         self.layout = QtWidgets.QHBoxLayout(self)
         self.temp_label = QtWidgets.QLabel('N/A')
-        self.temp_label.setFont(QtGui.QFont('Times font', 90))
+        self.temp_label.setFont(QtGui.QFont('Lucida Console', 50))
         self.layout.addWidget(self.temp_label)
+
+        self.spacer = QtWidgets.QSpacerItem(5, 50)
+        self.layout.addSpacerItem(self.spacer)
 
         self.symb_layout = QtWidgets.QVBoxLayout()
         self.layout.addLayout(self.symb_layout)
 
-        spacer = QtWidgets.QSpacerItem(20, 50, vData=QtWidgets.QSizePolicy.Expanding)
-        self.symb_layout.addSpacerItem(spacer)
-
         self.weather_label = QtWidgets.QLabel('N/A')
-        self.weather_label.setFont(QtGui.QFont('Times font', 10))
+        self.weather_label.setFont(QtGui.QFont('Lucida Console', 10))
         self.weather_label.setWordWrap(True)
         self.symb_layout.addWidget(self.weather_label)
 
