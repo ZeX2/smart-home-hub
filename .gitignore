@@ -2,6 +2,7 @@ __pycache__
 .vscode
 key_and_secret.py
 spotify_tokens.py
+note_id.py
 test.py
 
 .cache
