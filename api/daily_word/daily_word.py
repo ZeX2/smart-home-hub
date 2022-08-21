@@ -5,7 +5,8 @@ from requests.adapters import HTTPAdapter
 # I don't think you can really call this an API 
 TIMEOUT = 100
 ENG_API = 'https://www.merriam-webster.com/word-of-the-day'
-SWE_API = 'https://www.saob.se'
+SWE1_API = 'https://www.saob.se'
+SWE2_API = 'https://www.synonymer.se/sv-syn/'
 
 class DailyWordApi():
     def __init__(self):
@@ -35,17 +36,17 @@ class DailyWordApi():
         return word, definition
 
     def get_swe_word_and_def(self):
-        request = Request('GET', f'{SWE_API}')
+        request = Request('GET', f'{SWE1_API}')
         html = self.send(request).text
 
         soup = BeautifulSoup(html, features='html.parser')
         word = soup.find('div', {'class': 'eb-one-third equus dagens'}).find_next('a').text.strip().capitalize()
-        def_link = soup.find('div', {'class': 'eb-one-third equus dagens'}).find_next('a').get('href')
 
-        request = Request('GET', f'{SWE_API}/{def_link}')
+        request = Request('GET', f'{SWE2_API}/{word.lower()}')
         html = self.send(request).text
 
         soup = BeautifulSoup(html, features='html.parser')
-        definition = soup.find('span', {'class': 'StorAntikva indent'}).text
+        definition = soup.find('div', {'data-section': 'Vad betyder'}).find('div', {'class': 'body'}).find_next('li').text
+        definition = definition.strip().split('||')[0]
 
         return word, definition
