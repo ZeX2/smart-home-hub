@@ -33,4 +33,4 @@ class SimpleNoteApi():
         soup.find('p', {'id': 'title'}).decompose()
         data = soup.findAll('div', {'class': 'note note-detail-markdown'})[0]
 
-        return data
+        return str(data)

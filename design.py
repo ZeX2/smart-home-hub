@@ -2,11 +2,13 @@ from PySide2 import QtGui, QtCore, QtWidgets
 
 from widgets.clocks.analog_clock_widget import AnalogClockWidget
 from widgets.clocks.digital_clock_widget import DigitalClockWidget
+from widgets.daily_word.daily_word_widget import DailyWordWidget
 from widgets.weather.weather_widget import WeatherWidget
 from widgets.weather.current_weather_widget import CurrentWeatherWidget
 from widgets.vasttrafik.departures_widget import  VasttrafikDeparturesWidget
 from widgets.vasttrafik.livemap_widget import VasttrafikLiveMapWidget
 from widgets.spotify.spotify_widget import SpotifyWidget
+from widgets.note_board.note_board_widget import NoteBoardWidget
 
 # https://www.pythonguis.com/tutorials/creating-your-own-custom-widgets/
 # Jävligt nice widget?!
@@ -42,11 +44,15 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         self.page_one_widget = QtWidgets.QWidget()
         self.tab_widget.insertTab(0, self.page_one_widget, 'Hemma')
 
-        self.page_one_layout = QtWidgets.QHBoxLayout()
+        self.page_one_layout = QtWidgets.QGridLayout()
+        self.page_one_layout.setContentsMargins(15, 15, 15, 15)
         self.page_one_widget.setLayout(self.page_one_layout)
+        self.page_one_layout.setAlignment(QtCore.Qt.AlignAbsolute)
 
-        self.page_one_layout.addWidget(CurrentWeatherWidget(self.smhi_forecast, 57.71667, 12))
-        self.page_one_layout.addWidget(AnalogClockWidget())
+        self.page_one_layout.addWidget(CurrentWeatherWidget(self.smhi_forecast, 57.71667, 12), 0, 0, QtCore.Qt.AlignCenter)
+        self.page_one_layout.addWidget(AnalogClockWidget(), 0, 1, QtCore.Qt.AlignCenter)
+        self.page_one_layout.addWidget(NoteBoardWidget(self.simplenote), 1, 0, QtCore.Qt.AlignHCenter)
+        self.page_one_layout.addWidget(DailyWordWidget(self.daily_word), 1, 1, QtCore.Qt.AlignCenter)
         #self.page_one_layout.addWidget(WeatherWidget(self.se_data, self.smhi_forecast))
 
         # Page 2
