@@ -30,23 +30,42 @@ class DailyWordApi():
         html = self.send(request).text
 
         soup = BeautifulSoup(html, features='html.parser')
-        word = soup.find('div', {'class': 'word-and-pronunciation'}).find('h1').text.capitalize()
-        definition = soup.find('div', {'class': 'wod-definition-container'}).find('p').text
+        word = soup.find('div', {'class': 'word-and-pronunciation'}).find('h1').get_text(strip=True).capitalize()
+        definition = soup.find('div', {'class': 'wod-definition-container'}).find('p').get_text(strip=True)
 
         return word, definition
 
     def get_swe_word_and_def(self):
+        # Get word from SAOB
         request = Request('GET', f'{SWE1_API}')
         html = self.send(request).text
 
         soup = BeautifulSoup(html, features='html.parser')
-        word = soup.find('div', {'class': 'eb-one-third equus dagens'}).find_next('a').text.strip().capitalize()
+        word = soup.find('div', {'class': 'eb-one-third equus dagens'}).find_next('a').get_text(strip=True).capitalize()
+        def_link = soup.find('div', {'class': 'eb-one-third equus dagens'}).find_next('a').get('href')
 
+        # Try to first get definition from SAOB
+        request = Request('GET', f'{SWE1_API}/{def_link}')
+        html = self.send(request).text
+
+        soup = BeautifulSoup(html, features='html.parser')
+        definitions = soup.find('div', {'class': 'rawcontent'}).find_all('div', {'class': ['udda', 'jamn']})
+        definitions = [tag for tag in definitions if tag.find_next('span', {'class': 'StorAntikva'}).get('class') == ['StorAntikva']]  
+        definitions = [tag.find('span', {'class': 'StorAntikva'}) for tag in definitions]
+        if definitions:
+            definition = ''.join([tag.text for tag in definitions[:3] if tag])
+            return word, definition
+
+        # Otherwise, try to get definition from synonymer.se
         request = Request('GET', f'{SWE2_API}/{word.lower()}')
         html = self.send(request).text
 
         soup = BeautifulSoup(html, features='html.parser')
-        definition = soup.find('div', {'data-section': 'Vad betyder'}).find('div', {'class': 'body'}).find_next('li').text
-        definition = definition.strip().split('||')[0]
+        if soup.find('div', {'data-section': 'Vad betyder'}):
+            definition = soup.find('div', {'data-section': 'Vad betyder'}).find('div', {'class': 'body'}).find_next('li')
+            definition = definition.get_text(strip=True).split('||')[0]
+        else:
+            definition = soup.find('div', {'data-section': 'Synonymer till'}).find('div', {'class': 'body'}).find_next('li')
+            definition = definition.get_text(strip=True)
 
         return word, definition
