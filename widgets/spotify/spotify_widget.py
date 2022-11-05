@@ -165,7 +165,9 @@ class SpotifyWidget(SpotifyUi):
         self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=CLIENT_ID,
                                                 client_secret=CLIENT_SECRET,
                                                 redirect_uri=REDIRECT_URI,
-                                                scope=' '.join(SCOPES)))
+                                                scope=' '.join(SCOPES),
+                                                open_browser=False,
+                                                cache_path='.cache'))
 
         self.curr_playing_last_updated = None
         self.curr_playing = {}
