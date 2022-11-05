@@ -166,7 +166,7 @@ class SpotifyWidget(SpotifyUi):
                                                 client_secret=CLIENT_SECRET,
                                                 redirect_uri=REDIRECT_URI,
                                                 scope=' '.join(SCOPES),
-                                                open_browser=False,
+                                                open_browser=True,
                                                 cache_path='.cache'))
 
         self.curr_playing_last_updated = None
