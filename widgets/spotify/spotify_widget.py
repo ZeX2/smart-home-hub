@@ -167,7 +167,7 @@ class SpotifyWidget(SpotifyUi):
                                                 redirect_uri=REDIRECT_URI,
                                                 scope=' '.join(SCOPES),
                                                 open_browser=True,
-                                                cache_path='.cache'))
+                                                cache_path=os.path.join(SPOTIFY_WIDGET_DIR, 'tokens.txt')))
 
         self.curr_playing_last_updated = None
         self.curr_playing = {}
