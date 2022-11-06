@@ -26,7 +26,7 @@ class VasttrafikDeparturesUi(QtWidgets.QWidget):
     def setup_ui(self):
         self.layout = QtWidgets.QVBoxLayout(self)
 
-        self.search_bar = QtWidgets.QLineEdit()
+        self.search_bar = QtWidgets.QLineEdit('Olskrokstorget')
         self.layout.addWidget(self.search_bar)
         self.search_bar.textChanged.connect(self.get_and_update_departure_table)
         completer = QtWidgets.QCompleter(self.reseplaneraren.get_stop_names())
@@ -51,6 +51,7 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
         
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update_departure_table)
+        self.get_and_update_departure_table()
 
     def get_arrival_times_label(self, times, rt_times):
         arrival_minutes = []
