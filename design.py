@@ -22,7 +22,6 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         if (screen_size.width(), screen_size.height()) > (1000, 500):
             self.setFixedSize(800, 480)
         else:
-            self.showMaximized()
             self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowType_Mask)
             self.showFullScreen()
 
