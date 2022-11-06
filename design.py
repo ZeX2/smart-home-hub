@@ -19,9 +19,11 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
 
         # Show fullscreen and background
         screen_size = QtWidgets.QApplication.primaryScreen().size()
-        if (screen_size.width(), screen_size.height()) > (800, 480):
+        if (screen_size.width(), screen_size.height()) > (1000, 500):
             self.setFixedSize(800, 480)
         else:
+            self.showMaximized()
+            self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowType_Mask)
             self.showFullScreen()
 
         self.background_palette = QtGui.QPalette()
