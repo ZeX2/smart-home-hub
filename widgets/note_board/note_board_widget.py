@@ -46,11 +46,11 @@ class NoteBoardUi(QtWidgets.QFrame):
 
 class NoteBoardWidget(NoteBoardUi):
 
-    def __init__(self, simplenote):
+    def __init__(self, notion_note):
         super().__init__()
         self.setup_ui()
 
-        self.simplenote = simplenote
+        self.notion_note = notion_note
 
         self.update_note()
 
@@ -59,5 +59,5 @@ class NoteBoardWidget(NoteBoardUi):
         self.timer.start(60*1000)
 
     def update_note(self):
-        note_data = self.simplenote.get_note()
+        note_data = self.notion_note.get_note()
         self.note_label.setText(note_data)

@@ -50,7 +50,7 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
 
         self.page_one_layout.addWidget(CurrentWeatherWidget(self.smhi_forecast, 57.71667, 12), 0, 0, QtCore.Qt.AlignCenter)
         self.page_one_layout.addWidget(AnalogClockWidget(), 0, 1, QtCore.Qt.AlignCenter)
-        self.page_one_layout.addWidget(NoteBoardWidget(self.simplenote), 1, 0, QtCore.Qt.AlignHCenter)
+        self.page_one_layout.addWidget(NoteBoardWidget(self.notion_note), 1, 0, QtCore.Qt.AlignHCenter)
         self.page_one_layout.addWidget(DailyWordWidget(self.daily_word), 1, 1, QtCore.Qt.AlignCenter)
         #self.page_one_layout.addWidget(WeatherWidget(self.se_data, self.smhi_forecast))
 

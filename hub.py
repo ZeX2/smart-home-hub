@@ -5,7 +5,7 @@ from design import SmartHomeHubUi
 from api.se_data.se_data import SEData
 from api.smhi.smhi import SMHIForecastApi
 from api.vasttrafik.vasttrafik import VasttrafikReseplanerarenApi
-from api.simplenote.simplenote import SimpleNoteApi
+from api.notion_note.notion_note import NotionNoteApi
 from api.daily_word.daily_word import DailyWordApi
 
 # Virtual keyboard inspo: https://github.com/sanjivktr/PyQt5-Virtual-Keyboard/blob/master/virtual_keyboard_controller.py
@@ -23,7 +23,7 @@ class SmartHomeHub(SmartHomeHubUi):
         self.se_data = SEData()
         self.reseplaneraren = VasttrafikReseplanerarenApi()
         self.smhi_forecast = SMHIForecastApi()
-        self.simplenote = SimpleNoteApi()
+        self.notion_note = NotionNoteApi()
         self.daily_word = DailyWordApi()
 
         self.setup_ui()
