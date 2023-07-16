@@ -13,7 +13,7 @@ TIMEOUT = 100
 API1 = 'https://www.atxfinearts.com/blogs/news/100-most-famous-paintings-in-the-world'
 API2 = 'https://www.boredpanda.com/famous-paintings/?utm_source=google&utm_medium=organic&utm_campaign=organic'
 
-class DailyPaintingsScraper():
+class DailyPaintingScraper():
     def __init__(self):
         self.s = Session()
         adapter = HTTPAdapter(max_retries=3)
@@ -92,7 +92,7 @@ class DailyPaintingsScraper():
                 if i == 100 and len(paintings) < 100:
                         paintings.append(painting)
 
-        with open(os.path.join(FILE_DIR, 'paintings_data1.json'), 'w', encoding='utf-8') as f:
+        with open(os.path.join(FILE_DIR, 'paintings1_data.json'), 'w', encoding='utf-8') as f:
             json.dump(paintings, f, ensure_ascii=False, indent=4)
 
     def get_paintings2(self):
@@ -111,7 +111,7 @@ class DailyPaintingsScraper():
             img_format = img_link.split('.')[-1]
             description = element.find('div', {'class': 'bordered-description'})
             if description:
-                description = description.text.replace(description.find('strong').text, '')
+                description = description.text.replace(description.find('strong').text, '').replace(u'\xa0', u' ').strip()
 
             urllib.request.urlretrieve(img_link, os.path.join(FILE_DIR, 'paintings2', f'{i}.{img_format}'))
 
@@ -122,7 +122,7 @@ class DailyPaintingsScraper():
             }
             paintings.append(painting)
 
-        with open(os.path.join(FILE_DIR, 'paintings_data2.json'), 'w', encoding='utf-8') as f:
+        with open(os.path.join(FILE_DIR, 'paintings2_data.json'), 'w', encoding='utf-8') as f:
             json.dump(paintings, f, ensure_ascii=False, indent=4)
 
     def crop_images(self, dir, new_dir_name):
@@ -149,6 +149,6 @@ class DailyPaintingsScraper():
             cv2.imwrite(os.path.join(FILE_DIR, new_dir_name, os.path.basename(file)) , rect) # Save the image
 
 if __name__ == '__main__':
-    scraper = DailyPaintingsScraper()
-    #scraper.get_paintings1()
-    scraper.crop_images('paintings1', 'paintings1')
+    scraper = DailyPaintingScraper()
+    scraper.get_paintings2()
+    #scraper.crop_images('paintings1', 'paintings1')

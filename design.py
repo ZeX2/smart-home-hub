@@ -9,6 +9,7 @@ from widgets.vasttrafik.departures_widget import  VasttrafikDeparturesWidget
 from widgets.vasttrafik.livemap_widget import VasttrafikLiveMapWidget
 from widgets.spotify.spotify_widget import SpotifyWidget
 from widgets.note_board.note_board_widget import NoteBoardWidget
+from widgets.daily_painting.daily_painting_widget import DailyPaintingWidget
 
 # https://www.pythonguis.com/tutorials/creating-your-own-custom-widgets/
 # Jävligt nice widget?!
@@ -76,3 +77,6 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
 
         # Page 4
         self.tab_widget.insertTab(3, SpotifyWidget(), 'Spotify')
+
+        # Page 5
+        self.tab_widget.insertTab(4, DailyPaintingWidget(self.daily_painting_data), 'Daily Painting')
