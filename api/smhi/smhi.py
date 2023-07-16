@@ -49,7 +49,7 @@ class SMHIApi():
             try:
                 response.raise_for_status()
             except Exception as e:
-                raise Exception(f'SMHI API failed for url {request.url}! {response.status_code}! \n Response text: {response.text}')
+                raise Exception(f'{self.__class__.__name__} failed for url {request.url}! {response.status_code}! \n Response text: {response.text}')
         else:
             return response.json()
 

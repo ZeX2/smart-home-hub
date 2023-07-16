@@ -1,0 +1,602 @@
+[
+    {
+        "id": 0,
+        "title": "Mona Lisa",
+        "painter": "Leonardo Da Vinci",
+        "description": "Leonardo’s Mona Lisa is one of the most famous paintings in the world. Today, it's housed at the Louvre in Paris, France but it was created in Florence, Italy when Leonardo moved there to live from 1500-1508. Mona Lisa looks directly out at us, the viewers, which was something unconventional for a portrait painting during that time. "
+    },
+    {
+        "id": 1,
+        "title": "The Starry Night",
+        "painter": "Vincent Van Gogh",
+        "description": "Starry Night is one of the most recognized art pieces in the world. Resonating with so many people around the world, it is a testament to its own originality which is timeless and universal. "
+    },
+    {
+        "id": 2,
+        "title": "The Birth of Venus",
+        "painter": "Sandro Botticelli",
+        "description": ""
+    },
+    {
+        "id": 3,
+        "title": "Girl with a Pearl Earring",
+        "painter": "Johannes Vermeer",
+        "description": "Vermeer's most well-known painting. Delineates a young lady, looking at her observer, in a yellow-brown dress, wearing an oriental turban, and an unrealistically huge pearl in her ear. "
+    },
+    {
+        "id": 4,
+        "title": "The Last Supper",
+        "painter": "Leonardo da Vinci",
+        "description": "The Last Supper is a late fifteenth-century Christian painting done by the world renowned Italian artist Leonardo da Vinci. It's housed at the Convent of Santa Maria Delle Grazie in Milan, Italy. "
+    },
+    {
+        "id": 5,
+        "title": "The Kiss",
+        "painter": "Gustav Klimt",
+        "description": "The Kiss is a unique oil painting, which includes silver and gold leafs. It was painted between 1907 and 1908 during the time of Klimt's \"Golden Period\". "
+    },
+    {
+        "id": 6,
+        "title": "Las Meninas",
+        "painter": "Diego Velázquez",
+        "description": "Las Meninas is a 1656 painting currently displayed at the Museo del Prado in Madrid. Diego Velázquez, was one of the main artists of the Spanish Golden Age. "
+    },
+    {
+        "id": 7,
+        "title": "American Gothic",
+        "painter": " Grant Wood",
+        "description": "American Gothic is a 1930 painting housed at the Art Institute of Chicago. Wood was motivated to paint what is currently known as the American Gothic House in Eldon, Iowa. "
+    },
+    {
+        "id": 8,
+        "title": "A Sunday Afternoon on the Island of La Grande Jatte",
+        "painter": "Georges Seurat",
+        "description": "A Sunday Afternoon on the Island of La Grande Jatte was painted in 1884, and is Georges Seurat's most renowned artwork. It brilliantly showcases the pointillist style. Seurat's composition incorporates various Parisians at a park center on the banks of the River Seine. "
+    },
+    {
+        "id": 9,
+        "title": "Guernica",
+        "painter": " Pablo Picasso",
+        "description": "Guernica is an enormous oil painting that was finished in June 1937. It's presently displayed at the Museo Reina Sofía in Madrid. Parts of the painting where finished in Paris, where Picasso's had a home."
+    },
+    {
+        "id": 10,
+        "title": "The Night Watch",
+        "painter": "Rembrandt",
+        "description": "Local army Company of District II, under the Command of Captain Frans Banninck Cocq, otherwise called The Shooting Company of Frans Banning Cocq and Willem van Ruytenburch, is captured in The Night Watch."
+    },
+    {
+        "id": 11,
+        "title": "Café Terrace at Night",
+        "painter": "Vincent van Gogh",
+        "description": "Café Terrace at Night is an 1888 oil painting by the famous Dutch artists Vincent van Gogh. It's often called, The Cafe Terrace on the Place du Forum. Furthermore, when it was originally displayed in 1891, it was titled Coffeehouse at Night."
+    },
+    {
+        "id": 12,
+        "title": "Whistler's Mother",
+        "painter": "James Abbott McNeill Whistler",
+        "description": "The Gray and Black No.1, best known under the title of Whistler's Mother, is an oil on canvas painting created by the famous American painter James McNeill Whistler in 1871. The subject of the work is Whistler's mom, Anna McNeill Whistler."
+    },
+    {
+        "id": 13,
+        "title": "The Sleeping Gypsy",
+        "painter": "Henri Rousseau",
+        "description": ""
+    },
+    {
+        "id": 14,
+        "title": "Bal du moulin de la Galette",
+        "painter": "Pierre-Auguste Renoir",
+        "description": ""
+    },
+    {
+        "id": 15,
+        "title": "Impression, Sunrise",
+        "painter": "Claude Monet",
+        "description": "Impression, Sunrise was showcased at what might be considered the first impressionism, known as the \"Display of the Impressionists\" in Paris on April 1874. Impression, Sunrise delineates the port of Le Havre, close to Monet's main residency. "
+    },
+    {
+        "id": 16,
+        "title": "The Third of May 1808",
+        "painter": "Francisco Goya",
+        "description": ""
+    },
+    {
+        "id": 17,
+        "title": "Liberty Leading the People",
+        "painter": "Eugène Delacroix",
+        "description": ""
+    },
+    {
+        "id": 18,
+        "title": "Le Déjeuner sur l’herbe",
+        "painter": "Édouard Manet",
+        "description": "Le Déjeuner sur l'herbe – initially titled Le Bain – is an enormous oil on canvas painting by Édouard Manet painted around 1863. It delineates a female bare and two completely dressed men in a provincial setting. "
+    },
+    {
+        "id": 19,
+        "title": "Lady with an Ermine",
+        "painter": " Leonardo da Vinci",
+        "description": ""
+    },
+    {
+        "id": 20,
+        "title": "The Raft of the Medusa",
+        "painter": "Théodore Géricault",
+        "description": ""
+    },
+    {
+        "id": 21,
+        "title": "Nighthawks",
+        "painter": " Edward Hopper",
+        "description": ""
+    },
+    {
+        "id": 22,
+        "title": "Luncheon of the Boating Party",
+        "painter": "Pierre-Auguste Renoir",
+        "description": ""
+    },
+    {
+        "id": 23,
+        "title": "Napoleon Crossing the Alps",
+        "painter": "Jacques-Louis David",
+        "description": ""
+    },
+    {
+        "id": 24,
+        "title": "View of Toledo",
+        "painter": " El Greco",
+        "description": ""
+    },
+    {
+        "id": 25,
+        "title": "The Storm on the Sea of Galilee",
+        "painter": "Rembrandt",
+        "description": "The Storm on the Sea of Galilee is a 1633 painting by the Dutch Golden Age painter Rembrandt van Rijn. It was beforehand in the Isabella Stewart Gardner Museum in Boston, yet it was stolen in 1990 and stays missing."
+    },
+    {
+        "id": 26,
+        "title": "The Harvesters",
+        "painter": "Pieter Bruegel the Elder",
+        "description": ""
+    },
+    {
+        "id": 27,
+        "title": "The Arnolfini Portrait",
+        "painter": "Jan van Eyck",
+        "description": ""
+    },
+    {
+        "id": 28,
+        "title": "The Garden of Earthly Delights",
+        "painter": "Hieronymus Bosch",
+        "description": "This fantastical triptych is commonly viewed as a far off herald to Surrealism. In truth, it's the statement of a late medieval artist who accepted that God and the Devil, Heaven and Hell were genuine. Of the three scenes delineated, the left board demonstrates Christ showing Eve & Adam."
+    },
+    {
+        "id": 29,
+        "title": "Les Demoiselles d’Avignon",
+        "painter": "Pablo Picasso",
+        "description": "Is a big oil work by the Spanish artist Pablo Picasso, completed in 1907. The painting, which is part of the permanent collection of the Museum of Modern Art, depicts five naked female prostitutes at a brothel on Barcelona's Carrer d'Avinyó (Calle de Avión [es]). None of the figures are conventionally feminine, and each is depicted in an unsettling aggressive manner."
+    },
+    {
+        "id": 30,
+        "title": "The Naked Maja",
+        "painter": "Francisco de Goya y Lucientes",
+        "description": "Certainly OK with herself, this female naked gazing unashamedly at the watcher created a significant ruckus when it was painted, and even got Goya into high temp water with the Spanish Inquisition. In addition to other things, it highlights one of the primary portrayals of open hair in Western art. Dispatched by Manuel de Godoy, Spain's Prime Minister, The Naked Maja was joined by another adaptation with the sitter dressed. The personality of the lady stays a secret, however, she is believed to be Godoy's special lady, Pepita Tudó."
+    },
+    {
+        "id": 31,
+        "title": "The Creation Of Adam",
+        "painter": "Michelangelo",
+        "description": "The Creation of Adam is without a doubt the one piece which has most profoundly dazzled visitors. No big surprise, for here we are given an overpowering vision of of God. It depicts how God made Adam from the residue of the earth. This story is never delineated actually in Renaissance art. "
+    },
+    {
+        "id": 32,
+        "title": "Nude Descending a Staircase, No. 2",
+        "painter": "Marcel Duchamp",
+        "description": "A complex blend of Cubism and Futurism, Duchamp's delineation of the main subject in different presentation brings out development through time just as space and was roused by the photographic movement investigations of Eadweard Muybridge and Étienne-Jules Marey. Nude was one of a bunch of paintings Duchamp made before turning full time towards the conceptualist works."
+    },
+    {
+        "id": 33,
+        "title": "Grande Odalisque",
+        "painter": "Jean Auguste Dominique Ingres",
+        "description": "Authorized by Napoleon's sister, Queen Caroline Murat of Naples, Grande Odalisque spoke to the artist's break with the Neo-old style he'd been related to for quite a bit of his profession. The work could be depicted as Mannerist, however, it's, for the most part, thought of as a change to Romanticism, a development that renounced Neo-classicalism's exactness, convention, and equipoise. This delineation of a mistress is anatomically off base, this cryptic, uncanny figure was welcomed with sneers by pundits at the time, however, it, in the end, wound up one of Ingres' most renowned works. "
+    },
+    {
+        "id": 34,
+        "title": "Wanderer above the Sea of Fog",
+        "painter": "Caspar David Friedrich",
+        "description": "Wanderer Above The Sea Of Fog Analysis"
+    },
+    {
+        "id": 35,
+        "title": "The Swing Famous Painting",
+        "painter": "Fragonard Jean Honore",
+        "description": "Jean-Honoré Fragonard's The Swing was basically a commission given to him by another painter Gabriel-François Doyen. The painting's storyline and the arrangement was proposed to Doyen by a courteous fellow of the court, who needed a painting of him and his fancy woman. "
+    },
+    {
+        "id": 36,
+        "title": "A Cotton Office In New Orleans",
+        "painter": "Edgar Degas",
+        "description": "This painting depicts his uncle's cotton financier business when it failed during a monetary accident. Here, Degas' Uncle, Musson, is seen grabbing the nature of crude cotton, while Degas' sibling Achille is leaning against a window at the left. His sibling Rene is perusing a paper while a few other individuals approach them. "
+    },
+    {
+        "id": 37,
+        "title": "Irises",
+        "painter": "Vincent van Gogh",
+        "description": "Irises is one of several paintings of irises by the Dutch artist Vincent van Gogh, and one of a sequence of works he completed in the last year of his life at the Saint Paul-de-Mausole asylum in Saint-Rémy-de-Provence, France."
+    },
+    {
+        "id": 38,
+        "title": "A Bar At The Folies-Bergère",
+        "painter": "Édouard Manet",
+        "description": "Édouard Manet's painting A Bar at the Folies-Bergère is regarded to be his final big work. It was painted in 1882 and displayed at the Salon de Paris the same year. It depicts a scene from the Paris nightclub Folies Bergère. One of the prostitutes is supposed to be represented by the woman behind the bar. Suzon, a genuine person who worked at the cafe-concert hall in the early 1880s, was a real person."
+    },
+    {
+        "id": 39,
+        "title": "Composition viii",
+        "painter": "Wassily Kandinsky",
+        "description": "Wassily Kandinsky's Composition VIII is an oil-on-canvas painting in the Abstract style that he painted in 1923. The painting features a variety of geometric patterns, colors, and straight and curved lines against a cream backdrop that blends into areas of pale blue at certain points. Circles, triangles, and linear pieces form a surface of interlocking geometric forms in this painting. The prominence of circles in this painting foreshadows their central significance in many following works."
+    },
+    {
+        "id": 40,
+        "title": "The Scream",
+        "painter": "Edvard Munch",
+        "description": "The Scream is the famous name for a composition by Norwegian artist Edvard Munch, which was produced in 1893. The painting's pained face has become one of the most iconic images of art, expressing the human condition's angst."
+    },
+    {
+        "id": 41,
+        "title": "Paris Street In Rainy Weather",
+        "painter": "Gustave Caillebotte",
+        "description": "Gustave Caillebotte's best-known work, Paris Street; Rainy Day, is a massive 1877 oil painting by the French artist Gustave Caillebotte. It depicts a group of people going through the Place de Dublin, then known as the Carrefour de Moscou, in north Paris, at a crossroads east of the Gare Saint-Lazare."
+    },
+    {
+        "id": 42,
+        "title": "Boreas",
+        "painter": "John William Waterhouse",
+        "description": "Boreas is the Greek god of the north wind, and the artwork depicts a young girl being buffeted by the wind. A girl goes through a spring scene accentuated by pink flower and daffodils, according to the 1904 Royal Academy notes: In wind-blown drapery of slate-color and blue, a girl walks through a spring landscape accented by pink blossom and daffodils."
+    },
+    {
+        "id": 43,
+        "title": "Branches with Almond Blossom",
+        "painter": "Vincent van Gogh",
+        "description": "Almond Blossoms is a collection of paintings of blossoming almond trees painted by Vincent van Gogh in Arles and Saint-Rémy, southern France, between 1888 and 1890. Van Gogh was particularly fond of flowering trees. They symbolized rebirth and hope. He liked the way they looked and enjoyed drawing blossoming trees."
+    },
+    {
+        "id": 44,
+        "title": "Lady Godiva",
+        "painter": "John Maler Collier",
+        "description": "Lady Godiva is an 1897 painting by John Collier, an English artist who painted in the Pre-Raphaelite Brotherhood style. Lady Godiva and her well-known but mythical ride through Coventry, England, are depicted in the Herbert Art Gallery and Museum in Coventry. Thomas Hancock Nunn, a social reformer, bequeathed Lady Godiva. The work was offered to the Corporation of Hampstead after he died in 1937. In his will, he said that if Hampstead declined his bequest, the work would be presented to Coventry. Mab (Mabel) Paul, an artist model and West End stage actress who was also painted as herself by John Collier, is the model in the painting."
+    },
+    {
+        "id": 45,
+        "title": "Salvator Mundi",
+        "painter": "Leonardo da Vinci",
+        "description": "Salvator Mundi is a work ascribed in whole or in part to Leonardo da Vinci, an Italian High Renaissance artist who lived between 1499 and 1510. It was recovered, restored, and exhibited in a major exhibition of Leonardo's work at the National Gallery in London in 2011–2012, long assumed to be a duplicate of a lost original veiled in overpainting. The artwork depicts Christ in an anachronistic blue Renaissance gown, clutching a transparent, non-refracting crystal ball in his left hand, marking his function as Salvator Mundi and representing the 'celestial sphere' of the skies, while making the sign of the cross with his right hand."
+    },
+    {
+        "id": 46,
+        "title": "Champ de Mars: The Red Tower",
+        "painter": "Robert Delaunay",
+        "description": "In the winter of 1912, the artist originally exhibited this painting at the Galerie Barbazanges in Paris, where Guillaume Apollinaire described it as \"unfinished, whether by intention or accident\" in a review. Delaunay painted a series of Eiffel Tower paintings, one of which is on display at the Art Institute of Chicago. Multiple views, rhythmic fragmentation of form, and dramatic color contrasts were employed by the artist to convey the vitality of modern life in this artwork. Delaunay emphasized the structure's colossal size by framing it with tall buildings and placing smaller, shorter buildings at its base, which could be viewed from above."
+    },
+    {
+        "id": 47,
+        "title": "Among the Ruins",
+        "painter": "Sir Lawrence Alma-Tadema",
+        "description": "Alma-Tadema was one of the most well-known Victorian artists. Though praised for his draftsmanship and portrayals of Classical antiquity during his lifetime, his work fell out of favor after his death, and it has only been re-evaluated for its significance in nineteenth-century British art since the 1960s."
+    },
+    {
+        "id": 48,
+        "title": "Color Study, Squares with Concentric Rings",
+        "painter": "Wassily Kandinsky",
+        "description": "Kandinsky painted this vibrant, colorful work to experiment with the effect of putting different hues next to each other. He wanted to know which colors stand out and which blend in, as well as how to mix different colors to make a vibrant, appealing pattern. He paints concentric circles within each square unit, which means the circles all have the same central point. He utilized the circle as an abstract form because he believed it had symbolic meaning in relation to the secrets of the cosmos. The artwork is energized by the contrast of highly saturated, vivid hues."
+    },
+    {
+        "id": 49,
+        "title": "Stag Night At Sharkeys",
+        "painter": "George Bellows",
+        "description": "George Wesley Bellows painted Stag at Sharkey's in 1909, representing two boxers battling in the exclusive sports club opposite from his studio. It's part of the Ashcan School movement, which is notable for showing images of everyday life in early twentieth-century New York City, particularly in the city's poorer areas. Members of the club were generally in the boxing ring, but outsiders with temporary memberships would occasionally fight. Stags were the name given to these fighters."
+    },
+    {
+        "id": 50,
+        "title": "The Great Wave Off Kanagawa",
+        "painter": "Katsushika Hokusai",
+        "description": "The Great Wave off Kanagawa, often known as The Great Wave or The Wave, is a Japanese ukiyo-e artist Hokusai's woodblock print. It was the first print in Hokusai's series Thirty-six Views of Mount Fuji, which was completed in 1831 during the late Edo period. With fully saturated blues and exceptional contrast, The Great Wave is a visually spectacular work. "
+    },
+    {
+        "id": 51,
+        "title": "Interchange",
+        "painter": "Willem de Kooning",
+        "description": "Willem de Kooning's abstract expressionist oil painting Interchange, also known as Interchanged, is an abstract expressionist oil painting on canvas by the Dutch-American painter. De Kooning, like Jackson Pollock, was a pioneer of the abstract expressionism movement, the first American modern art trend. Its dimensions are 200.7 centimetres by 175.3 centimetres."
+    },
+    {
+        "id": 52,
+        "title": "Breezing Up also known as A Fair Wind",
+        "painter": "Winslow Homer",
+        "description": "Breezing Up (A Fair Wind) is an oil painting by Winslow Homer, an American artist. It shows the Gloucester, a catboat, cruising through the harbor of that city in \"a pleasant wind\" (Homer's original title). A dad, three lads, and their catch are aboard the boat. The artwork was completed in 1876, and it was first shown at the National Academy of Design that year, followed by the Centennial Exposition in Philadelphia. By 1879, it was known as Breezing Up, a moniker that did not belong to the artist but that he did not appear to mind. \"It is painted in [Homer's] normal crude and negligé style, yet represents with obvious intensity the life and motion of a breezy summer day off the coast,\" a contemporary critic wrote."
+    },
+    {
+        "id": 53,
+        "title": "Wheat Field with Cypresses at the Haude Galline near Eygalieres",
+        "painter": "Vincent van Gogh",
+        "description": "A Wheatfield with Cypresses is one of three wheat field works by Vincent van Gogh, all of which date from 1889 and are part of his wheat field series. Van Gogh was voluntarily a patient at the Saint-Paul-de-Mausole mental institute in Saint-Rémy near Arles, France, from May 1889 to May 1890, when he showed all of his works."
+    },
+    {
+        "id": 54,
+        "title": "A Friend In Need",
+        "painter": "Cassius Marcellus Coolidge",
+        "description": "Cassius Marcellus Coolidge's A Friend in Need is also known as Dogs Playing Poker. One of a set of 16 paintings created in 1910. This is one of the most well-known, and it's even been featured in the Simpsons. The dogs are playing poker with their pals while smoking cigars and sipping whiskey."
+    },
+    {
+        "id": 55,
+        "title": "Boulevard des Capucines",
+        "painter": "Claude Oscar Monet",
+        "description": "Boulevard des Capucines is an 1873 oil on canvas street scene painting by French Impressionist artist Claude Monet of the famed Paris boulevard. Monet used the Japanese mobile viewpoint in Boulevard des Capucines to encapsulate the fragmentary, yet modern civilized experiences of space as the eye plunges into the deep channel of the busy sidewalk, seeking to disentangle the clues to the complex visual experiences provided by a myriad detached brushstrokes."
+    },
+    {
+        "id": 56,
+        "title": "Dancers Bending Down, also known as The Ballerinas",
+        "painter": "Edgar Degas",
+        "description": "Dancers Bending Down, also known as The Ballerinas, is a classic artwork by French artist Edgar Degas, which was produced in 1885. This masterwork is now owned by a private collection, which means we will have less opportunities to see Edgar Degas' painting in person. The pastel drawings of dancers by Degas are among his best-known works. Many of the works, notably The Star (1878), use idealized compositions, frantic sketching, and rich color backdrops to convey the spectacle of the ballet."
+    },
+    {
+        "id": 57,
+        "title": "Dante And Virgil In Hell",
+        "painter": "William-Adolphe Bouguereau",
+        "description": "Dante and Virgil is an 1850 oil on canvas work by William-Adolphe Bouguereau, a French academic painter. The Musée d'Orsay in Paris has it on exhibit. The work represents a scene from Dante's Divine Comedy, which depicts Dante and his companion Virgil on a voyage through Hell. The author and his guide are watching as two tormented souls are entwined in unending conflict in the scene. Capocchio, an alchemist and heretic, is one of the souls. Gianni Schicchi, the trickster who had used trickery to steal another man's inheritance, bites him on the neck."
+    },
+    {
+        "id": 58,
+        "title": "Carnation, Lily, Lily, Rose",
+        "painter": "John Singer Sargent",
+        "description": "Carnation, Lily, Lily, Rose is an oil-on-canvas work by John Singer Sargent, created between 1885 and 1886. The artwork depicts two tiny children clothed in white burning paper lanterns in a garden littered with pink roses, yellow carnations, and tall white lilies (perhaps the Japanese mountain lily, Lilium auratum) behind them as the day changes to nighttime. Green foliage dominates the artwork, which lacks a horizon or other horizontal line to provide a sense of depth. The viewer appears to be on the same level as the kids, but he or she is also looking down on them. The painting's two protagonists are the daughters of Sargent's friend and illustrator Frederick Barnard. The work is situated in an English garden at Farnham House near Broadway, in the Cotswolds, where Sargent spent the summer of 1885 with Millet after fleeing the scandal surrounding his 1884 masterpiece Portrait of Madame X."
+    },
+    {
+        "id": 59,
+        "title": "When Will You Marry?",
+        "painter": "Paul Gauguin",
+        "description": "When Will You Marry? is an 1892 oil painting by Paul Gauguin, a French Post-Impressionist artist. In 1891, Gauguin visited Tahiti for the first time. Rather than the primitivist false works being produced by artists in France, he hoped to establish \"an edenic paradise where he could make true, 'primitive' art.\""
+    },
+    {
+        "id": 60,
+        "title": "The Oath Of Horatii",
+        "painter": "Jacques-Louis David",
+        "description": "The Oath of the Horatii is a big artwork by Jacques-Louis David that was completed in 1784 and is presently on exhibit in the Louvre in Paris. The painting was an instant hit with critics and the general public, and it is still one of the most well-known Neoclassical works. It depicts a scene from a Roman tale about a feud between two warring cities, Rome and Alba Longa, in the seventh century BC, and emphasizes the significance of patriotism and masculine self-sacrifice for one's nation."
+    },
+    {
+        "id": 61,
+        "title": "Flaming June",
+        "painter": "Frederic Leighton",
+        "description": "Sir Frederic Leighton's work Flaming June was completed in 1895. It is widely regarded as Leighton's magnum effort, showing his classicist nature and painted with oil paints on a 47-by-47-inch square canvas. The artist was interested in exploring the aesthetic relationship between sleep and death, which was a popular theme among Victorian artists. Summer Slumber, one of Leighton's other works, used Flaming June as a motif to embellish a marble bath. He grew so enamored with the design that he decided to turn it into a separate painting."
+    },
+    {
+        "id": 62,
+        "title": "Annunciation",
+        "painter": "Leonardo Da Vinci",
+        "description": "The Annunciation is a work credited to Leonardo da Vinci, an Italian Renaissance artist who lived between 1472 and 1476. The oldest existing major work by Leonardo, it was created in Florence while he was an apprentice in Andrea del Verrocchio's studio. The work's subject content is taken from Luke 1.26–39. It represents the angel Gabriel telling Mary that she would pregnant miraculously and give birth to a son who would be known as \"the Son of God\" and whose dominion would last forever. The Annunciation was a popular subject for contemporaneous artworks painted in Christian countries like Italy, and it had been shown numerous times in Florentine art, including multiple instances by the Early Renaissance painter Fra Angelico."
+    },
+    {
+        "id": 63,
+        "title": "The Avenue In The Rain",
+        "painter": "Childe Hassam",
+        "description": "The Avenue in the Rain is an oil painting by Childe Hassam, an American Impressionist painter, from 1917. It depicts Fifth Avenue in New York City in the rain, with American flags draped across it. The artwork is one of six by Hassam in the White House's permanent art collection in Washington, D.C. Hassam painted roughly thirty paintings of flag-draped streets between 1916 and 1919. This work was completed in February 1917, when the flag had 48 stars and the United States was about to enter the First World War, at a time when nationalist pride was high. Germany had extended its military aggression to neutral ships, including American ships, the previous month. The Zimmermann Telegram was made public at the end of February 1917, and on April 6, 1917, the country declared war on Germany."
+    },
+    {
+        "id": 64,
+        "title": "Dance at Bougival",
+        "painter": "Pierre Auguste Renoir",
+        "description": "Pierre-Auguste Renoir's Dance at Bougival is a painting from 1883 that is currently housed in the Museum of Fine Arts in Boston, Massachusetts, USA. It is one of three works in a group commissioned by Paul Durand-Ruel and described as \"one of the museum's most beloved works.\" Two dancers are seen in the painting, who are surrounded by a vibrant scene of café patrons. Although the painting's exact subjects are debatable, it is well renowned for conveying the idea that they are moving, giving the viewer the impression that they are there. Renoir employed largely pastel hues, although the hats of both subjects had a more bright tone. Renoir's last journey into Impressionism, to which this work belongs, is described as demonstrating the progression of his artistic talent from his previous works."
+    },
+    {
+        "id": 65,
+        "title": "Still Life with Irises",
+        "painter": "Vincent van Gogh",
+        "description": "Van Gogh produced a sequence of still lifes in his final weeks at Saint-Rémy before returning north. The grandeur and scale of these harken back to the enormous Sunflowers painting from the summer of 1888, but the controlled use of complimentary hues also harkens back to the color and flower painting efforts that consumed him during his first year in Paris, 1886. Van Gogh painted pink flowers against a green background in Saint-Rémy, and violet irises against a yellow background here. The artwork exudes a new sense of vitality and color intensity. Instead of softening the contrasts to balance the various elements of the work, as he sometimes did, Van Gogh has endeavored to sharpen and heighten them here, as he had done in Paris."
+    },
+    {
+        "id": 66,
+        "title": "Battle Of Issus",
+        "painter": "Albrecht Altdorfer",
+        "description": "Albrecht Altdorfer a forerunner of landscape art and a co - founder of the Danube school, painted The Battle of Alexander at Issus in 1529. The Battle of Issus, which took place in 333 BC, was a critical victory for Alexander the Great over Darius III of Persia, giving him crucial leverage in his battle against the Persian Empire. The work is commonly recognized as Altdorfer's masterpiece, and it is one of the most famous instances of the global landscape, a genre of Renaissance landscape painting that reaches extraordinary grandeur here."
+    },
+    {
+        "id": 67,
+        "title": "The Lady of Shalott",
+        "painter": "John William Waterhouse",
+        "description": "The Lady of Shalott is an 1888 artwork by John William Waterhouse, an English painter. It's a recreation of the same-named poem by Alfred, Lord Tennyson, written in 1832. In 1888, 1894, and 1915, Waterhouse painted three different renditions of this character. Waterhouse painted several decades after the Pre-Raphaelite Brotherhood split up during his early infancy, and it is one of his most famous works, adopting much of their style. Sir Henry Tate presented the Lady of Shalott to the public in 1894, and it is currently on exhibit in room 1840 of Tate Britain in London."
+    },
+    {
+        "id": 68,
+        "title": "The Boat Trip",
+        "painter": "Mary Cassatt",
+        "description": "The flat, patterned surfaces, reduced color, and strange angles of Japanese prints, which were popular in Paris in the late 1800s, are evident in this dramatic composition. The subject is compressed onto the flat surface of the canvas by the dark figure of the guy, and the horizon is pushed to the top, crushing a sense of distance. We have an oblique view into the boat from our higher vantage point. The junction of its horizontal supports divides its form into ornamental shapes. Cassatt's first solo exhibition in the United States in 1895 featured this work, which was one of her most ambitious. Her relationships with rich people in the United States were instrumental in bringing avant–garde French painting to the United States."
+    },
+    {
+        "id": 69,
+        "title": "Boulevard Montmartre Spring",
+        "painter": "Camille Pissarro",
+        "description": "Pissarro's technique to the systematic examination of a number of views of the same subject is revealed in the Boulevard Montmartre series, which has a remarkable scope and variety. The artist examined the many climatic conditions of the street while focusing on a single compositional element - the majestic procession of the Boulevard Montmartre."
+    },
+    {
+        "id": 70,
+        "title": "Sailboat at Le Petit-Gennevilliers",
+        "painter": "Claude Oscar Monet",
+        "description": "Claude Oscar Monet painted Sailboat At Le Petit Gennevilliers in 1874, that year he joined other present-day artists to relocate to Paris."
+    },
+    {
+        "id": 71,
+        "title": "Nu couché",
+        "painter": "Amedeo Modigliani",
+        "description": "Nu couché additionally referred to in English as Red Nude or Reclining Nude is a 1917 oil on canvas painting by the Italian artist Amedeo Modigliani. It is one of his most generally replicated and displayed paintings. The painting sold for $170,405,000 at Christie's New York auction on 9 November 2015."
+    },
+    {
+        "id": 72,
+        "title": "The Night Cafe",
+        "painter": "Vincent van Gogh",
+        "description": "The painting was executed on a modernly prepared canvas of size 30 (French standard). It delineates the inside of the bistro, with a half-curtained entryway. Five clients sit at tables and there is a billiard table close to the focal point of the room."
+    },
+    {
+        "id": 73,
+        "title": "The Walk Woman with a Parasol",
+        "painter": "Claude Oscar Monet",
+        "description": "Claude Monet's oil-on-canvas painting Woman with a Parasol – Madame Monet and Her Son, also known as The Stroll, was completed in 1875. The Impressionist painting features his wife Camille Monet and their son Jean Monet during their time in Argenteuil, from 1871 to 1877, capturing a moment during a promenade on a windy summer day."
+    },
+    {
+        "id": 74,
+        "title": "A Moorish Bath (also known as Turkish Woman Bathing)",
+        "painter": "Jean-Léon Gérôme",
+        "description": "Jean-Léon Gérôme was a French painter and sculpture who worked in the academicist style. By 1880, his paintings had been widely reprinted, making him \"probably the world's most famous living artist.\" Gérôme's paintings were frequently misrepresented as genuine representations, hiding the artist's and artwork's roles in contributing to the Western ideological construct of the \"Orient.\""
+    },
+    {
+        "id": 75,
+        "title": "Portrait of Madame de Florian",
+        "painter": "Giovanni Boldini",
+        "description": "During the Belle Époque, Marthe de Florian was a French demi-mondaine and socialite. Georges Clemenceau, Pierre Waldeck-Rousseau, Paul Deschanel, Gaston Doumergue, Robert de Montesquiou, and Giovanni Boldini were among her renowned lovers. Her narrative was resurrected in 2010 after her things were discovered unused for decades in her Parisian flat, located at 2 square La Bruyère in the 9th arrondissement."
+    },
+    {
+        "id": 76,
+        "title": "The Beach at Trouville",
+        "painter": "Claude Oscar Monet",
+        "description": "Monet blends conscious and unconscious via dissolving shapes, effacing identities, and dissolving forms. This work has sand on its surface, which was blown on to the wet canvas as Monet worked in the open air on the beach at Trouville in Normandy. The woman on the left is thought to represent Camille, Monet's first wife."
+    },
+    {
+        "id": 77,
+        "title": "The Magic Circle",
+        "painter": "John William Waterhouse",
+        "description": "The Magic Circle is the title of two 1886 oil paintings by John William Waterhouse in the Pre-Raphaelite style. A witch or sorceress draws a fire magic circle on the soil with her wand to create a ritual place for her ceremonial magic."
+    },
+    {
+        "id": 78,
+        "title": "Masterpiece",
+        "painter": "Roy Lichtenstein",
+        "description": "Roy Lichtenstein's Masterpiece is a 1962 pop art painting that has his signature Ben-Day dots and narrative information enclosed within a speech balloon. The work was sold for $165 million in 2017."
+    },
+    {
+        "id": 79,
+        "title": "The Hireling Shepherd",
+        "painter": "William Holman Hunt",
+        "description": "William Holman Hunt's painting The Hireling Shepherd is a Pre-Raphaelite masterpiece. It depicts a shepherd who neglects his flock in favor of a beautiful rural girl, to whom he gifts a death's-head hawkmoth. The work's significance has been hotly contested."
+    },
+    {
+        "id": 80,
+        "title": "The Tower Of Babel",
+        "painter": "Pieter Bruegel the Elder",
+        "description": "One of the three paintings by Pieter Bruegel the Elder depict the Tower of Babel. The first, a miniature painted on ivory that was painted while Bruegel was in Rome and is now lost, was painted while Bruegel was in Rome. The two surviving paintings, often referred to as \"Great\" and \"Little,\" are housed in Vienna's Kunsthistorisches Museum and Rotterdam's Museum Boijmans Van Beuningen, respectively. Both paintings are oil on wood panels. The paintings represent the construction of the Tower of Babel, which, according to the Bible's Book of Genesis, was built as a symbol of humanity's triumph by a unified, monolingual humanity."
+    },
+    {
+        "id": 81,
+        "title": "The Gleaners",
+        "painter": "Jean-Francois Millet",
+        "description": "Jean-François Millet's oil work The Gleaners (Des glaneuses) was created in 1857. It shows three peasant ladies after the harvest gleaning a field of stray wheat stalks. The artwork is noteworthy for depicting what were once the lowest sections of rural society in a sympathetic light; it was not well welcomed by the French upper classes. In 1857, Millet debuted The Gleaners at the Salon. It drew quick ire from the middle and upper classes, who regarded the subject with distrust."
+    },
+    {
+        "id": 82,
+        "title": "The Card Players",
+        "painter": "Paul Cézanne",
+        "description": "The Card Players is a series of oil paintings by Paul Cézanne, a French Post-Impressionist painter. There are five works in the series, all painted during Cézanne's final era in the early 1890s. The game's size, number of players, and setting all differ between versions. In preparation for The Card Players series, Cézanne made various drawings and studies."
+    },
+    {
+        "id": 83,
+        "title": "Fishing boats on the Beach at Les Saintes-Maries-de-la-Mer",
+        "painter": "Vincent van Gogh",
+        "description": "The boats are constructed up of color-coordinated regions with distinct outlines. The boats also don't cast any shadows on the shore. Van Gogh was familiar with these style aspects from his collection of Japanese prints. Van Gogh would have loved to paint this on the shore, but he was unable to do so since the fishermen set sail very early every morning. He did, however, draw the boats there and later painted this artwork at home."
+    },
+    {
+        "id": 84,
+        "title": "A Wooded Path In Autumn",
+        "painter": "Hans Andersen Brendekilde",
+        "description": "A Wooded Path in Autumn is a delightful painting by Hans Andersen Brendekilde. Hans Andersen was a Danish painter who came for a poor family. As a youngster, he was apprenticed be an artist."
+    },
+    {
+        "id": 85,
+        "title": "Spanish Dancer",
+        "painter": "John Singer Sargent",
+        "description": "El Jaleo is a huge painting by John Singer Sargent, delineating a Spanish Gypsy artist performing. The painting was motivated by a five-month trip Sargent made through Spain and North Africa in 1879."
+    },
+    {
+        "id": 86,
+        "title": "A Mermaid",
+        "painter": "John William Waterhouse",
+        "description": "Waterhouse was likewise intrigued by the folklore of the mermaid sorcerer. Mermaids generally baited mariners to their demise through their enrapturing tune. "
+    },
+    {
+        "id": 87,
+        "title": "The Orange Trees",
+        "painter": "Gustave Caillebotte",
+        "description": "The work incorporates all of the essential characteristics of modern art. According to the Impressionist canon, the sundrenched work, with the almost felt summer heat emanating off the garden path, was most likely painted outside. Caillebotte's goal to represent a transitory moment—that time before the light changes and the feeling of delightful peace and repose is disrupted—is reflected in the brief, sketchy brushstrokes."
+    },
+    {
+        "id": 88,
+        "title": "Summer Evening at Skagen",
+        "painter": "Peder Severin Kroyer",
+        "description": "Peder Severin Kryer's painting Summer Evening on Skagen's Southern Beach is considered one of his finest. Kryer was one of the most well-known members of the Skagen Painters, a group of Danish artists. Kryer's works frequently emphasize the Skagen light's distinctive effects, including numerous notable works representing beach scenes. The artwork was inspired by Anna Ancher and Marie Kryer's walk along the beach following a dinner party at the Kryers' home in the summer of 1892, when the guests went down to the shore to enjoy the wonderful evening."
+    },
+    {
+        "id": 89,
+        "title": "The Siesta",
+        "painter": "Paul Gauguin",
+        "description": "The Siesta is a Paul Gauguin oil on canvas painting from 1892-1894 that is presently housed in the Metropolitan Museum of Art in New York. During Gauguin's first extended journey to Tahiti, he painted this painting."
+    },
+    {
+        "id": 90,
+        "title": "The Birth of Venus",
+        "painter": "Alexandre Cabanel",
+        "description": "The Birth of Venus is a painting by Alexandre Cabanel, a French artist. It was painted in 1863 and is presently housed in Paris's Musée d'Orsay. The Dahesh Museum of Art has a second, smaller replica from around 1864. A third version, dating from 1875, can be found in New York City's Metropolitan Museum of Art."
+    },
+    {
+        "id": 91,
+        "title": "Dance Class",
+        "painter": "Edgar Degas",
+        "description": "Edgar Degas painted The Dance Class in 1874. It is in the Metropolitan Museum of Art's collection. The painting, together with a sister piece in the Musée d'Orsay in Paris, is one of Degas' most extensive works on the subject of ballet."
+    },
+    {
+        "id": 92,
+        "title": "The Kiss",
+        "painter": "Francesco Paolo Hayez",
+        "description": "The Kiss is an 1859 painting by Francesco Hayez, an Italian artist. It's his most well-known piece. This artwork captures the essence of Italian Romanticism and has come to symbolize the Risorgimento attitude. Alfonso Maria Visconti di Saliceto commissioned it and presented it to the Pinacoteca di Brera following his death."
+    },
+    {
+        "id": 93,
+        "title": "Echo and Narcissus",
+        "painter": "John William Waterhouse",
+        "description": "John William Waterhouse painted Echo and Narcissus in 1903. It depicts the Ovid's Metamorphoses story of Echo and Narcissus. John William Waterhouse was an English painter who was categorized as a Pre-Raphaelite because of his style and topics. He created nearly 200 works, mostly in the disciplines of classical mythology, history, and literature. The femme fatale, or the woman who ensnares a man, is one of his recurring motifs."
+    },
+    {
+        "id": 94,
+        "title": "Dempsey and Firpo, also known as Brodie's Revenge",
+        "painter": "George Wesley Bellows",
+        "description": "One of George Bellows' most elaborate paintings, Dempsey and Firpo, depicts a key moment in the title bout between American heavyweight champion Jack Dempsey and his Argentine rival Luis Angel Firpo on September 14, 1923. Firpo dropped to the ground nine times and Dempsey twice during the frenzy, which lasted less than four minutes. Despite the fact that Dempsey won in the end, the artist chose to depict the dramatic moment when Firpo knocked his opponent out of the ring with a massive jaw hit."
+    },
+    {
+        "id": 95,
+        "title": "Oarsmen",
+        "painter": "Gustave Caillebotte",
+        "description": ""
+    },
+    {
+        "id": 96,
+        "title": "The Abduction of Psyche",
+        "painter": "William Bouguereau",
+        "description": "Cupid is shown embracing Psyche in a passionate embrace as he transports her to the Otherworld to become his wife in the picture. The newly emerged butterfly wings of Psyche are symbolic, indicating her immortality. Her pliant figure appears soft and vulnerable, and her facial expression is one of blissful happiness. Cupid's arms encircle Psyche, implying possession, while Psyche's posture suggests utter surrender."
+    },
+    {
+        "id": 97,
+        "title": "Patroclus",
+        "painter": "Jacques-Louis David",
+        "description": "Patroclus is a modest painting by Jacques Louis David, a Neo-classicist painter who created it in 1780. It is now part of the Musée Thomas Henry's collection in Cherbourg, France. This artwork can be thought of as a study because there is no facial detail or anything else in the composition but the reclining man with his back to us."
+    },
+    {
+        "id": 98,
+        "title": "Head of a Woman (Female)",
+        "painter": "Leonardo da Vinci",
+        "description": "The Lady with Dishevelled Hair (La Scapigliata) or Head of a Woman is an unfinished painting dated c. 1506–1508. It is commonly assigned to the Italian High Renaissance artist Leonardo da Vinci. It was painted in oil, umber, and white lead paints on a small poplar wood panel, and its attribution is still debated, with numerous experts claiming it was done by a Leonardo pupil. The work has been praised for its alluring beauty, secretive demeanor, and sfumato expertise."
+    },
+    {
+        "id": 99,
+        "title": "The Floor Scrapers, also known as The Floor Strippers",
+        "painter": "Gustave Caillebotte",
+        "description": "The Floor Scrapers, commonly known as The Floor Strippers, is a well-known impressionist oil painting created by French artist Gustave Caillebotte in 1875. The Musée d'Orsay now owns the artwork. It is a painting that depicts working-class people hard at work, which was not an unexpected subject for French works of art as it had been repeated countless times before, but the distinction was that prior French paintings depicted the struggles of the working class exclusively through the eyes of working-class farmers or country peasants."
+    }
+]

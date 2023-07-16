@@ -36,7 +36,7 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
         vehicles = self.reseplaneraren.get_live_map_vehicles(11760200, 12167400, 57605300, 57733500)
         for vehicle in vehicles:
             id = vehicle['gid']
-            name = vehicle['name'].replace('Bus ', '').replace('Spå ', '')
+            name = vehicle['name'].replace('Bus', '').replace('Spå ', '').replace('Fär', '').strip()
             icon_html = f'''<div style="border: 1px solid transparent; border-radius: 0.25rem;
                 color: {vehicle["lcolor"]}; background-color: {vehicle["bcolor"]}; width: fit-content;
                 height: fit-content; text-align: center; font-weight: bold;

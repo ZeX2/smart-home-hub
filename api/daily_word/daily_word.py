@@ -21,7 +21,7 @@ class DailyWordApi():
             try:
                 response.raise_for_status()
             except Exception as e:
-                raise Exception(f'DailyWord API failed for url {request.url}! {response.status_code}! \n Response text: {response.text}')
+                raise Exception(f'{self.__class__.__name__} failed for url {request.url}! {response.status_code}! \n Response text: {response.text}')
         else:
             return response
 
@@ -31,7 +31,7 @@ class DailyWordApi():
 
         soup = BeautifulSoup(html, features='html.parser')
         word = soup.find('div', {'class': 'word-and-pronunciation'}).find_all(['h1', 'h2', 'h3', 'h4', 'h5'])[0].get_text(strip=True).capitalize()
-        
+
         request = Request('GET', ENG_API_DEF.format(word=word))
         html = self.send(request).text
 

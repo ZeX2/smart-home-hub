@@ -49,10 +49,10 @@ class VasttrafikApi():
             try:
                 response.raise_for_status()
             except Exception as e:
-                raise Exception(f'Västtrafik API failed for url {request.url}! {response.status_code}! \n Response text: {response.text}')
+                raise Exception(f'{self.__class__.__name__} failed for url {request.url}! {response.status_code}! \n Response text: {response.text}')
         else:
             return response
-    
+
     def update_token_and_headers(self):
         headers = {'Content-Type': 'application/x-www-form-urlencoded',
         'Authorization': f'Basic {base64.b64encode((KEY + ":" + SECRET).encode()).decode()}'}
