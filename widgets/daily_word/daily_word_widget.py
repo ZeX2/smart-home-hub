@@ -2,6 +2,11 @@ import os
 
 from PySide2 import QtGui, QtCore, QtWidgets
 
+import resources
+
+DAILY_WORD_DIR = os.path.dirname(os.path.realpath(__file__))
+DROP_DOWN_ARROW_PATH = os.path.join(DAILY_WORD_DIR, 'refresh.png')
+
 class QLabelButton(QtWidgets.QLabel):
     clicked = QtCore.Signal()
 
@@ -30,11 +35,25 @@ class DailyWordUi(QtWidgets.QFrame):
         self.combo_box = QtWidgets.QComboBox()
         self.combo_box.addItems(['ENG', 'SWE'])
         self.combo_box.currentTextChanged.connect(self.combo_box_changed)
-        self.combo_box.setStyleSheet('''
-            QComboBox {border: 0px}
-            QComboxBox::down-arrow {border: 0px}
-            QComboBox::drop-down {border: 0px}
+        self.combo_box.setStyleSheet(f'''
+            QComboBox {{
+                width: 30px;
+                image: url(:/drop_down_arrow.png);
+                border: 1px solid gray;
+                border-radius: 3px;
+             }}
+ 
+             QComboBox::drop-down:button {{
+                image: url(:/drop_down_arrow.png);
+                border: 0px;
+                width: 30px;
+             }}
+ 
+             QComboBox::down-arrow {{
+                image: url(:/drop_down_arrow.png);
+             }}
         ''')
+        print(self.combo_box.styleSheet())
         self.title_layout.addWidget(self.combo_box)
 
         self.definition_label = QtWidgets.QLabel('N/A')

@@ -1,0 +1,6 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="icons">
+        <file alias="drop_down_arrow.png">widgets/daily_word/drop_down_arrow.png</file>
+    </qresource>
+</RCC>

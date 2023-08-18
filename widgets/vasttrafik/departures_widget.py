@@ -48,7 +48,9 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
         super().__init__()
         self.reseplaneraren = reseplaneraren
         self.setup_ui()
-        
+
+        self.table_initialized = False
+
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update_departure_table)
         self.get_and_update_departure_table()
@@ -78,13 +80,14 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
         html_label.append('</tr> </table>')
 
         arrival_label = QtWidgets.QLabel(' '.join(html_label))
-        
+
         return arrival_label
 
     def update_departure_table(self):
-        if self.visibleRegion().isEmpty():
+        if self.visibleRegion().isEmpty() and self.table_initialized:
                 return
 
+        self.table_initialized = True
         departure_data = self.reseplaneraren.get_departure_table(stop_name=self.search_bar.text())
 
         self.departure_table.clear()
@@ -107,3 +110,6 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
 
         self.update_departure_table()
         self.timer.start(20*1000)
+
+    def tab_changed(self):
+        self.get_and_update_departure_table()

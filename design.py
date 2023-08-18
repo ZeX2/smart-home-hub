@@ -58,22 +58,10 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         #self.page_one_layout.addWidget(WeatherWidget(self.se_data, self.smhi_forecast))
 
         # Page 2
-        self.page_two_widget = QtWidgets.QWidget()
-        self.tab_widget.insertTab(1, self.page_two_widget, 'Reseplaneraren')
-
-        self.page_two_layout = QtWidgets.QVBoxLayout()
-        self.page_two_widget.setLayout(self.page_two_layout)
-
-        self.page_two_layout.addWidget(VasttrafikDeparturesWidget(self.reseplaneraren))
+        self.tab_widget.insertTab(1, VasttrafikDeparturesWidget(self.reseplaneraren), 'Reseplaneraren')
 
         # Page 3
-        self.page_three_widget = QtWidgets.QWidget()
-        self.tab_widget.insertTab(2, self.page_three_widget, 'Västtrafik Live Map')
-
-        self.page_three_layout = QtWidgets.QVBoxLayout()
-        self.page_three_widget.setLayout(self.page_three_layout)
-
-        self.page_three_layout.addWidget(VasttrafikLiveMapWidget(self.reseplaneraren))
+        self.tab_widget.insertTab(2, VasttrafikLiveMapWidget(self.reseplaneraren), 'Västtrafik Live Map')
 
         # Page 4
         self.tab_widget.insertTab(3, SpotifyWidget(), 'Spotify')

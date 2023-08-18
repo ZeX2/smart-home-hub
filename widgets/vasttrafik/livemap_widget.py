@@ -31,7 +31,7 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
 
     def update_web_map(self):
         if self.visibleRegion().isEmpty():
-            return
+                return
 
         vehicles = self.reseplaneraren.get_live_map_vehicles(11760200, 12167400, 57605300, 57733500)
         for vehicle in vehicles:
@@ -52,3 +52,6 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
                 }}'''
             
             self.web_map.page().runJavaScript(javascript)
+
+    def tab_changed(self):
+        self.update_web_map()
