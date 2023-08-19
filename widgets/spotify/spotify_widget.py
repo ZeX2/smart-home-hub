@@ -4,7 +4,11 @@ from datetime import date, timedelta, datetime
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from PySide2 import QtGui, QtCore, QtWidgets
+
+try:
+    from PySide6 import QtGui, QtCore, QtWidgets
+except:
+    from PySide2 import QtGui, QtCore, QtWidgets
 
 from .spotify_tokens import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 

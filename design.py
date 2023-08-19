@@ -1,4 +1,7 @@
-from PySide2 import QtGui, QtCore, QtWidgets
+try:
+    from PySide6 import QtGui, QtCore, QtWidgets
+except:
+    from PySide2 import QtGui, QtCore, QtWidgets
 
 from widgets.clocks.analog_clock_widget import AnalogClockWidget
 from widgets.clocks.digital_clock_widget import DigitalClockWidget

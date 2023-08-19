@@ -1,10 +1,17 @@
 import io
 import os
 
-from PySide2 import QtGui, QtCore, QtWidgets, QtWebEngineWidgets
+try:
+    from PySide6 import QtGui, QtCore, QtWidgets, QtWebEngineWidgets, QtWebEngineCore
+except:
+    from PySide2 import QtGui, QtCore, QtWidgets, QtWebEngineWidgets, QtWebEngineCore
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 LIVEMAP_PATH = os.path.join(FILE_DIR, 'livemap.html')
+
+class Interceptor(QtWebEngineCore.QWebEngineUrlRequestInterceptor):
+    def interceptRequest(self, info):
+        info.setHttpHeader(b"Accept-Language", b"en-US,en;q=0.9,es;q=0.8,de;q=0.7")
 
 class VasttrafikLiveMapUi(QtWidgets.QWidget):
 
@@ -22,6 +29,9 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
         self.reseplaneraren = reseplaneraren
 
         url = QtCore.QUrl.fromLocalFile(LIVEMAP_PATH)
+        
+        interceptor = Interceptor()
+        self.web_map.page().profile().setUrlRequestInterceptor(interceptor)
         self.web_map.load(url)
 
         self.update_web_map()

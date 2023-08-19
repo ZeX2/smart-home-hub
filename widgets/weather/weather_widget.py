@@ -1,4 +1,7 @@
-from PySide2 import QtGui, QtCore, QtWidgets
+try:
+    from PySide6 import QtGui, QtCore, QtWidgets
+except:
+    from PySide2 import QtGui, QtCore, QtWidgets
 
 from api.se_data.se_data import SEData
 from api.smhi.smhi import SMHIForecastApi

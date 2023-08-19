@@ -1,5 +1,7 @@
-PySide2
+PySide6
 requests
 pandas
 rapidfuzz
-folium
+spotipy
+notion-client
+bs4

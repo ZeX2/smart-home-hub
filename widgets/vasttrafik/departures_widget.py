@@ -1,6 +1,9 @@
 from datetime import datetime
 
-from PySide2 import QtGui, QtCore, QtWidgets
+try:
+    from PySide6 import QtGui, QtCore, QtWidgets
+except:
+    from PySide2 import QtGui, QtCore, QtWidgets
 
 VECHILE_TYPE_SORT_ORDER = {'TRAM': 0, 'BUS': 1}
 

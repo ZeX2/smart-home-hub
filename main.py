@@ -2,7 +2,10 @@ import sys
 
 from hub import SmartHomeHub
 
-from PySide2.QtWidgets import QApplication
+try:
+    from PySide6.QtWidgets import QApplication
+except:
+    from PySide2.QtWidgets import QApplication
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

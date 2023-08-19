@@ -1,4 +1,8 @@
-from PySide2 import QtGui, QtCore, QtWidgets
+try:
+    from PySide6 import QtGui, QtCore, QtWidgets
+except:
+    from PySide2 import QtGui, QtCore, QtWidgets
+
 
 class DigitalClockUi(QtWidgets.QWidget):
 
