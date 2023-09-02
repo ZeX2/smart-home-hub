@@ -6,10 +6,11 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
 try:
-    from PySide6 import QtGui, QtCore, QtWidgets
+    from PySide6 import QtGui, QtCore, QtWidgets # type: ignore
 except:
-    from PySide2 import QtGui, QtCore, QtWidgets
+    from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
+from common_widgets.label_button import QLabelButton
 from .spotify_tokens import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 
 SPOTIFY_WIDGET_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -20,13 +21,6 @@ SCOPES = ['user-library-read', 'user-read-recently-played',
 # Inspo: https://chowdera.com/2021/05/20210506082607288s.html#4__281
 # https://programmer.group/python-developing-music-player-pyqt-making-music-player-main-interface.html
 # https://stackoverflow.com/questions/44264852/pyside-pyqt-overlay-widget
-
-class QLabelButton(QtWidgets.QLabel):
-    clicked = QtCore.Signal()
-
-    def mouseReleaseEvent(self, event):
-        self.clicked.emit()
-        QtWidgets.QLabel.mousePressEvent(self, event)
 
 class SpotifyUi(QtWidgets.QWidget):
 
@@ -56,31 +50,21 @@ class SpotifyUi(QtWidgets.QWidget):
         outer_right_spacer = QtWidgets.QSpacerItem(100, 10)
         left_spacer = QtWidgets.QSpacerItem(20, 10)
         right_spacer = QtWidgets.QSpacerItem(20, 10)
-        self.shuffle_button = QLabelButton()
+        self.shuffle_button = QLabelButton(os.path.join(SPOTIFY_WIDGET_DIR, 'shuffle_off.png'))
         self.shuffle_button.clicked.connect(self.shuffle_button_clicked)
         self.shuffle_button.setFixedSize(25, 25)
-        self.shuffle_button.setScaledContents(True)
-        self.shuffle_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, 'shuffle_off.png')))
-        self.prev_button = QLabelButton()
+        self.prev_button = QLabelButton(os.path.join(SPOTIFY_WIDGET_DIR, 'prev_btn.png'))
         self.prev_button.clicked.connect(self.prev_button_clicked)
         self.prev_button.setFixedSize(40, 30)
-        self.prev_button.setScaledContents(True)
-        self.prev_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, 'prev_btn.png')))
-        self.play_button = QLabelButton()
+        self.play_button = QLabelButton(os.path.join(SPOTIFY_WIDGET_DIR, 'play_btn.png'))
         self.play_button.clicked.connect(self.play_button_clicked)
         self.play_button.setFixedSize(35, 35)
-        self.play_button.setScaledContents(True)
-        self.play_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, 'play_btn.png')))
-        self.next_button = QLabelButton()
+        self.next_button = QLabelButton(os.path.join(SPOTIFY_WIDGET_DIR, 'next_btn.png'))
         self.next_button.clicked.connect(self.next_button_clicked)
         self.next_button.setFixedSize(40, 30)
-        self.next_button.setScaledContents(True)
-        self.next_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, 'next_btn.png')))
-        self.repeat_button = QLabelButton()
+        self.repeat_button = QLabelButton(os.path.join(SPOTIFY_WIDGET_DIR, 'repeat_off.png'))
         self.repeat_button.clicked.connect(self.repeat_button_clicked)
         self.repeat_button.setFixedSize(25, 25)
-        self.repeat_button.setScaledContents(True)
-        self.repeat_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, 'repeat_off.png')))
         self.music_controls_layout.addSpacerItem(outer_left_spacer)
         self.music_controls_layout.addWidget(self.shuffle_button)
         self.music_controls_layout.addSpacerItem(left_spacer)

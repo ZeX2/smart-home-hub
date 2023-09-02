@@ -2,9 +2,9 @@ import io
 import os
 
 try:
-    from PySide6 import QtGui, QtCore, QtWidgets, QtWebEngineWidgets, QtWebEngineCore
+    from PySide6 import QtGui, QtCore, QtWidgets, QtWebEngineWidgets, QtWebEngineCore # type: ignore
 except:
-    from PySide2 import QtGui, QtCore, QtWidgets, QtWebEngineWidgets, QtWebEngineCore
+    from PySide2 import QtGui, QtCore, QtWidgets, QtWebEngineWidgets, QtWebEngineCore # type: ignore
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 LIVEMAP_PATH = os.path.join(FILE_DIR, 'livemap.html')

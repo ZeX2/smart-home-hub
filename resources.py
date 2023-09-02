@@ -7,9 +7,9 @@
 # WARNING! All changes made in this file will be lost!
 
 try:
-    from PySide6 import QtCore
+    from PySide6 import QtCore # type: ignore
 except:
-    from PySide2 import QtCore
+    from PySide2 import QtCore # type: ignore
 qt_resource_data = b"\
 \x00\x00\x01\xe9\
 \x89\

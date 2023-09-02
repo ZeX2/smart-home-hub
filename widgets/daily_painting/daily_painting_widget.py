@@ -1,9 +1,9 @@
 import os
 
 try:
-    from PySide6 import QtGui, QtCore, QtWidgets
+    from PySide6 import QtGui, QtCore, QtWidgets # type: ignore
 except:
-    from PySide2 import QtGui, QtCore, QtWidgets
+    from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 

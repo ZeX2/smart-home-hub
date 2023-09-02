@@ -1,21 +1,14 @@
 import os
 
 try:
-    from PySide6 import QtGui, QtCore, QtWidgets
+    from PySide6 import QtGui, QtCore, QtWidgets # type: ignore
 except:
-    from PySide2 import QtGui, QtCore, QtWidgets
+    from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
 import resources
 
 DAILY_WORD_DIR = os.path.dirname(os.path.realpath(__file__))
 DROP_DOWN_ARROW_PATH = os.path.join(DAILY_WORD_DIR, 'refresh.png')
-
-class QLabelButton(QtWidgets.QLabel):
-    clicked = QtCore.Signal()
-
-    def mouseReleaseEvent(self, event):
-        self.clicked.emit()
-        QtWidgets.QLabel.mousePressEvent(self, event)
 
 class DailyWordUi(QtWidgets.QFrame):
     
@@ -56,7 +49,7 @@ class DailyWordUi(QtWidgets.QFrame):
                 image: url(:/drop_down_arrow.png);
              }}
         ''')
-        print(self.combo_box.styleSheet())
+        #print(self.combo_box.styleSheet())
         self.title_layout.addWidget(self.combo_box)
 
         self.definition_label = QtWidgets.QLabel('N/A')

@@ -1,9 +1,9 @@
 try:
-    from PySide6 import QtGui, QtCore, QtWidgets
+    from PySide6 import QtGui, QtCore, QtWidgets # type: ignore
 except:
-    from PySide2 import QtGui, QtCore, QtWidgets
+    from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
-from design import SmartHomeHubUi
+from design import SmartHomeHubUi, SIDE_MENU_WIDTH, SIDE_MENU_EXTENDED_WIDTH
 
 from api.se_data.se_data import SEData
 from api.smhi.smhi import SMHIForecastApi
@@ -35,7 +35,36 @@ class SmartHomeHub(SmartHomeHubUi):
         self.show()
 
     def tab_changed(self, index):
-        widget = self.tab_widget.currentWidget()
+        widget = self.stacked_widget.currentWidget()
         tab_changed = getattr(widget, 'tab_changed', None)
         if callable(tab_changed):
             tab_changed()
+
+    def side_menu_animate(self):
+        if self.side_menu.width() <= SIDE_MENU_WIDTH + 10:
+            start_value = SIDE_MENU_WIDTH
+            end_value = SIDE_MENU_EXTENDED_WIDTH
+        elif self.side_menu.width() >= SIDE_MENU_WIDTH + 10:
+            start_value = SIDE_MENU_EXTENDED_WIDTH
+            end_value = SIDE_MENU_WIDTH
+        else:
+            return
+
+        self.animation1 = QtCore.QPropertyAnimation(self.side_menu, b'maximumWidth')
+        self.animation1.setDuration(500)
+        self.animation1.setStartValue(start_value)
+        self.animation1.setEndValue(end_value)
+        self.animation1.setEasingCurve(QtCore.QEasingCurve.InOutSine)
+        self.animation1.start()
+
+        self.animation2 = QtCore.QPropertyAnimation(self.side_menu, b'minimumWidth')
+        self.animation2.setDuration(500)
+        self.animation2.setStartValue(start_value)
+        self.animation2.setEndValue(end_value)
+        self.animation2.setEasingCurve(QtCore.QEasingCurve.InOutSine)
+        self.animation2.start()
+
+    def mousePressEvent(self, event):
+        if event.x() > SIDE_MENU_EXTENDED_WIDTH and self.side_menu.width() >= SIDE_MENU_WIDTH + 10:
+            self.side_menu_animate()
+        super().mousePressEvent(event)

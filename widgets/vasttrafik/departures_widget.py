@@ -1,9 +1,9 @@
 from datetime import datetime
 
 try:
-    from PySide6 import QtGui, QtCore, QtWidgets
+    from PySide6 import QtGui, QtCore, QtWidgets # type: ignore
 except:
-    from PySide2 import QtGui, QtCore, QtWidgets
+    from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
 VECHILE_TYPE_SORT_ORDER = {'TRAM': 0, 'BUS': 1}
 
