@@ -21,7 +21,7 @@ class NoteBoardUi(QtWidgets.QFrame):
         self.layout.addLayout(self.title_layout)
 
         self.title_label = QtWidgets.QLabel('Anslagstavla')
-        self.title_label.setFont(QtGui.QFont('Lucida Console', 12))
+        self.title_label.setFont(QtGui.QFont('Lucida Console', 20))
         self.title_layout.addWidget(self.title_label)
 
         self.spacer = QtWidgets.QSpacerItem(5, 5, hData=QtWidgets.QSizePolicy.Expanding)
@@ -33,7 +33,7 @@ class NoteBoardUi(QtWidgets.QFrame):
         self.title_layout.addWidget(self.refresh_button)
 
         self.note_label = QtWidgets.QLabel('N/A')
-        self.note_label.setFont(QtGui.QFont('Lucida Console', 10))
+        self.note_label.setFont(QtGui.QFont('Lucida Console', 12))
         self.note_label.setWordWrap(True)
         self.layout.addWidget(self.note_label)
 

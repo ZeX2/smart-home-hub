@@ -22,7 +22,7 @@ class DailyWordUi(QtWidgets.QFrame):
         self.layout.addLayout(self.title_layout)
 
         self.title_label = QtWidgets.QLabel('N/A')
-        self.title_label.setFont(QtGui.QFont('Lucida Console', 12))
+        self.title_label.setFont(QtGui.QFont('Lucida Console', 20))
         self.title_layout.addWidget(self.title_label)
 
         self.spacer = QtWidgets.QSpacerItem(5, 5, hData=QtWidgets.QSizePolicy.Expanding)
@@ -53,7 +53,7 @@ class DailyWordUi(QtWidgets.QFrame):
         self.title_layout.addWidget(self.combo_box)
 
         self.definition_label = QtWidgets.QLabel('N/A')
-        self.definition_label.setFont(QtGui.QFont('Lucida Console', 9))
+        self.definition_label.setFont(QtGui.QFont('Lucida Console', 12))
         self.definition_label.setWordWrap(True)
         self.layout.addWidget(self.definition_label)
 
