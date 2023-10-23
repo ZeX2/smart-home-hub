@@ -52,6 +52,7 @@ class SideMenyButton(QtWidgets.QPushButton):
                 background-color: rgba(211, 211, 211, 0.85);
             }}
         ''')
+        self.setFocusPolicy(QtCore.Qt.NoFocus)
         icon = QtGui.QIcon()
         icon.addFile(icon_path, QtCore.QSize(), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.setIcon(icon)
