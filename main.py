@@ -10,4 +10,8 @@ except:
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     smart_home_hub = SmartHomeHub()
-    sys.exit(app.exec())
+
+    if hasattr(app, 'exec'):
+        sys.exit(app.exec())
+    else:
+        sys.exit(app.exec_())
