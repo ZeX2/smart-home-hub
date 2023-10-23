@@ -21,7 +21,7 @@ class NoteBoardUi(QtWidgets.QFrame):
         self.layout.addLayout(self.title_layout)
 
         self.title_label = QtWidgets.QLabel('Anslagstavla')
-        self.title_label.setFont(QtGui.QFont('Lucida Console', 20))
+        self.title_label.setFont(QtGui.QFont('Lucida Console', 18))
         self.title_layout.addWidget(self.title_label)
 
         self.spacer = QtWidgets.QSpacerItem(5, 5, hData=QtWidgets.QSizePolicy.Expanding)

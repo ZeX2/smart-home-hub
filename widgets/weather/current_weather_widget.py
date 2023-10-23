@@ -22,7 +22,7 @@ class CurrentWeatherUi(QtWidgets.QFrame):
         self.layout.addLayout(self.symb_layout)
 
         self.weather_label = QtWidgets.QLabel('N/A')
-        self.weather_label.setFont(QtGui.QFont('Lucida Console', 20))
+        self.weather_label.setFont(QtGui.QFont('Lucida Console', 18))
         self.weather_label.setWordWrap(True)
         self.symb_layout.addWidget(self.weather_label)
 
