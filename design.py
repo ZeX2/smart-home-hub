@@ -16,6 +16,7 @@ from widgets.spotify.spotify_widget import SpotifyWidget
 from widgets.note_board.note_board_widget import NoteBoardWidget
 from widgets.daily_painting.daily_painting_widget import DailyPaintingWidget
 from widgets.manage_home.manage_home_widget import ManageHomeWidget
+from widgets.unlock_gate.unlock_gate_widget import UnlockGateWidget
 
 # https://www.pythonguis.com/tutorials/creating-your-own-custom-widgets/
 # Jävligt nice widget?!
@@ -133,6 +134,7 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         SideMenyButton(self.side_menu, 'Spotify', os.path.join(DESIGN_DIR, 'icons', 'spotify.svg'), self.stacked_widget, SpotifyWidget())
         SideMenyButton(self.side_menu, 'Daily Painting', os.path.join(DESIGN_DIR, 'icons', 'paintbrush.svg'), self.stacked_widget, DailyPaintingWidget(self.daily_painting_data))
         SideMenyButton(self.side_menu, 'Manage Home', os.path.join(DESIGN_DIR, 'icons', 'lightbulb.svg'), self.stacked_widget, ManageHomeWidget())
+        SideMenyButton(self.side_menu, 'Unlock Gates', os.path.join(DESIGN_DIR, 'icons', 'lock.svg'), self.stacked_widget, UnlockGateWidget(self.unlock_gate))
         SideMenyButton(self.side_menu, 'Settings', os.path.join(DESIGN_DIR, 'icons', 'settings.svg'), top=self.height()-SIDE_MENU_WIDTH)
 
         self.stacked_widget.raise_()

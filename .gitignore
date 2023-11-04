@@ -3,8 +3,13 @@ __pycache__
 .vscode
 key_and_secret.py
 spotify_tokens.py
+secrets.py
+unlock_gate_data.py
 note_id.py
 test.py
+
+block.png
+floor_plan.svg
 
 .cache
 map.html

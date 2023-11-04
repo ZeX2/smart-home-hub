@@ -6,7 +6,7 @@ except:
 class QToggleButton(QtWidgets.QLabel):
     clicked = QtCore.Signal()
 
-    def __init__(self, path_active, path_inactive, active=True):
+    def __init__(self, path_inactive, path_active, active=False):
         super().__init__()
         self.setScaledContents(True)
         self.active = active

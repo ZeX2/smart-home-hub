@@ -11,6 +11,7 @@ from api.vasttrafik.vasttrafik import VasttrafikReseplanerarenApi
 from api.notion_note.notion_note import NotionNoteApi
 from api.daily_word.daily_word import DailyWordApi
 from api.daily_painting.daily_painting_data import DailyPaintingData
+from api.unlock_gate.unlock_gate import UnlockGateApi
 
 # Virtual keyboard inspo: https://github.com/sanjivktr/PyQt5-Virtual-Keyboard/blob/master/virtual_keyboard_controller.py
 # https://github.com/githubuser0xFFFF/QtFreeVirtualKeyboard
@@ -30,6 +31,10 @@ class SmartHomeHub(SmartHomeHubUi):
         self.notion_note = NotionNoteApi()
         self.daily_word = DailyWordApi()
         self.daily_painting_data = DailyPaintingData()
+        self.unlock_gate = UnlockGateApi()
+
+        # Thread pool
+        self.thread_pool = QtCore.QThreadPool()
 
         self.setup_ui()
         self.show()

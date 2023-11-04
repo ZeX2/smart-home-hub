@@ -39,14 +39,14 @@ class ManageHomeWidget(QtWidgets.QWidget):
                 ''')
                 self.layout.addWidget(label, i, j)
 
-        button = QToggleButton(os.path.join(MANAGE_HOME_WIDGET_DIR, 'lightbulb_on.svg'), os.path.join(MANAGE_HOME_WIDGET_DIR, 'lightbulb_off.svg'))
+        button = QToggleButton(os.path.join(MANAGE_HOME_WIDGET_DIR, 'lightbulb_off.svg'), os.path.join(MANAGE_HOME_WIDGET_DIR, 'lightbulb_on.svg'))
         button.setFixedSize(self.width()/columns, self.height()/rows)
         self.layout.addWidget(button, 6, 12)
         
-        button = QToggleButton(os.path.join(MANAGE_HOME_WIDGET_DIR, 'lightbulb_on.svg'), os.path.join(MANAGE_HOME_WIDGET_DIR, 'lightbulb_off.svg'))
+        button = QToggleButton(os.path.join(MANAGE_HOME_WIDGET_DIR, 'lightbulb_off.svg'), os.path.join(MANAGE_HOME_WIDGET_DIR, 'lightbulb_on.svg'))
         button.setFixedSize(self.width()/columns, self.height()/rows)
         self.layout.addWidget(button, 2, 12)
 
-        button = QToggleButton(os.path.join(MANAGE_HOME_WIDGET_DIR, 'lightbulb_on.svg'), os.path.join(MANAGE_HOME_WIDGET_DIR, 'lightbulb_off.svg'))
+        button = QToggleButton(os.path.join(MANAGE_HOME_WIDGET_DIR, 'lightbulb_off.svg'), os.path.join(MANAGE_HOME_WIDGET_DIR, 'lightbulb_on.svg'))
         button.setFixedSize(self.width()/columns, self.height()/rows)
         self.layout.addWidget(button, 4, 6)
