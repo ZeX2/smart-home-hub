@@ -22,7 +22,7 @@ class UnlockGateApi():
         try:
             self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
         except:
-            self.options.binary_location = '/usr/lib/chromium-browser/chromedriver'
+            options.binary_location = '/usr/lib/chromium-browser/chromedriver'
             self.driver = webdriver.Chrome(options=options)
 
     def get_gates(self):
