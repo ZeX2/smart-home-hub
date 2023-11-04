@@ -1,7 +1,7 @@
 try:
-    from PySide6 import QtGui, QtCore, QtWidgets, QtTest# type: ignore
+    from PySide6 import QtGui, QtCore, QtWidgets# type: ignore
 except:
-    from PySide2 import QtGui, QtCore, QtWidgets, QtTest# type: ignore
+    from PySide2 import QtGui, QtCore, QtWidgets# type: ignore
 
 from common.qthreading import Worker, get_thread_pool
 
@@ -33,9 +33,8 @@ class QTimedToggleButton(QtWidgets.QLabel):
 
     def function_finished(self, func_return):
         self.setPixmap(self.pixmaps_mode[func_return])      
-        QtTest.QTest.qWait(3000)
-        self.toggle_pixmap()
-
+        QtCore.QTimer.singleShot(3000, lambda: self.toggle_pixmap())
+        
     def mouseReleaseEvent(self, event):
         if self.active:
             return
