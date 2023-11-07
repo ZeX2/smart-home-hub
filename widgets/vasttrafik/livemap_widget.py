@@ -42,8 +42,7 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
         self.timer.start(5000)
 
         self.thread_pool = get_thread_pool()
-        self.worker = Worker(self.get_web_map_data)
-        self.worker.signals.result.connect(self._update_web_map)
+
 
     def get_web_map_data(self):
         return self.reseplaneraren.get_live_map_vehicles(11760200, 12167400, 57605300, 57733500)
@@ -72,6 +71,8 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
         if self.visibleRegion().isEmpty():
                 return
 
+        self.worker = Worker(self.get_web_map_data)
+        self.worker.signals.result.connect(self._update_web_map)
         self.thread_pool.start(self.worker)
 
     def tab_changed(self):
