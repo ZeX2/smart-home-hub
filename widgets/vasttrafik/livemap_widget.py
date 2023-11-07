@@ -6,6 +6,8 @@ try:
 except:
     from PySide2 import QtGui, QtCore, QtWidgets, QtWebEngineWidgets, QtWebEngineCore # type: ignore
 
+from common.qthreading import Worker, get_thread_pool
+
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 LIVEMAP_PATH = os.path.join(FILE_DIR, 'livemap.html')
 
@@ -39,11 +41,14 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
         self.timer.timeout.connect(self.update_web_map)
         self.timer.start(5000)
 
-    def update_web_map(self):
-        if self.visibleRegion().isEmpty():
-                return
+        self.thread_pool = get_thread_pool()
+        self.worker = Worker(self.get_web_map_data)
+        self.worker.signals.result.connect(self._update_web_map)
 
-        vehicles = self.reseplaneraren.get_live_map_vehicles(11760200, 12167400, 57605300, 57733500)
+    def get_web_map_data(self):
+        return self.reseplaneraren.get_live_map_vehicles(11760200, 12167400, 57605300, 57733500)
+
+    def _update_web_map(self, vehicles):
         for vehicle in vehicles:
             id = vehicle['gid']
             name = vehicle['name'].replace('Bus', '').replace('Spå ', '').replace('Fär', '').strip()
@@ -62,6 +67,12 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
                 }}'''
             
             self.web_map.page().runJavaScript(javascript)
+
+    def update_web_map(self):
+        if self.visibleRegion().isEmpty():
+                return
+
+        self.thread_pool.start(self.worker)
 
     def tab_changed(self):
         self.update_web_map()
