@@ -12,7 +12,7 @@ NOTE_BOARD_WIDGET_DIR = os.path.dirname(os.path.realpath(__file__))
 class NoteBoardUi(QtWidgets.QFrame):
     
     def setup_ui(self):
-        self.setFixedSize(275, 250)
+        self.setFixedSize(275, 200)
         self.setObjectName('NoteBoard')
         self.setStyleSheet('QFrame#NoteBoard {border: 0px solid black; border-radius: 25px}')
 
