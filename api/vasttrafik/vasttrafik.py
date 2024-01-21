@@ -155,6 +155,6 @@ class VasttrafikReseplanerarenApi(VasttrafikApi):
     def get_live_map_vehicles(self, minx, maxx, miny, maxy, limit=200):
         params = {'lowerLeftLong': minx, 'upperRightLong': maxx, 'lowerLeftLat': miny, 'upperRightLat': maxy, 'limit': limit}
         request = Request('GET', f'{API}/positions', headers=self.headers, params=params)
-        data = self.send(request).json()['livemap']['vehicles']
+        data = self.send(request).json()
 
         return data

@@ -45,19 +45,19 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
 
 
     def get_web_map_data(self):
-        return self.reseplaneraren.get_live_map_vehicles(11760200, 12167400, 57605300, 57733500)
+        return self.reseplaneraren.get_live_map_vehicles(11.760200, 12.167400, 57.605300, 57.733500)
 
     def _update_web_map(self, vehicles):
         for vehicle in vehicles:
-            id = vehicle['gid']
-            name = vehicle['name'].replace('Bus', '').replace('Spå ', '').replace('Fär', '').strip()
+            id = vehicle['detailsReference']
+            name = vehicle['line']['name']#.replace('Bus', '').replace('Spå ', '').replace('Fär', '').strip()
             icon_html = f'''<div style="border: 1px solid transparent; border-radius: 0.25rem;
-                color: {vehicle["lcolor"]}; background-color: {vehicle["bcolor"]}; width: fit-content;
+                color: {vehicle["line"]["foregroundColor"]}; background-color: {vehicle["line"]["backgroundColor"]}; width: fit-content;
                 height: fit-content; text-align: center; font-weight: bold;
                 min-height: 1rem; min-width: 1rem;">{name}</div>'''
 
-            x = int(vehicle['x'])/1000000
-            y = int(vehicle['y'])/1000000
+            x = int(vehicle['longitude'])
+            y = int(vehicle['latitude'])
             javascript = f'''if (typeof marker_{id} !== 'undefined') {{
                     marker_{id}.setLatLng([{y}, {x}]).update()
                 }} else {{
