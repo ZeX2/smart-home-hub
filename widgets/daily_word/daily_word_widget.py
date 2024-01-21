@@ -21,7 +21,7 @@ class DailyWordUi(QtWidgets.QFrame):
         self.title_layout = QtWidgets.QHBoxLayout()
         self.layout.addLayout(self.title_layout)
 
-        self.title_label = QtWidgets.QLabel('N/A')
+        self.title_label = QtWidgets.QLabel()
         self.title_label.setFont(QtGui.QFont('Lucida Console', 18))
         self.title_layout.addWidget(self.title_label)
 
@@ -52,10 +52,18 @@ class DailyWordUi(QtWidgets.QFrame):
         #print(self.combo_box.styleSheet())
         self.title_layout.addWidget(self.combo_box)
 
+        self.scroll_area = QtWidgets.QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setBackgroundRole(QtGui.QPalette.Light)
+        self.scroll_area.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.scroll_area.setStyleSheet('background-color: none;')
+
         self.definition_label = QtWidgets.QLabel('N/A')
         self.definition_label.setFont(QtGui.QFont('Lucida Console', 12))
         self.definition_label.setWordWrap(True)
-        self.layout.addWidget(self.definition_label)
+
+        self.scroll_area.setWidget(self.definition_label)
+        self.layout.addWidget(self.scroll_area)
 
         self.spacer = QtWidgets.QSpacerItem(5, 5, vData=QtWidgets.QSizePolicy.Expanding)
         self.layout.addSpacerItem(self.spacer)
