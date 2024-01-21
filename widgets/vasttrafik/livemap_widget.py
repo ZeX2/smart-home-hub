@@ -56,8 +56,8 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
                 height: fit-content; text-align: center; font-weight: bold;
                 min-height: 1rem; min-width: 1rem;">{name}</div>'''
 
-            x = int(vehicle['longitude'])
-            y = int(vehicle['latitude'])
+            x = vehicle['longitude']
+            y = vehicle['latitude']
             javascript = f'''if (typeof marker_{id} !== 'undefined') {{
                     marker_{id}.setLatLng([{y}, {x}]).update()
                 }} else {{
