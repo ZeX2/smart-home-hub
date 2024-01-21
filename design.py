@@ -114,10 +114,10 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         # Home Widget
         self.home_widget = QtWidgets.QWidget()
         self.home_layout = QtWidgets.QGridLayout()
-        self.home_layout.setContentsMargins(15, 15, 15, 15)
+        self.home_layout.setContentsMargins(10, 10, 10, 10)
         self.home_widget.setLayout(self.home_layout)
         self.home_layout.setAlignment(QtCore.Qt.AlignAbsolute)
-        self.home_layout.setSpacing(60)
+        self.home_layout.setSpacing(30)
 
         self.home_layout.addWidget(CurrentWeatherWidget(self.smhi_forecast, 57.71667, 12), 0, 0, QtCore.Qt.AlignCenter)
         self.home_layout.addWidget(AnalogClockWidget(), 0, 1, QtCore.Qt.AlignCenter)
