@@ -13,7 +13,7 @@ DROP_DOWN_ARROW_PATH = os.path.join(DAILY_WORD_DIR, 'refresh.png')
 class DailyWordUi(QtWidgets.QFrame):
     
     def setup_ui(self):
-        self.setFixedSize(300, 275)
+        self.setFixedSize(300, 250)
         self.setObjectName('DailyWord')
         self.setStyleSheet('QFrame#DailyWord {border: 0px solid black; border-radius: 25px}')
 
