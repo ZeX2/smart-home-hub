@@ -13,7 +13,7 @@ DROP_DOWN_ARROW_PATH = os.path.join(DAILY_WORD_DIR, 'refresh.png')
 class DailyWordUi(QtWidgets.QFrame):
     
     def setup_ui(self):
-        self.setFixedSize(300, 200)
+        self.setFixedSize(300, 150)
         self.setObjectName('DailyWord')
         self.setStyleSheet('QFrame#DailyWord {border: 0px solid black; border-radius: 25px}')
 
@@ -59,7 +59,7 @@ class DailyWordUi(QtWidgets.QFrame):
         self.scroll_area.setStyleSheet('background-color: none;')
 
         self.definition_label = QtWidgets.QLabel('N/A')
-        self.definition_label.setFont(QtGui.QFont('Lucida Console', 12))
+        self.definition_label.setFont(QtGui.QFont('Lucida Console', 11))
         self.definition_label.setWordWrap(True)
 
         self.scroll_area.setWidget(self.definition_label)

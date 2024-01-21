@@ -12,7 +12,7 @@ NOTE_BOARD_WIDGET_DIR = os.path.dirname(os.path.realpath(__file__))
 class NoteBoardUi(QtWidgets.QFrame):
     
     def setup_ui(self):
-        self.setFixedSize(275, 200)
+        self.setFixedSize(275, 150)
         self.setObjectName('NoteBoard')
         self.setStyleSheet('QFrame#NoteBoard {border: 0px solid black; border-radius: 25px}')
 
@@ -33,7 +33,7 @@ class NoteBoardUi(QtWidgets.QFrame):
         self.title_layout.addWidget(self.refresh_button)
 
         self.note_label = QtWidgets.QLabel('N/A')
-        self.note_label.setFont(QtGui.QFont('Lucida Console', 12))
+        self.note_label.setFont(QtGui.QFont('Lucida Console', 11))
         self.note_label.setWordWrap(True)
         self.layout.addWidget(self.note_label)
 
