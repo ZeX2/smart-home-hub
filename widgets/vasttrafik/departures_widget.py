@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 try:
     from PySide6 import QtGui, QtCore, QtWidgets # type: ignore
@@ -62,9 +62,9 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
         arrival_minutes = []
         for time, rt_time in zip(times, rt_times):
             if rt_time:
-                arrival_minutes.append((round((rt_time - datetime.now()).total_seconds()/60), False))
+                arrival_minutes.append((round((rt_time - datetime.now(timezone.utc)).total_seconds()/60), False))
             else:
-                arrival_minutes.append((round((time - datetime.now()).total_seconds()/60), True))
+                arrival_minutes.append((round((time - datetime.now(timezone.utc)).total_seconds()/60), True))
         arrival_minutes = sorted(arrival_minutes, key=lambda x: x[0])
     
         if arrival_minutes[0][0] == 0:

@@ -1,8 +1,6 @@
 import os
 import json
 import base64
-from xml.etree import ElementTree as ET
-from xml.dom import minidom
 from datetime import datetime, timedelta
 
 import pandas as pd
@@ -14,9 +12,9 @@ from .key_and_secret import KEY, SECRET
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 STOPS_PATH_JSON = os.path.join(FILE_DIR, 'stops.json')
 TIMEOUT = 100
-TOKEN_API = 'https://api.vasttrafik.se/token'
-API = 'https://api.vasttrafik.se/bin/rest.exe/v2'
-GEO_API = 'https://api.vasttrafik.se/geo/v2'
+TOKEN_API = 'https://ext-api.vasttrafik.se/token'
+API = 'https://ext-api.vasttrafik.se/pr/v4'
+GEO_API = 'https://ext-api.vasttrafik.se/geo/v2'
 
 class VasttrafikApi():
     def __init__(self):
@@ -79,9 +77,9 @@ class VasttrafikReseplanerarenApi(VasttrafikApi):
             data = self.send(request).json()
             data = data['stopPoints']
 
-            data = list({elem['stopAreaGid']: elem for elem in data}.values())
+            data = list({elem['gid']: elem for elem in data}.values())
 
-            with open(os.path.join(FILE_DIR, 'stops.json'), 'w', encoding='utf-8') as f:
+            with open(STOPS_PATH_JSON, 'w', encoding='utf-8') as f:
                 f.write(json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False))
 
         try:
@@ -114,56 +112,49 @@ class VasttrafikReseplanerarenApi(VasttrafikApi):
         departures_table = dict()
 
         for departure in departures_data:
-            track = departure.attrib['track']
+            track = departure['stopPoint']['platform']
             if track not in departures_table:
                 departures_table[track] = dict()
 
-            tram = f'{departure.attrib["name"]} {departure.attrib["direction"]}'
+            tram = f'{departure["serviceJourney"]["line"]["name"]} {departure["serviceJourney"]["direction"]}'
             if tram not in departures_table[track]:
                 departures_table[track][tram] = dict()
-                departures_table[track][tram]['name'] = departure.attrib['name']
-                departures_table[track][tram]['short_name'] = departure.attrib['sname']
-                departures_table[track][tram]['type'] = departure.attrib['type']
-                departures_table[track][tram]['direction'] = departure.attrib['direction']
-                departures_table[track][tram]['fg_color'] = departure.attrib['fgColor']
-                departures_table[track][tram]['bg_color'] = departure.attrib['bgColor']
-                departures_table[track][tram]['stroke'] = departure.attrib['stroke']
+                departures_table[track][tram]['name'] = departure['serviceJourney']['line']['name']
+                departures_table[track][tram]['short_name'] = departure['serviceJourney']['line']['shortName']
+                departures_table[track][tram]['type'] = departure['serviceJourney']['line']['transportMode']
+                departures_table[track][tram]['direction'] = departure['serviceJourney']['direction']
+                departures_table[track][tram]['fg_color'] = departure['serviceJourney']['line']['foregroundColor']
+                departures_table[track][tram]['bg_color'] = departure['serviceJourney']['line']['backgroundColor']
+                departures_table[track][tram]['stroke'] = departure['serviceJourney']['line']['borderColor']
                 departures_table[track][tram]['time'] = []
                 departures_table[track][tram]['rt_time'] = []
 
-            time = datetime.strptime(f'{departure.attrib["date"]} {departure.attrib["time"]}', '%Y-%m-%d %H:%M')
-            if 'cancelled' in departure.attrib:
+            time = datetime.fromisoformat(departure['plannedTime'][:19] + departure['plannedTime'][27:])
+            if departure['isCancelled']:
                 rt_time = None
-            elif 'rtDate' not in departure.attrib or 'rtTime' not in departure.attrib:
-                rt_time = time
             else:
-                rt_time = datetime.strptime(f'{departure.attrib["rtDate"]} {departure.attrib["rtTime"]}', '%Y-%m-%d %H:%M')
+                rt_time = datetime.fromisoformat(departure['estimatedOtherwisePlannedTime'][:19] + departure['estimatedOtherwisePlannedTime'][27:])
             departures_table[track][tram]['time'].append(time)
             departures_table[track][tram]['rt_time'].append(rt_time)
         
         return departures_table
 
-    def get_departures_data(self, stop_id=None, stop_name=None, date=None, time=None, time_span_minutes=None):
+    def get_departures_data(self, stop_id=None, stop_name=None, time_span_minutes=None):
         if stop_name:
             stop_id = self.get_stop_id(stop_name)
 
-        return self._get_departures_data(stop_id, date, time, time_span_minutes)
+        return self._get_departures_data(stop_id, time_span_minutes)
 
-    def _get_departures_data(self, stop_id, date=None, time=None, time_span_minutes=None):
-        if not date:
-            date = datetime.now().strftime('%Y-%m-%d')
-        if not time:
-            time = datetime.now().strftime('%H:%M')
-
-        params = {'id': stop_id, 'date': date, 'time': time, 'timeSpan': time_span_minutes}
-        request = Request('GET', f'{API}/departureBoard', headers=self.headers, params=params)
-        data = ET.fromstring(self.send(request).content)
+    def _get_departures_data(self, stop_id, time_span_minutes=None):
+        params = {'stopPointGid': stop_id, 'timeSpanInMinutes': time_span_minutes, 'limit': 1000, 'maxDeparturesPerLineAndDirection': 10}
+        request = Request('GET', f'{API}/stop-areas/{stop_id}/departures', headers=self.headers, params=params)
+        data = self.send(request).json()['results']
 
         return data
 
-    def get_live_map_vehicles(self, minx, maxx, miny, maxy, real_time=True):
-        params = {'minx': minx, 'maxx': maxx, 'miny': miny, 'maxy': maxy, 'onlyRealtime': real_time}
-        request = Request('GET', f'{API}/livemap', headers=self.headers, params=params)
+    def get_live_map_vehicles(self, minx, maxx, miny, maxy, limit=200):
+        params = {'lowerLeftLong': minx, 'upperRightLong': maxx, 'lowerLeftLat': miny, 'upperRightLat': maxy, 'limit': limit}
+        request = Request('GET', f'{API}/positions', headers=self.headers, params=params)
         data = self.send(request).json()['livemap']['vehicles']
 
         return data
