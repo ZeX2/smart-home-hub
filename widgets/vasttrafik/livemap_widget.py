@@ -27,28 +27,40 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
     def __init__(self, reseplaneraren):
         super().__init__()
         self.setup_ui()
-
         self.reseplaneraren = reseplaneraren
+        self.thread_pool = get_thread_pool()
+        self.map_initialized = False
 
         url = QtCore.QUrl.fromLocalFile(LIVEMAP_PATH)
         
         interceptor = Interceptor()
         self.web_map.page().profile().setUrlRequestInterceptor(interceptor)
         self.web_map.load(url)
+        self.web_map.loadFinished.connect(self.get_and_update_web_map)
 
-        self.update_web_map()
+        self.since_last_clean_up = 0
+
         self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.update_web_map)
+        self.timer.timeout.connect(self.get_and_update_web_map)
         self.timer.start(5000)
-
-        self.thread_pool = get_thread_pool()
-
 
     def get_web_map_data(self):
         return self.reseplaneraren.get_live_map_vehicles(11.760200, 12.167400, 57.605300, 57.733500)
 
-    def _update_web_map(self, vehicles):
+    def update_web_map(self, vehicles):
+        self.map_initialized = True
+        if self.since_last_clean_up > 120:
+            self.web_map.page().runJavaScript(f'''
+                                              Object.values(layerGroups).forEach(layerGroup => {{layerGroup.clearLayers();}});
+                                              for (var marker in markers) delete markers[marker];
+                                              markers = {{}};         
+            ''')
+            self.since_last_clean_up = 0
+        else:
+            self.since_last_clean_up += 1
+
         for vehicle in vehicles:
+            mode = vehicle['line']['transportMode']
             id = vehicle['detailsReference']
             name = vehicle['line']['name']#.replace('Bus', '').replace('Spå ', '').replace('Fär', '').strip()
             icon_html = f'''<div style="border: 1px solid transparent; border-radius: 0.25rem;
@@ -58,22 +70,22 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
 
             x = vehicle['longitude']
             y = vehicle['latitude']
-            javascript = f'''if (typeof marker_{id} !== 'undefined') {{
-                    marker_{id}.setLatLng([{y}, {x}]).update()
+            javascript = f'''if ('{id}' in markers) {{
+                    markers['{id}'].setLatLng([{y}, {x}]).update()
                 }} else {{
                     var icon_{id} = L.divIcon({{html: `{icon_html}` }});
-                    var marker_{id} = L.marker([{y}, {x}], {{icon: icon_{id} }}).addTo(map);
+                    markers['{id}'] = L.marker([{y}, {x}], {{icon: icon_{id} }}).addTo(layerGroups['{mode}']);
                 }}'''
             
             self.web_map.page().runJavaScript(javascript)
 
-    def update_web_map(self):
-        if self.visibleRegion().isEmpty():
-                return
-
+    def get_and_update_web_map(self):
+        if self.visibleRegion().isEmpty() and self.map_initialized:
+            return
+        
         self.worker = Worker(self.get_web_map_data)
-        self.worker.signals.result.connect(self._update_web_map)
+        self.worker.signals.result.connect(self.update_web_map)
         self.thread_pool.start(self.worker)
 
     def tab_changed(self):
-        self.update_web_map()
+        self.get_and_update_web_map()

@@ -102,12 +102,12 @@ class VasttrafikReseplanerarenApi(VasttrafikApi):
         self.stops_data.set_index('id', inplace=True)
 
     def get_stop_names(self):
-        return list(self.stops_data['name'])
+        return set(self.stops_data['name'])
 
     def get_stop_id(self, stop_name):
         return self.stops_data.loc[self.stops_data['name'] == stop_name].index[0]
 
-    def get_departure_table(self, stop_name):
+    def get_departures_data_dict(self, stop_name):
         departures_data = self.get_departures_data(stop_name=stop_name, time_span_minutes=60)
         departures_table = dict()
 

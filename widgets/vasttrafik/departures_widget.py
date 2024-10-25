@@ -5,6 +5,8 @@ try:
 except:
     from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
+from common.qthreading import Worker, get_thread_pool
+
 VECHILE_TYPE_SORT_ORDER = {'TRAM': 0, 'BUS': 1}
 
 def get_tram_sort_key(tram_data):
@@ -31,7 +33,7 @@ class VasttrafikDeparturesUi(QtWidgets.QWidget):
 
         self.search_bar = QtWidgets.QLineEdit('Chalmers')
         self.layout.addWidget(self.search_bar)
-        self.search_bar.textChanged.connect(self.get_and_update_departure_table)
+        self.search_bar.textChanged.connect(self.get_and_update_departures_table)
         completer = QtWidgets.QCompleter(self.reseplaneraren.get_stop_names())
         completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
         completer.setFilterMode(QtCore.Qt.MatchContains)
@@ -51,12 +53,13 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
         super().__init__()
         self.reseplaneraren = reseplaneraren
         self.setup_ui()
-
+        self.thread_pool = get_thread_pool()
         self.table_initialized = False
 
+        self.get_and_update_departures_table()
         self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.update_departure_table)
-        self.get_and_update_departure_table()
+        self.timer.timeout.connect(self.get_and_update_departures_table)
+        self.timer.start(20*1000)
 
     def get_arrival_times_label(self, times, rt_times):
         arrival_minutes = []
@@ -86,15 +89,14 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
 
         return arrival_label
 
-    def update_departure_table(self):
-        if self.visibleRegion().isEmpty() and self.table_initialized:
-                return
+    def get_departures_data(self):
+        return self.reseplaneraren.get_departures_data_dict(stop_name=self.search_bar.text())
 
+    def update_departures_table(self, departures_data):
         self.table_initialized = True
-        departure_data = self.reseplaneraren.get_departure_table(stop_name=self.search_bar.text())
 
         self.departure_table.clear()
-        for track, trams in sorted(departure_data.items(), key=lambda x: x[0]):
+        for track, trams in sorted(departures_data.items(), key=lambda x: x[0]):
             track_item = QtWidgets.QTreeWidgetItem()
             self.departure_table.addTopLevelItem(track_item)
             self.departure_table.setItemWidget(track_item, 0, QtWidgets.QLabel(f'Läge {track}'))
@@ -106,13 +108,16 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
                 self.departure_table.setItemWidget(tram_item, 1, QtWidgets.QLabel(f' {tram_data["direction"]}'))
                 self.departure_table.setItemWidget(tram_item, 2, self.get_arrival_times_label(tram_data['time'], tram_data['rt_time']))
 
-    def get_and_update_departure_table(self):
-        if not self.search_bar.text() or self.search_bar.text() not in self.reseplaneraren.get_stop_names():
-            self.timer.stop()
+    def get_and_update_departures_table(self):
+        if self.visibleRegion().isEmpty() and self.table_initialized:
             return
 
-        self.update_departure_table()
-        self.timer.start(20*1000)
+        if not self.search_bar.text() or self.search_bar.text() not in self.reseplaneraren.get_stop_names():
+            return
+        
+        self.worker = Worker(self.get_departures_data)
+        self.worker.signals.result.connect(self.update_departures_table)
+        self.thread_pool.start(self.worker)
 
     def tab_changed(self):
-        self.get_and_update_departure_table()
+        self.get_and_update_departures_table()

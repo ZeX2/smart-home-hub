@@ -25,6 +25,19 @@
 		maxZoom: 19,
 		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 	}).addTo(map);
+
+	var markers = {};
+	layerGroups = {
+		'tram': L.layerGroup().addTo(map),
+		'bus': L.layerGroup().addTo(map),
+		'ferry': L.layerGroup().addTo(map),
+		'train': L.layerGroup().addTo(map)
+	};
+	var layerControl = L.control.layers().addTo(map);
+	layerControl.addOverlay(layerGroups['tram'], 'Spårvagn');
+    layerControl.addOverlay(layerGroups['bus'], 'Buss');
+    layerControl.addOverlay(layerGroups['ferry'], 'Färja');
+    layerControl.addOverlay(layerGroups['train'], 'Tåg');
 </script>
 
 </body>
