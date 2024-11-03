@@ -1,4 +1,5 @@
 import os
+import copy
 import datetime
 from glob import glob
 from random import shuffle
@@ -32,22 +33,23 @@ SIDE_MENU_EXTENDED_WIDTH = 170
 
 icon_path = lambda fn : os.path.join(DESIGN_DIR, 'icons', fn)
 
-class Screensaver(QtWidgets.QSplashScreen):
+class Screensaver(QtWidgets.QLabel):
 
     def __init__(self, main_parent):
         super().__init__()
         self.main_parent = main_parent
+        self.main_parent.central_widget.addWidget(self)
 
         self.installEventFilter(self)
         self.activity_events = self.main_parent.add_to_receive_activity_events(self)
 
         self.inactivity_timer = QtCore.QTimer()
-        self.inactivity_timer.setSingleShot(True)
-        self.inactivity_timer.setInterval(5000)
+        #self.inactivity_timer.setSingleShot(True)
+        self.inactivity_timer.setInterval(60*1000)
         self.inactivity_timer.timeout.connect(self.start_screensaver)
 
         self.screensaver_timer = QtCore.QTimer()
-        self.screensaver_timer.setSingleShot(True)
+        #self.screensaver_timer.setSingleShot(True)
         self.screensaver_timer.setInterval(5*60*1000)
         self.screensaver_timer.timeout.connect(self.change_screensaver)
 
@@ -74,15 +76,16 @@ class Screensaver(QtWidgets.QSplashScreen):
 
     def start_screensaver(self):
         self.change_screensaver()
-        self.show()
+        self.main_parent.central_widget.setCurrentWidget(self)
+        self.inactivity_timer.stop()
         self.screensaver_timer.start()
 
     def eventFilter(self, source, event):
         if event.type() in self.activity_events:
+            self.inactivity_timer.start()
             if self.isVisible():
-                self.finish(self.main_parent)
+                self.main_parent.central_widget.setCurrentWidget(self.main_parent.hub_widget)
             else:
-                self.inactivity_timer.start()
                 self.screensaver_timer.stop()
             return True
 
@@ -158,11 +161,15 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         self.setPalette(self.background_palette)
 
         # Central widget and layout
-        self.central_widget = QtWidgets.QWidget()
+        self.central_widget = QtWidgets.QStackedWidget(self)
         self.setCentralWidget(self.central_widget)
+        
+        self.hub_widget = QtWidgets.QWidget()
+        self.central_widget.addWidget(self.hub_widget)
+        self.central_widget.setCurrentWidget(self.hub_widget)
 
         # Side meny
-        self.side_menu = QtWidgets.QFrame(self.central_widget)
+        self.side_menu = QtWidgets.QFrame(self.hub_widget)
         self.side_menu.setGeometry(QtCore.QRect(0, 0, SIDE_MENU_WIDTH, self.height()+5))
         self.side_menu.setStyleSheet('''
             QFrame {
@@ -173,7 +180,7 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         self.side_menu.setFrameShadow(QtWidgets.QFrame.Raised)
 
         # Main stacked widget
-        self.stacked_widget = QtWidgets.QStackedWidget(self.central_widget)
+        self.stacked_widget = QtWidgets.QStackedWidget(self.hub_widget)
         self.stacked_widget.setGeometry(QtCore.QRect(SIDE_MENU_WIDTH, 0, self.width()-SIDE_MENU_WIDTH, self.height()))
 
         # Home Widget
