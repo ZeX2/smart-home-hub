@@ -53,15 +53,16 @@ class Screensaver(QtWidgets.QSplashScreen):
 
         self.paths = glob(os.path.join(DESIGN_DIR, 'screensaver_pics', '*'))
         shuffle(self.paths)
-        self.paths = cycle(self.paths)
-        
+        if self.paths:
+            self.paths = cycle(self.paths)
+
         self.w = self.main_parent.frameGeometry().width()
         self.h = self.main_parent.frameGeometry().height()
 
     def change_screensaver(self):
         pixmap = QtGui.QPixmap(self.w, self.h)
         pixmap.fill(QtGui.QColor('black'))
-        if not datetime.time(0, 0) <= datetime.datetime.now().time() <= datetime.time(7, 15):
+        if not datetime.time(0, 0) <= datetime.datetime.now().time() <= datetime.time(7, 15) and self.paths:
             img_pixmap = QtGui.QPixmap(next(self.paths))
             img_pixmap = img_pixmap.scaled(self.w, self.h, QtCore.Qt.KeepAspectRatio)
             painter = QtGui.QPainter(pixmap)
