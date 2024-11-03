@@ -1,4 +1,8 @@
 import os
+import datetime
+from glob import glob
+from random import shuffle
+from itertools import cycle
 
 try:
     from PySide6 import QtGui, QtCore, QtWidgets # type: ignore
@@ -22,9 +26,66 @@ from widgets.unlock_gate.unlock_gate_widget import UnlockGateWidget
 # Jävligt nice widget?!
 
 DESIGN_DIR = os.path.dirname(os.path.realpath(__file__))
-SIDE_MENU_WIDTH = 50
-SIDE_MENU_ICON_WIDTH = 40
-SIDE_MENU_EXTENDED_WIDTH = 180
+SIDE_MENU_WIDTH = 40
+SIDE_MENU_ICON_WIDTH = 30
+SIDE_MENU_EXTENDED_WIDTH = 170
+
+icon_path = lambda fn : os.path.join(DESIGN_DIR, 'icons', fn)
+
+class Screensaver(QtWidgets.QSplashScreen):
+
+    def __init__(self, main_parent):
+        super().__init__()
+        self.main_parent = main_parent
+
+        self.installEventFilter(self)
+        self.activity_events = self.main_parent.add_to_receive_activity_events(self)
+
+        self.inactivity_timer = QtCore.QTimer()
+        self.inactivity_timer.setSingleShot(True)
+        self.inactivity_timer.setInterval(5000)
+        self.inactivity_timer.timeout.connect(self.start_screensaver)
+
+        self.screensaver_timer = QtCore.QTimer()
+        self.screensaver_timer.setSingleShot(True)
+        self.screensaver_timer.setInterval(5*60*1000)
+        self.screensaver_timer.timeout.connect(self.change_screensaver)
+
+        self.paths = glob(os.path.join(DESIGN_DIR, 'screensaver_pics', '*'))
+        shuffle(self.paths)
+        self.paths = cycle(self.paths)
+        
+        self.w = self.main_parent.frameGeometry().width()
+        self.h = self.main_parent.frameGeometry().height()
+
+    def change_screensaver(self):
+        pixmap = QtGui.QPixmap(self.w, self.h)
+        pixmap.fill(QtGui.QColor('black'))
+        if not datetime.time(0, 0) <= datetime.datetime.now().time() <= datetime.time(7, 15):
+            img_pixmap = QtGui.QPixmap(next(self.paths))
+            img_pixmap = img_pixmap.scaled(self.w, self.h, QtCore.Qt.KeepAspectRatio)
+            painter = QtGui.QPainter(pixmap)
+            x = (self.w - img_pixmap.width()) // 2
+            y = (self.h - img_pixmap.height()) // 2
+            painter.drawPixmap(x, y, img_pixmap)
+            painter.end()
+        self.setPixmap(pixmap)
+
+    def start_screensaver(self):
+        self.change_screensaver()
+        self.show()
+        self.screensaver_timer.start()
+
+    def eventFilter(self, source, event):
+        if event.type() in self.activity_events:
+            if self.isVisible():
+                self.finish(self.main_parent)
+            else:
+                self.inactivity_timer.start()
+                self.screensaver_timer.stop()
+            return True
+
+        return super().eventFilter(source, event)
 
 class SideMenyButton(QtWidgets.QPushButton):
     top = 0
@@ -73,6 +134,9 @@ class SideMenyButton(QtWidgets.QPushButton):
         if stacked_widget and widget:
             stacked_widget.addWidget(widget)
             self.clicked.connect(lambda: stacked_widget.setCurrentWidget(widget))
+
+        if isinstance(widget, Screensaver):
+            self.clicked.connect(widget.start_screensaver)
 
         if not top:
             SideMenyButton.top += SIDE_MENU_WIDTH
@@ -128,14 +192,15 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         # Add side meny buttons
         self.side_menu_button = SideMenyButton(self.side_menu, 'Meny', os.path.join(DESIGN_DIR, 'icons', 'bars.svg'))
         self.side_menu_button.clicked.connect(self.side_menu_animate)
-        SideMenyButton(self.side_menu, 'Hemma', os.path.join(DESIGN_DIR, 'icons', 'home.svg'), self.stacked_widget, self.home_widget)
-        SideMenyButton(self.side_menu, 'Reseplaneraren', os.path.join(DESIGN_DIR, 'icons', 'tram.svg'), self.stacked_widget, VasttrafikDeparturesWidget(self.reseplaneraren))
-        SideMenyButton(self.side_menu, 'Västtrafik Live Map', os.path.join(DESIGN_DIR, 'icons', 'map.svg'), self.stacked_widget, VasttrafikLiveMapWidget(self.reseplaneraren))
-        SideMenyButton(self.side_menu, 'Spotify', os.path.join(DESIGN_DIR, 'icons', 'spotify.svg'), self.stacked_widget, SpotifyWidget())
-        SideMenyButton(self.side_menu, 'Daily Painting', os.path.join(DESIGN_DIR, 'icons', 'paintbrush.svg'), self.stacked_widget, DailyPaintingWidget(self.daily_painting_data))
-        SideMenyButton(self.side_menu, 'Manage Home', os.path.join(DESIGN_DIR, 'icons', 'lightbulb.svg'), self.stacked_widget, ManageHomeWidget())
-        SideMenyButton(self.side_menu, 'Unlock Gates', os.path.join(DESIGN_DIR, 'icons', 'lock.svg'), self.stacked_widget, UnlockGateWidget(self.unlock_gate))
-        SideMenyButton(self.side_menu, 'Settings', os.path.join(DESIGN_DIR, 'icons', 'settings.svg'), top=self.height()-SIDE_MENU_WIDTH)
+        SideMenyButton(self.side_menu, 'Hemma', icon_path('home.svg'), self.stacked_widget, self.home_widget)
+        SideMenyButton(self.side_menu, 'Reseplaneraren', icon_path('tram.svg'), self.stacked_widget, VasttrafikDeparturesWidget(self.reseplaneraren))
+        SideMenyButton(self.side_menu, 'Västtrafik Live Map', icon_path('map.svg'), self.stacked_widget, VasttrafikLiveMapWidget(self.reseplaneraren))
+        SideMenyButton(self.side_menu, 'Spotify', icon_path('spotify.svg'), self.stacked_widget, SpotifyWidget())
+        SideMenyButton(self.side_menu, 'Daily Painting', icon_path('paintbrush.svg'), self.stacked_widget, DailyPaintingWidget(self.daily_painting_data))
+        SideMenyButton(self.side_menu, 'Manage Home', icon_path('lightbulb.svg'), self.stacked_widget, ManageHomeWidget())
+        SideMenyButton(self.side_menu, 'Unlock Gates', icon_path('lock.svg'), self.stacked_widget, UnlockGateWidget(self.unlock_gate))
+        SideMenyButton(self.side_menu, 'Screensaver', icon_path('gallery.svg'), widget=Screensaver(self), top=self.height()-SIDE_MENU_WIDTH*2)
+        SideMenyButton(self.side_menu, 'Settings', icon_path('settings.svg'), top=self.height()-SIDE_MENU_WIDTH)
 
         self.stacked_widget.raise_()
         self.side_menu.raise_()

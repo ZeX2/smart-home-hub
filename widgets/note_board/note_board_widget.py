@@ -1,12 +1,14 @@
 import os
+import __main__
 
 try:
     from PySide6 import QtGui, QtCore, QtWidgets # type: ignore
 except:
     from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
-from common_widgets.label_button import QLabelButton
+from common_widgets.buttons import QLabelButton
 
+MAIN_ART_DIR = os.path.join(os.path.dirname(os.path.realpath(__main__.__file__)), 'common_art')
 NOTE_BOARD_WIDGET_DIR = os.path.dirname(os.path.realpath(__file__))
 
 class NoteBoardUi(QtWidgets.QFrame):
@@ -27,7 +29,7 @@ class NoteBoardUi(QtWidgets.QFrame):
         self.spacer = QtWidgets.QSpacerItem(5, 5, hData=QtWidgets.QSizePolicy.Expanding)
         self.title_layout.addSpacerItem(self.spacer)
 
-        self.refresh_button = QLabelButton(os.path.join(NOTE_BOARD_WIDGET_DIR, 'refresh.png'))
+        self.refresh_button = QLabelButton(os.path.join(MAIN_ART_DIR, 'refresh.svg'))
         self.refresh_button.clicked.connect(self.update_note)
         self.refresh_button.setFixedSize(25, 25)
         self.title_layout.addWidget(self.refresh_button)

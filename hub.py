@@ -18,7 +18,9 @@ from api.unlock_gate.unlock_gate import UnlockGateApi
 # https://stackoverflow.com/questions/3103178/how-to-get-the-system-info-with-python
 # https://www.geeksforgeeks.org/how-to-get-current-cpu-and-ram-usage-in-python/
 # https://www.geeksforgeeks.org/get-your-system-information-using-python-script/
-# 
+
+INACTIVITY_EVENTS = [QtCore.QEvent.MouseMove, QtCore.QEvent.KeyPress, QtCore.QEvent.MouseButtonPress]
+
 class SmartHomeHub(SmartHomeHubUi):
 
     def __init__(self):
@@ -35,6 +37,10 @@ class SmartHomeHub(SmartHomeHubUi):
 
         # Thread pool
         self.thread_pool = QtCore.QThreadPool()
+
+        # Widgets to receive all activity events
+        self.installEventFilter(self)
+        self.receive_activity_events = []
 
         self.setup_ui()
         self.show()
@@ -68,6 +74,18 @@ class SmartHomeHub(SmartHomeHubUi):
         self.animation2.setEndValue(end_value)
         self.animation2.setEasingCurve(QtCore.QEasingCurve.InOutSine)
         self.animation2.start()
+
+    def add_to_receive_activity_events(self, widget):
+        self.receive_activity_events.append(widget)
+        return INACTIVITY_EVENTS
+
+    def eventFilter(self, source, event):
+        if event.type() in INACTIVITY_EVENTS:
+            for widget in self.receive_activity_events:
+                QtWidgets.QApplication.sendEvent(widget, event)
+            return True
+
+        return super().eventFilter(source, event)
 
     def mousePressEvent(self, event):
         if event.x() > SIDE_MENU_EXTENDED_WIDTH and self.side_menu.width() >= SIDE_MENU_WIDTH + 10:

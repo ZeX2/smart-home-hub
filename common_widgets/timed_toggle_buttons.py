@@ -35,7 +35,7 @@ class QTimedToggleButton(QtWidgets.QLabel):
         self.setPixmap(self.pixmaps_mode[func_return])      
         QtCore.QTimer.singleShot(3000, lambda: self.toggle_pixmap())
         
-    def mouseReleaseEvent(self, event):
+    def mousePressEvent(self, event):
         if self.active:
             return
 

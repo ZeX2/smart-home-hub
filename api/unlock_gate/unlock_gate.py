@@ -20,8 +20,11 @@ class UnlockGateApi():
         options = Options()
         options.add_argument("--headless=new")
         try:
-            self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
-        except:
+            try:
+                self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
+            except Exception as e:
+                self.driver = webdriver.Chrome(options=options)
+        except Exception as e:
             self.driver = webdriver.Chrome(service=ChromeService(executable_path='/usr/lib/chromium-browser/chromedriver'), options=options)
 
     def get_gates(self):

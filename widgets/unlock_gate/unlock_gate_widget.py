@@ -5,7 +5,7 @@ try:
 except:
     from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
-from common_widgets.timed_toggle_button import QTimedToggleButton
+from common_widgets.timed_toggle_buttons import QTimedToggleButton
 
 UNLOCK_GATE_WIDGET_DIR = os.path.dirname(os.path.realpath(__file__))
 

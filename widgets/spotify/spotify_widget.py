@@ -10,7 +10,7 @@ try:
 except:
     from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
-from common_widgets.label_button import QLabelButton
+from common_widgets.buttons import QLabelButton
 from .spotify_tokens import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 
 SPOTIFY_WIDGET_DIR = os.path.dirname(os.path.realpath(__file__))

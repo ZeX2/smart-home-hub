@@ -6,8 +6,12 @@ spotify_tokens.py
 secrets.py
 unlock_gate_data.py
 note_id.py
+dirigera_secret.py
 test.py
+stops.json
+config.json
 
+screensaver_pics/*
 block.png
 floor_plan.svg
 
