@@ -20,7 +20,26 @@ CONFIG_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'config.
 
 LIGHT_OFF_PATH = os.path.join(MANAGE_HOME_ART_DIR, 'lightbulb_off.svg')
 LIGHT_ON_PATH = os.path.join(MANAGE_HOME_ART_DIR, 'lightbulb_on.svg')
+
+DEVICES_TO_BE_SHOWN = ['light', 'outlet']
+
+class DirigeraListener(QtCore.QThread):
+    on_message = QtCore.Signal(object)
+    on_error = QtCore.Signal(object)
+
+    def __init__(self, dh):
+        super().__init__()
+        self.dh = dh
+
+    def run(self):
+        self.dh.create_event_listener(on_message=self.on_message_, on_error=self.on_error_)
+
+    def on_message_(self, ws, message):
+        self.on_message.emit(message)
     
+    def on_error_(self, ws, message):
+        self.on_error.emit(message)
+
 class ManageHomeUi(QtWidgets.QWidget):
     
     def setup_ui(self):
@@ -79,50 +98,83 @@ class ManageHomeWidget(ManageHomeUi):
             self.config = {}
             self.save_config()
 
-        self.buttons = {}
-        self.dh = dirigera.Hub(ip_address=IP_ADDRESS, token=TOKEN)
-        #self.dh.create_event_listener(on_message=self.on_message, on_error=self.on_error)
+        self.status_online = False
+        self.initialize_hub()
         self.initialize_devices()
 
     def drag_button_pressed(self):
         for id, b in self.buttons.items():
-            b.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, self.drag_button.isActive())
-            if not self.drag_button.isActive():
+            b.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable, self.drag_button.is_active())
+            b.childItems()[0].setVisible(self.drag_button.is_active())
+            if not self.drag_button.is_active():
                 self.config[id]['x'] = b.x()
                 self.config[id]['y'] = b.y()
 
-        if not self.drag_button.isActive():
+        if not self.drag_button.is_active():
             self.save_config()
 
-    def on_message(self, ws, message: str):
+    def on_message(self, message):
         message_dict = json.loads(message)
-        data = message_dict["data"]
-        print(message_dict)
-        print(data)
-        print(ws)
+        data = message_dict['data']
+        if 'isOn' in data['attributes'] and data['type'] in DEVICES_TO_BE_SHOWN:
+            self.toggle_button_state(data['id'], data['attributes']['isOn'])
 
-    def on_error(self, ws, message: str):
-        print(ws)
+    def on_error(self, message):
         print(message)
+
+    def toggle_button_state(self, id, state):
+        self.buttons[id].set_state(state)
 
     def save_config(self):
         with open(CONFIG_PATH, 'w') as f:
             f.write(json.dumps(self.config, indent=4, sort_keys=True))
 
-    def initialize_devices(self):
-        self.dh_devices = self.dh.get_all_devices()
-        
-        for device in self.dh_devices:
-            if device.id not in self.config:
-                self.config[device.id] = {'x': 0, 'y': 0}
+    def toggle_device(self, id):
+        if self.config[id]['type'] == 'light':
+            self.dh_devices[id].set_light(lamp_on=self.buttons[id].is_active())
+        if self.config[id]['type'] == 'outlet':
+            self.dh_devices[id].set_on(outlet_on=self.buttons[id].is_active())
 
-            if device.type == 'light':
-                device.reload()
-                button = QGraphicsPixmapItemToggleButton(LIGHT_OFF_PATH, LIGHT_ON_PATH, w=50, h=50, active=device.attributes.is_on)
-                f = lambda : device.set_light(lamp_on=button.isActive())
-                button.set_short_click_function(f)
-                self.scene.addItem(button)
-                button.setPos(self.config[device.id]['x'], self.config[device.id]['y'])
-                self.buttons[device.id] = button
-        
-        self.save_config()
+    def initialize_hub(self):
+        try:
+            self.dh = dirigera.Hub(ip_address=IP_ADDRESS, token=TOKEN)
+            self.dh_devices = {device.id: device for device in self.dh.get_all_devices()}
+            self.dlistener = DirigeraListener(self.dh)
+            self.dlistener.on_message.connect(self.on_message)
+            self.dlistener.on_error.connect(self.on_error)
+            self.dlistener.start()
+            self.status_online = True
+        except Exception as e:
+            print(e)
+
+    def initialize_devices(self):
+        self.buttons = {}
+        self.light_functions = {}
+        if self.status_online:            
+            for id, device in self.dh_devices.items():
+                if id not in self.config:
+                    self.config[id] = {'x': 0, 'y': 0}
+                self.config[id]['type'] = device.type
+                self.config[id]['name'] = device.attributes.custom_name
+                if device.type in DEVICES_TO_BE_SHOWN:
+                    self.config[id]['active'] = device.attributes.is_on
+
+            self.save_config()
+
+        for id, device in self.config.items():
+            if self.config[id]['type'] in DEVICES_TO_BE_SHOWN:
+                if self.status_online:
+                    self.buttons[id] = QGraphicsPixmapItemToggleButton(LIGHT_OFF_PATH, LIGHT_ON_PATH, w=50, h=50, active=device['active'])
+                    self.buttons[id].set_short_click_function(self.toggle_device, id)
+                else:
+                    self.buttons[id] = QGraphicsPixmapItemToggleButton(LIGHT_OFF_PATH, LIGHT_OFF_PATH, w=50, h=50)
+
+                self.scene.addItem(self.buttons[id])
+                self.buttons[id].setPos(device['x'], device['y'])
+
+                button_text = QtWidgets.QGraphicsTextItem(device['name'])
+                button_text.setDefaultTextColor(QtCore.Qt.gray)
+                self.scene.addItem(button_text)
+                button_text.setParentItem(self.buttons[id])
+                button_text.setPos(-button_text.boundingRect().width()/2+17.5, 45)
+                button_text.setVisible(False)

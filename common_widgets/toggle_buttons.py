@@ -15,7 +15,7 @@ class QToggleButton(QtWidgets.QLabel):
         
         self.setStyleSheet('')
 
-    def isActive(self):
+    def is_active(self):
         return self.active
 
     def update_pixmap(self):
@@ -32,12 +32,16 @@ class QToggleButton(QtWidgets.QLabel):
 
 class QGraphicsPixmapItemToggleButton(QtWidgets.QGraphicsPixmapItem):
 
-    def __init__(self, path_inactive, path_active, short_click_func=lambda:None, long_click_func=lambda:None, w=None, h=None, active=False):
+    def __init__(self, path_inactive, path_active, w=None, h=None, active=False):
         super().__init__()
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
 
-        self.long_click_func = long_click_func
-        self.short_click_func = short_click_func
+        self.long_click_func = lambda:None
+        self.long_click_func_args = ()
+        self.long_click_func_kwargs = {}
+        self.short_click_func = lambda:None
+        self.short_click_func_args = ()
+        self.short_click_func_kwargs = {}
         self.active = active
         
         self.click_timer = QtCore.QElapsedTimer()
@@ -50,11 +54,22 @@ class QGraphicsPixmapItemToggleButton(QtWidgets.QGraphicsPixmapItem):
 
         self.update_pixmap()
 
-    def isActive(self):
+    def set_state(self, state):
+        self.active = state
+        self.update_pixmap()
+
+    def is_active(self):
         return self.active
 
-    def set_short_click_function(self, f):
+    def set_short_click_function(self, f, *args, **kwargs):
         self.short_click_func = f
+        self.short_click_func_args = args
+        self.short_click_func_kwargs = kwargs
+
+    def set_long_click_function(self, f, *args, **kwargs):
+        self.long_click_func = f
+        self.long_click_func_args = args
+        self.long_click_func_kwargs = kwargs
 
     def update_pixmap(self):
         self.setPixmap(self.pixmaps[self.active])
@@ -86,5 +101,4 @@ class QGraphicsPixmapItemToggleButton(QtWidgets.QGraphicsPixmapItem):
     
     def short_click(self):
         self.toggle_pixmap()
-        self.short_click_func()
-
+        self.short_click_func(*self.short_click_func_args, **self.short_click_func_kwargs)

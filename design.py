@@ -45,12 +45,12 @@ class Screensaver(QtWidgets.QLabel):
 
         self.inactivity_timer = QtCore.QTimer()
         #self.inactivity_timer.setSingleShot(True)
-        self.inactivity_timer.setInterval(60*1000)
+        self.inactivity_timer.setInterval(3*60*1000)
         self.inactivity_timer.timeout.connect(self.start_screensaver)
 
         self.screensaver_timer = QtCore.QTimer()
         #self.screensaver_timer.setSingleShot(True)
-        self.screensaver_timer.setInterval(5*60*1000)
+        self.screensaver_timer.setInterval(10*60*1000)
         self.screensaver_timer.timeout.connect(self.change_screensaver)
 
         self.paths = glob(os.path.join(DESIGN_DIR, 'screensaver_pics', '*'))

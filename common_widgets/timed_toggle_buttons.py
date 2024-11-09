@@ -21,7 +21,7 @@ class QTimedToggleButton(QtWidgets.QLabel):
         
         self.thread_pool = get_thread_pool()
 
-    def isActive(self):
+    def is_active(self):
         return self.active
 
     def update_pixmap(self):
