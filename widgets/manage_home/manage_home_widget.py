@@ -78,8 +78,8 @@ class ManageHomeUi(QtWidgets.QWidget):
 
         self.refresh_button = QGraphicsPixmapItemButton(
             os.path.join(MAIN_ART_DIR, 'refresh.svg'),
-            lambda: print('hej2'),
-            lambda: print('hej2long'),
+            lambda: self.restart_hub(),
+            lambda: None,
             50,
             50
         )
@@ -135,6 +135,18 @@ class ManageHomeWidget(ManageHomeUi):
         if self.config[id]['type'] == 'outlet':
             self.dh_devices[id].set_on(outlet_on=self.buttons[id].is_active())
 
+    def restart_hub(self):
+        try:
+            self.dlistener.quit()
+        except Exception as e:
+            print(e)
+        
+        for b in self.buttons.values():
+            self.scene.removeItem(b)
+        
+        self.initialize_hub()
+        self.initialize_devices()
+
     def initialize_hub(self):
         try:
             self.dh = dirigera.Hub(ip_address=IP_ADDRESS, token=TOKEN)
@@ -149,7 +161,6 @@ class ManageHomeWidget(ManageHomeUi):
 
     def initialize_devices(self):
         self.buttons = {}
-        self.light_functions = {}
         if self.status_online:            
             for id, device in self.dh_devices.items():
                 if id not in self.config:
