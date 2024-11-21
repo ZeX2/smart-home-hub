@@ -20,6 +20,7 @@ class QGraphicsPixmapItemButton(QtWidgets.QGraphicsPixmapItem):
     def __init__(self, path, short_click_func, long_click_func=lambda:None, w=None, h=None):
         super().__init__()
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
+        self.setShapeMode(QtWidgets.QGraphicsPixmapItem.BoundingRectShape)
 
         self.long_click_func = long_click_func
         self.short_click_func = short_click_func

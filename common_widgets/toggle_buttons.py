@@ -35,6 +35,7 @@ class QGraphicsPixmapItemToggleButton(QtWidgets.QGraphicsPixmapItem):
     def __init__(self, path_inactive, path_active, w=None, h=None, active=False):
         super().__init__()
         self.setFlag(QtWidgets.QGraphicsItem.ItemIsSelectable)
+        self.setShapeMode(QtWidgets.QGraphicsPixmapItem.BoundingRectShape)
 
         self.long_click_func = lambda:None
         self.long_click_func_args = ()
