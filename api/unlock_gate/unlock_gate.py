@@ -7,7 +7,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
 
 from .unlock_gate_data import PORTAL_LOGIN_URL, GATES
 from .secrets import USR, PWD
@@ -17,7 +16,7 @@ FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 class UnlockGateApi():
 
     def __init__(self):
-        options = Options()
+        options = webdriver.ChromeOptions()
         options.add_argument("--headless=new")
         try:
             try:
@@ -41,7 +40,7 @@ class UnlockGateApi():
         login_btn_element = self.driver.find_elements(By.CLASS_NAME, 'btn.btn-primary')[0]
         self.driver.execute_script('arguments[0].click();', login_btn_element)
         time.sleep(0.25)
-        booking_btn_element = self.driver.find_elements(By.CLASS_NAME, 'btn.btn-primary')[9]
+        booking_btn_element = self.driver.find_elements(By.CLASS_NAME, 'btn.btn-primary')[10]
         self.driver.get(booking_btn_element.get_attribute('href'))
 
         door_element_id = f'entranceDoor_{gate_id}'
