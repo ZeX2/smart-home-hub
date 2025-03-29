@@ -40,7 +40,7 @@ class UnlockGateApi():
         login_btn_element = self.driver.find_elements(By.CLASS_NAME, 'btn.btn-primary')[0]
         self.driver.execute_script('arguments[0].click();', login_btn_element)
         time.sleep(0.25)
-        booking_btn_element = self.driver.find_elements(By.CLASS_NAME, 'btn.btn-primary')[10]
+        booking_btn_element = self.driver.find_elements(By.XPATH, "//a[@class='btn btn-primary' and text()='Öppna']")[0]
         self.driver.get(booking_btn_element.get_attribute('href'))
 
         door_element_id = f'entranceDoor_{gate_id}'
