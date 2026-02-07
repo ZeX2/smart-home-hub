@@ -14,7 +14,7 @@ STOPS_PATH_JSON = os.path.join(FILE_DIR, 'stops.json')
 TIMEOUT = 100
 TOKEN_API = 'https://ext-api.vasttrafik.se/token'
 API = 'https://ext-api.vasttrafik.se/pr/v4'
-GEO_API = 'https://ext-api.vasttrafik.se/geo/v2'
+GEO_API = 'https://ext-api.vasttrafik.se/geo/v3'
 
 class VasttrafikApi():
     def __init__(self):
