@@ -56,7 +56,7 @@ class SMHIApi():
 class SMHIForecastApi(SMHIApi):
     def __init__(self):
         super().__init__()
-        self.API = 'http://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2'
+        self.API = 'https://opendata-download-metfcst.smhi.se/api/category/snow1g/version/1'
         # See https://opendata.smhi.se/apidocs/metfcst/index.html for more info!
 
     def get_wsymb2_path(self, value):
@@ -69,28 +69,28 @@ class SMHIForecastApi(SMHIApi):
         request = Request('GET', f'{self.API}/parameter.json')
         data = self.get_request_data(request)
         return data['parameter']
-    
+
     def get_point_weather_data(self, lat, lon, *parameters):
         request = Request('GET', f'{self.API}/geotype/point/lon/{lon}/lat/{lat}/data.json')
         data = self.get_request_data(request)
 
         weather_data = []
         for point_data in data['timeSeries']:
-            time = point_data['validTime']
+            time = point_data['time']
             time = datetime.fromisoformat(time.replace('Z', '+00:00'))
             time = time.replace(tzinfo=timezone.utc).astimezone().replace(tzinfo=None)
 
-            data = dict.fromkeys(parameters)
-            for parameter_data in point_data['parameters']:
-                if parameter_data['name'] in parameters:
-                    data[parameter_data['name']] = parameter_data['values'][0]
-            
-            weather_data.append(tuple((time, *data.values())))
+            entry = dict.fromkeys(parameters)
+            for param in parameters:
+                if param in point_data['data']:
+                    entry[param] = point_data['data'][param]
+
+            weather_data.append(tuple((time, *entry.values())))
 
         return weather_data
 
     def get_temperatures(self, lat, lon):
-        return self.get_point_weather_data(lat, lon, 't', 'Wsymb2')
+        return self.get_point_weather_data(lat, lon, 'air_temperature', 'symbol_code')
 
 class SMHIObservationApi(SMHIApi):
     def __init__(self):
