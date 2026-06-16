@@ -4,8 +4,7 @@ from requests.adapters import HTTPAdapter
 
 # I don't think you can really call this an API
 TIMEOUT = 100
-ENG_API = 'https://www.merriam-webster.com/word-of-the-day'
-ENG_API_DEF = '''https://www.merriam-webster.com/dictionary/{word}'''
+ENG_API = 'https://www.merriam-webster.com/wotd/feed/rss2'
 SWE_API = 'https://www.dagensdatum.nu/dagens/ord'
 
 HEADERS = {
@@ -38,20 +37,17 @@ class DailyWordApi():
 
     def get_eng_word_and_def(self):
         request = Request('GET', ENG_API)
-        html = self.send(request).text
+        xml = self.send(request).text
 
-        soup = BeautifulSoup(html, features='html.parser')
-        word = soup.find('div', {'class': 'word-and-pronunciation'}).find_all(['h1', 'h2', 'h3', 'h4', 'h5'])[0].get_text(strip=True).capitalize()
+        feed = BeautifulSoup(xml, features='html.parser')
+        item = feed.find('item')
+        word = item.find('title').get_text(strip=True).capitalize()
 
-        request = Request('GET', ENG_API_DEF.format(word=word))
-        html = self.send(request).text
+        desc = BeautifulSoup(item.find('description').get_text(), features='html.parser')
+        headword = desc.find('em').find_parent('p')
+        definition = headword.find('p').get_text(' ', strip=True)
 
-        soup = BeautifulSoup(html, features='html.parser')
-        definitions = soup.find('div', {'class': 'vg'}).find_all('div', {'class': 'vg-sseq-entry-item'})
-        definitions = [d.find('span', {'class': 'dt'}).get_text().strip().lstrip(':').strip() for d in definitions]
-        definitions = '; '.join(definitions).capitalize() +  '.'
-
-        return word, definitions
+        return word, definition
 
     def get_swe_word_and_def(self):
         # Get word from SAOB
