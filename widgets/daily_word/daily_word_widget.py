@@ -79,11 +79,15 @@ class DailyWordWidget(DailyWordUi):
         self.combo_box_changed(self.combo_box.currentText())
 
     def combo_box_changed(self, value):
-        if value == 'ENG':
-            word, definition = self.daily_word.get_eng_word_and_def()
-            self.title_label.setText('Word of the Day')
-        elif value == 'SWE':
-            word, definition = self.daily_word.get_swe_word_and_def()
-            self.title_label.setText('Dagens Ord')
-        self.definition_label.setText(f'{word}: {definition}')
+        try:
+            if value == 'ENG':
+                word, definition = self.daily_word.get_eng_word_and_def()
+                self.title_label.setText('Word of the Day')
+            elif value == 'SWE':
+                word, definition = self.daily_word.get_swe_word_and_def()
+                self.title_label.setText('Dagens Ord')
+            self.definition_label.setText(f'{word}: {definition}')
+        except Exception as e:
+            self.definition_label.setText('Could not load the word of the day.')
+            print(f'DailyWordWidget: failed to load word ({value}): {e}')
         
