@@ -39,15 +39,22 @@ class UnlockGateApi():
 
         login_btn_element = self.driver.find_elements(By.CLASS_NAME, 'btn.btn-primary')[0]
         self.driver.execute_script('arguments[0].click();', login_btn_element)
-        time.sleep(0.25)
-        booking_btn_element = self.driver.find_elements(By.XPATH, "//a[@class='btn btn-primary' and text()='Öppna']")[0]
-        self.driver.get(booking_btn_element.get_attribute('href'))
+
+        def booking_href_ready(driver):
+            links = driver.find_elements(By.XPATH, "//a[@class='btn btn-primary' and text()='Öppna']")
+            if not links:
+                return False
+            href = links[0].get_attribute('href') or ''
+            return href if 'RemoteLogin' in href else False
+
+        booking_href = WebDriverWait(self.driver, 20).until(booking_href_ready)
+        self.driver.get(booking_href)
 
         door_element_id = f'entranceDoor_{gate_id}'
-        WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.ID, door_element_id)))
+        WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.ID, door_element_id)))
         door_element = self.driver.find_element(By.ID, door_element_id)
 
-        self.driver.execute_script(f'AjaxUnlockEntranceDoor({gate_id})')
+        self.driver.execute_script(f'UnlockEntranceDoor({gate_id})')
         time.sleep(2)
         door_element = self.driver.find_element(By.ID, door_element_id)
 
