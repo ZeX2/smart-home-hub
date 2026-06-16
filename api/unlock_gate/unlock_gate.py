@@ -1,11 +1,11 @@
 import os
-import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.common.exceptions import TimeoutException
 from webdriver_manager.chrome import ChromeDriverManager
 
 from .unlock_gate_data import PORTAL_LOGIN_URL, GATES
@@ -52,13 +52,16 @@ class UnlockGateApi():
 
         door_element_id = f'entranceDoor_{gate_id}'
         WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.ID, door_element_id)))
-        door_element = self.driver.find_element(By.ID, door_element_id)
 
         self.driver.execute_script(f'UnlockEntranceDoor({gate_id})')
-        time.sleep(2)
-        door_element = self.driver.find_element(By.ID, door_element_id)
 
-        return door_element.get_attribute('data-status') == 'unlocked'
+        def door_unlocked(driver):
+            return driver.find_element(By.ID, door_element_id).get_attribute('data-status') == 'unlocked'
+
+        try:
+            return WebDriverWait(self.driver, 15).until(door_unlocked)
+        except TimeoutException:
+            return False
 
 if __name__ == "__main__":
     ug = UnlockGateApi()
