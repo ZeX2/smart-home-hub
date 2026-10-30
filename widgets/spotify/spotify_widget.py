@@ -3,7 +3,7 @@ import urllib.request
 from datetime import date, timedelta, datetime
 
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth
+from spotipy.oauth2 import SpotifyOAuth, SpotifyOauthError
 
 try:
     from PySide6 import QtGui, QtCore, QtWidgets # type: ignore
@@ -171,7 +171,16 @@ class SpotifyWidget(SpotifyUi):
 
     def update_currently_playing(self):
         prev_playing = self.curr_playing
-        curr_playing = self.sp.current_playback()
+        try:
+            curr_playing = self.sp.current_playback()
+        except Exception as e:
+            print(f'SpotifyWidget: failed to get current playback: {e}')
+            if isinstance(e, SpotifyOauthError) and e.error == 'invalid_grant':
+                # spotipy only re-runs the browser login when no token is cached
+                cache_path = self.sp.auth_manager.cache_handler.cache_path
+                if os.path.exists(cache_path):
+                    os.remove(cache_path)
+            curr_playing = None
         self.curr_playing = {} if not curr_playing else curr_playing
         self.curr_playing_last_updated = datetime.now()
 
