@@ -22,7 +22,7 @@ class DailyWordUi(QtWidgets.QFrame):
         self.layout.addLayout(self.title_layout)
 
         self.title_label = QtWidgets.QLabel()
-        self.title_label.setFont(QtGui.QFont('Lucida Console', 18))
+        self.title_label.setFont(QtGui.QFont('', 18))
         self.title_layout.addWidget(self.title_label)
 
         self.spacer = QtWidgets.QSpacerItem(5, 5, hData=QtWidgets.QSizePolicy.Expanding)
@@ -59,7 +59,7 @@ class DailyWordUi(QtWidgets.QFrame):
         self.scroll_area.setStyleSheet('background-color: none;')
 
         self.definition_label = QtWidgets.QLabel('N/A')
-        self.definition_label.setFont(QtGui.QFont('Lucida Console', 11))
+        self.definition_label.setFont(QtGui.QFont('', 11))
         self.definition_label.setWordWrap(True)
 
         self.scroll_area.setWidget(self.definition_label)

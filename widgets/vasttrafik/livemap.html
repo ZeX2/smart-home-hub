@@ -13,6 +13,10 @@
 			height: 100%;
 			margin: 0;
 		}
+		/* Markers glide to each new position over the 5 s between updates (the timer in livemap_widget.py) */
+		.glide .leaflet-marker-icon {
+			transition: transform 5s linear;
+		}
 	</style>
 </head>
 <body>
@@ -21,7 +25,7 @@
 <script>
 	var map = L.map('map').setView([57.6919675, 11.9721758], 15);
 
-	var tiles = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 19,
 		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 	}).addTo(map);
@@ -39,8 +43,23 @@
     layerControl.addOverlay(layerGroups['ferry'], 'Färja');
     layerControl.addOverlay(layerGroups['train'], 'Tåg');
 
+	// Glide is off while zooming, or the markers would slide to their new spots after every zoom
+	function setGlide(on) {
+		if (on) map.getContainer().offsetWidth; // Apply pending marker positions first so they don't glide
+		map.getContainer().classList.toggle('glide', on);
+	}
+	setGlide(true);
+	map.on('zoomstart', function() { setGlide(false); });
+	map.on('zoomend', function() { setGlide(true); });
+
+	var lastUpdate = 0;
+
 	// Moves known vehicles, adds new ones and removes the ones no longer reported
 	function updateVehicles(vehicles) {
+		// After a long gap (the map tab was hidden) jump to the new positions instead of gliding across town
+		var stale = Date.now() - lastUpdate > 10000;
+		lastUpdate = Date.now();
+		if (stale) setGlide(false);
 		var seen = {};
 		vehicles.forEach(function(vehicle) {
 			var id = vehicle.detailsReference;
@@ -63,6 +82,7 @@
 				delete markers[id];
 			}
 		}
+		if (stale) setGlide(true);
 	}
 </script>
 

@@ -33,7 +33,10 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
         self.map_initialized = False
 
         url = QtCore.QUrl.fromLocalFile(LIVEMAP_PATH)
-        
+        # Qt 6 blocks the remote map tiles for a page loaded from a local file unless this is on (Qt 5 on the Pi loads them anyway)
+        settings = self.web_map.settings()
+        settings.setAttribute(settings.WebAttribute.LocalContentCanAccessRemoteUrls, True)
+
         interceptor = Interceptor()
         self.web_map.page().profile().setUrlRequestInterceptor(interceptor)
         self.web_map.load(url)

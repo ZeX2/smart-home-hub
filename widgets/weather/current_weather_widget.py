@@ -14,7 +14,7 @@ class CurrentWeatherUi(QtWidgets.QFrame):
 
         self.layout = QtWidgets.QHBoxLayout(self)
         self.temp_label = QtWidgets.QLabel('N/A')
-        self.temp_label.setFont(QtGui.QFont('Lucida Console', 50))
+        self.temp_label.setFont(QtGui.QFont('', 50))
         self.layout.addWidget(self.temp_label)
 
         self.spacer = QtWidgets.QSpacerItem(5, 50)
@@ -24,7 +24,7 @@ class CurrentWeatherUi(QtWidgets.QFrame):
         self.layout.addLayout(self.symb_layout)
 
         self.weather_label = QtWidgets.QLabel('N/A')
-        self.weather_label.setFont(QtGui.QFont('Lucida Console', 18))
+        self.weather_label.setFont(QtGui.QFont('', 18))
         self.weather_label.setWordWrap(True)
         self.symb_layout.addWidget(self.weather_label)
 

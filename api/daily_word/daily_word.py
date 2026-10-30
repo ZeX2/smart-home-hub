@@ -1,3 +1,4 @@
+from xml.etree import ElementTree
 from bs4 import BeautifulSoup
 from requests import Session, Request
 from requests.adapters import HTTPAdapter
@@ -37,13 +38,12 @@ class DailyWordApi():
 
     def get_eng_word_and_def(self):
         request = Request('GET', ENG_API)
-        xml = self.send(request).text
+        xml = self.send(request).content
 
-        feed = BeautifulSoup(xml, features='html.parser')
-        item = feed.find('item')
-        word = item.find('title').get_text(strip=True).capitalize()
+        item = ElementTree.fromstring(xml).find('channel/item')
+        word = item.findtext('title').strip().capitalize()
 
-        desc = BeautifulSoup(item.find('description').get_text(), features='html.parser')
+        desc = BeautifulSoup(item.findtext('description'), features='html.parser')
         headword = desc.find('em').find_parent('p')
         definition = headword.find('p').get_text(' ', strip=True)
 
