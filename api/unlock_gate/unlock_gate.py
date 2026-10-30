@@ -1,6 +1,7 @@
 import os
 import atexit
 import threading
+import subprocess
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -20,6 +21,14 @@ class UnlockGateApi():
     def __init__(self):
         # One browser for all gates, so unlocks must take turns
         self.lock = threading.Lock()
+        # Chrome takes seconds to start, so start it in the background; unlock_door waits for it
+        self.driver_thread = threading.Thread(target=self.start_driver)
+        self.driver_thread.start()
+
+    def start_driver(self):
+        # atexit doesn't run when the app is killed or loses power, so clear out Chrome left over from earlier runs
+        for pattern in ['enable-automation', 'chromedriver']:
+            subprocess.run(['pkill', '-f', pattern])
         options = webdriver.ChromeOptions()
         options.add_argument("--headless=new")
         try:
@@ -36,6 +45,7 @@ class UnlockGateApi():
         return list(GATES.keys())
 
     def unlock_door(self, gate_name):
+        self.driver_thread.join()
         with self.lock:
             gate_id = GATES[gate_name]
 

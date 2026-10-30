@@ -6,6 +6,7 @@ except:
     from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
 import resources
+from common.qthreading import Worker, get_thread_pool
 
 DAILY_WORD_DIR = os.path.dirname(os.path.realpath(__file__))
 DROP_DOWN_ARROW_PATH = os.path.join(DAILY_WORD_DIR, 'refresh.png')
@@ -75,6 +76,7 @@ class DailyWordWidget(DailyWordUi):
         self.setup_ui()
 
         self.daily_word = daily_word
+        self.thread_pool = get_thread_pool()
 
         self.combo_box_changed(self.combo_box.currentText())
 
@@ -83,15 +85,20 @@ class DailyWordWidget(DailyWordUi):
         self.timer.start(60*60*1000)
 
     def combo_box_changed(self, value):
-        try:
-            if value == 'ENG':
-                word, definition = self.daily_word.get_eng_word_and_def()
-                self.title_label.setText('Word of the Day')
-            elif value == 'SWE':
-                word, definition = self.daily_word.get_swe_word_and_def()
-                self.title_label.setText('Dagens Ord')
-            self.definition_label.setText(f'{word}: {definition}')
-        except Exception as e:
+        get_word_and_def = self.daily_word.get_eng_word_and_def if value == 'ENG' else self.daily_word.get_swe_word_and_def
+        self.worker = Worker(get_word_and_def)
+        self.worker.signals.result.connect(lambda word_and_def: self.set_word(value, word_and_def))
+        self.worker.signals.error.connect(lambda _: self.set_word(value, None))
+        self.thread_pool.start(self.worker)
+
+    def set_word(self, value, word_and_def):
+        # The other language's answer can land after the user switched
+        if value != self.combo_box.currentText():
+            return
+        if not word_and_def:
             self.definition_label.setText('Could not load the word of the day.')
-            print(f'DailyWordWidget: failed to load word ({value}): {e}')
-        
+            return
+
+        self.title_label.setText('Word of the Day' if value == 'ENG' else 'Dagens Ord')
+        word, definition = word_and_def
+        self.definition_label.setText(f'{word}: {definition}')

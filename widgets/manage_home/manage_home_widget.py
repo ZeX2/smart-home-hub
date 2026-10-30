@@ -11,6 +11,7 @@ except:
 
 from common_widgets.toggle_buttons import QGraphicsPixmapItemToggleButton
 from common_widgets.buttons import QGraphicsPixmapItemButton
+from common.qthreading import Worker, get_thread_pool
 from .dirigera_secret import TOKEN, IP_ADDRESS
 
 MAIN_ART_DIR = os.path.join(os.path.dirname(os.path.realpath(__main__.__file__)), 'common_art')
@@ -98,6 +99,7 @@ class ManageHomeWidget(ManageHomeUi):
             self.config = {}
             self.save_config()
 
+        self.thread_pool = get_thread_pool()
         self.status_online = False
         self.initialize_hub()
         self.initialize_devices()
@@ -147,24 +149,32 @@ class ManageHomeWidget(ManageHomeUi):
 
     def restart_hub(self):
         self.stop_listener()
-
-        for b in self.buttons.values():
-            self.scene.removeItem(b)
-        
         self.initialize_hub()
-        self.initialize_devices()
 
     def initialize_hub(self):
-        try:
-            self.dh = dirigera.Hub(ip_address=IP_ADDRESS, token=TOKEN)
-            self.dh_devices = {device.id: device for device in self.dh.get_all_devices()}
-            self.dlistener = DirigeraListener(self.dh)
-            self.dlistener.on_message.connect(self.on_message)
-            self.dlistener.on_error.connect(self.on_error)
-            self.dlistener.start()
-            self.status_online = True
-        except Exception as e:
-            print(e)
+        # Listing the devices takes seconds (10 s to time out when the hub is offline), so connect off the UI thread
+        self.worker = Worker(self.connect_hub)
+        self.worker.signals.result.connect(self.hub_connected)
+        self.thread_pool.start(self.worker)
+
+    def connect_hub(self):
+        dh = dirigera.Hub(ip_address=IP_ADDRESS, token=TOKEN)
+        return dh, {device.id: device for device in dh.get_all_devices()}
+
+    def hub_connected(self, hub_and_devices):
+        # Two quick refreshes can both connect, so stop the first one's listener
+        self.stop_listener()
+        self.dh, self.dh_devices = hub_and_devices
+        self.dlistener = DirigeraListener(self.dh)
+        self.dlistener.on_message.connect(self.on_message)
+        self.dlistener.on_error.connect(self.on_error)
+        self.dlistener.start()
+        self.status_online = True
+
+        # Swap the offline buttons drawn while connecting for live ones
+        for b in self.buttons.values():
+            self.scene.removeItem(b)
+        self.initialize_devices()
 
     def initialize_devices(self):
         self.buttons = {}
