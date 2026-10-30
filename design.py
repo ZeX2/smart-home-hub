@@ -30,6 +30,7 @@ DESIGN_DIR = os.path.dirname(os.path.realpath(__file__))
 SIDE_MENU_WIDTH = 40
 SIDE_MENU_ICON_WIDTH = 30
 SIDE_MENU_EXTENDED_WIDTH = 170
+INACTIVITY_EVENTS = [QtCore.QEvent.MouseMove, QtCore.QEvent.KeyPress, QtCore.QEvent.MouseButtonPress]
 
 icon_path = lambda fn : os.path.join(DESIGN_DIR, 'icons', fn)
 
@@ -40,18 +41,19 @@ class Screensaver(QtWidgets.QLabel):
         self.main_parent = main_parent
         self.main_parent.central_widget.addWidget(self)
 
-        self.installEventFilter(self)
-        self.activity_events = self.main_parent.add_to_receive_activity_events(self)
-
         self.inactivity_timer = QtCore.QTimer()
         #self.inactivity_timer.setSingleShot(True)
         self.inactivity_timer.setInterval(3*60*1000)
         self.inactivity_timer.timeout.connect(self.start_screensaver)
+        self.inactivity_timer.start()
 
         self.screensaver_timer = QtCore.QTimer()
         #self.screensaver_timer.setSingleShot(True)
         self.screensaver_timer.setInterval(10*60*1000)
         self.screensaver_timer.timeout.connect(self.change_screensaver)
+
+        self.main_parent.installEventFilter(self) # For WinIdChange
+        self.watch_window()
 
         self.paths = glob(os.path.join(DESIGN_DIR, 'screensaver_pics', '*'))
         shuffle(self.paths)
@@ -80,14 +82,23 @@ class Screensaver(QtWidgets.QLabel):
         self.inactivity_timer.stop()
         self.screensaver_timer.start()
 
+    def watch_window(self):
+        # Filter the window, so touches a child widget takes (map, lists, sliders) also count as activity.
+        # Not app-wide: PySide 6.8 segfaults wrapping some web view objects that pass through such a filter.
+        window = self.main_parent.windowHandle()
+        if window:
+            window.installEventFilter(self)
+
     def eventFilter(self, source, event):
-        if event.type() in self.activity_events:
+        if event.type() == QtCore.QEvent.WinIdChange:
+            self.watch_window() # Qt replaces the window when a web view starts rendering
+        if event.type() in INACTIVITY_EVENTS:
             self.inactivity_timer.start()
             if self.isVisible():
                 self.main_parent.central_widget.setCurrentWidget(self.main_parent.hub_widget)
             else:
                 self.screensaver_timer.stop()
-            return True
+            return False # Let the event reach its widget
 
         return super().eventFilter(source, event)
 
@@ -182,6 +193,7 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         # Main stacked widget
         self.stacked_widget = QtWidgets.QStackedWidget(self.hub_widget)
         self.stacked_widget.setGeometry(QtCore.QRect(SIDE_MENU_WIDTH, 0, self.width()-SIDE_MENU_WIDTH, self.height()))
+        self.stacked_widget.currentChanged.connect(self.tab_changed)
 
         # Home Widget
         self.home_widget = QtWidgets.QWidget()

@@ -13,7 +13,9 @@ class NotionNoteApi():
         page_blocks = self.notion.blocks.children.list(PAGE_ID, page_size=100)['results']
         for block in page_blocks:
             block_type = block['type']
-            if block[block_type]['rich_text']:
-                notes.append(block[block_type]['rich_text'][0].get('plain_text', ''))
+            # Blocks like dividers have no text, and styled text comes in several pieces
+            rich_text = block[block_type].get('rich_text')
+            if rich_text:
+                notes.append(''.join(text.get('plain_text', '') for text in rich_text))
 
         return '\n'.join(notes)

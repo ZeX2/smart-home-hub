@@ -38,6 +38,32 @@
     layerControl.addOverlay(layerGroups['bus'], 'Buss');
     layerControl.addOverlay(layerGroups['ferry'], 'Färja');
     layerControl.addOverlay(layerGroups['train'], 'Tåg');
+
+	// Moves known vehicles, adds new ones and removes the ones no longer reported
+	function updateVehicles(vehicles) {
+		var seen = {};
+		vehicles.forEach(function(vehicle) {
+			var id = vehicle.detailsReference;
+			var group = layerGroups[vehicle.line.transportMode];
+			if (!group) return; // A transport mode without a layer
+			seen[id] = true;
+			if (id in markers) {
+				markers[id].setLatLng([vehicle.latitude, vehicle.longitude]);
+			} else {
+				var icon = L.divIcon({html: `<div style="border: 1px solid transparent; border-radius: 0.25rem;
+					color: ${vehicle.line.foregroundColor}; background-color: ${vehicle.line.backgroundColor}; width: fit-content;
+					height: fit-content; text-align: center; font-weight: bold;
+					min-height: 1rem; min-width: 1rem;">${vehicle.line.name}</div>`});
+				markers[id] = L.marker([vehicle.latitude, vehicle.longitude], {icon: icon}).addTo(group);
+			}
+		});
+		for (var id in markers) {
+			if (!(id in seen)) {
+				Object.values(layerGroups).forEach(function(group) { group.removeLayer(markers[id]); });
+				delete markers[id];
+			}
+		}
+	}
 </script>
 
 </body>

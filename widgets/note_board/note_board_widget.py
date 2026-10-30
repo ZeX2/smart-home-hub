@@ -7,6 +7,7 @@ except:
     from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
 from common_widgets.buttons import QLabelButton
+from common.qthreading import Worker, get_thread_pool
 
 MAIN_ART_DIR = os.path.join(os.path.dirname(os.path.realpath(__main__.__file__)), 'common_art')
 NOTE_BOARD_WIDGET_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -49,6 +50,7 @@ class NoteBoardWidget(NoteBoardUi):
         self.setup_ui()
 
         self.notion_note = notion_note
+        self.thread_pool = get_thread_pool()
 
         self.update_note()
 
@@ -57,5 +59,6 @@ class NoteBoardWidget(NoteBoardUi):
         self.timer.start(60*1000)
 
     def update_note(self):
-        note_data = self.notion_note.get_note()
-        self.note_label.setText(note_data)
+        self.worker = Worker(self.notion_note.get_note)
+        self.worker.signals.result.connect(self.note_label.setText)
+        self.thread_pool.start(self.worker)

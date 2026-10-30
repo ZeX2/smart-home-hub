@@ -7,7 +7,7 @@ except:
 
 from common.qthreading import Worker, get_thread_pool
 
-VECHILE_TYPE_SORT_ORDER = {'TRAM': 0, 'BUS': 1}
+VECHILE_TYPE_SORT_ORDER = {'tram': 0, 'bus': 1} # Västtrafik sends transportMode in lowercase
 
 def get_tram_sort_key(tram_data):
     return (
@@ -117,6 +117,8 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
         
         self.worker = Worker(self.get_departures_data)
         self.worker.signals.result.connect(self.update_departures_table)
+        # Old minutes would be wrong, so show nothing rather than stale times
+        self.worker.signals.error.connect(lambda _: self.departure_table.clear())
         self.thread_pool.start(self.worker)
 
     def tab_changed(self):

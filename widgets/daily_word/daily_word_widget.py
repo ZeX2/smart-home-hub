@@ -78,6 +78,10 @@ class DailyWordWidget(DailyWordUi):
 
         self.combo_box_changed(self.combo_box.currentText())
 
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(lambda: self.combo_box_changed(self.combo_box.currentText()))
+        self.timer.start(60*60*1000)
+
     def combo_box_changed(self, value):
         try:
             if value == 'ENG':

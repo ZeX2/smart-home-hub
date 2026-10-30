@@ -3,6 +3,8 @@ try:
 except:
     from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
+from common.qthreading import Worker, get_thread_pool
+
 class CurrentWeatherUi(QtWidgets.QFrame):
     
     def setup_ui(self):
@@ -40,6 +42,7 @@ class CurrentWeatherWidget(CurrentWeatherUi):
         self.smhi_forecast = smhi_forecast
         self.lat = lat
         self.lon = lon
+        self.thread_pool = get_thread_pool()
 
         self.update_weather()
 
@@ -48,7 +51,12 @@ class CurrentWeatherWidget(CurrentWeatherUi):
         self.timer.start(20*60*1000)
 
     def update_weather(self):
-        weather_data = self.smhi_forecast.get_temperatures(self.lat, self.lon)[0]
+        self.worker = Worker(self.smhi_forecast.get_temperatures, self.lat, self.lon)
+        self.worker.signals.result.connect(self.set_weather)
+        self.thread_pool.start(self.worker)
+
+    def set_weather(self, forecast):
+        weather_data = forecast[0]
         self.temp_label.setText(f'{round(weather_data[1])}°')
         wsymb_value = weather_data[2]
         self.weather_label.setText(self.smhi_forecast.get_wsymb2_meaning(wsymb_value))

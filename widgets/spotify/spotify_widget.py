@@ -18,6 +18,15 @@ SCOPES = ['user-library-read', 'user-read-recently-played',
     'user-modify-playback-state', 'user-read-currently-playing',
     'user-read-playback-state', 'app-remote-control']
 
+def format_time(ms, duration_ms):
+    # str(timedelta) gives '0:03:05'; cut it to '03:05', or '0:42' for tracks under a minute
+    time_str = str(timedelta(seconds=int(ms/1000)))
+    if duration_ms >= 60*60*1000:
+        return time_str
+    elif duration_ms < 60*1000:
+        return time_str[3:]
+    return time_str[2:]
+
 # Inspo: https://chowdera.com/2021/05/20210506082607288s.html#4__281
 # https://programmer.group/python-developing-music-player-pyqt-making-music-player-main-interface.html
 # https://stackoverflow.com/questions/44264852/pyside-pyqt-overlay-widget
@@ -170,6 +179,9 @@ class SpotifyWidget(SpotifyUi):
         self.curr_playing_timer.start(3*1000)
 
     def update_currently_playing(self):
+        if self.visibleRegion().isEmpty():
+            return
+
         prev_playing = self.curr_playing
         try:
             curr_playing = self.sp.current_playback()
@@ -214,7 +226,7 @@ class SpotifyWidget(SpotifyUi):
 
         try:
             album_cover_url = self.curr_playing['item']['album']['images'][0]['url']
-            album_cover_data = urllib.request.urlopen(album_cover_url).read()
+            album_cover_data = urllib.request.urlopen(album_cover_url, timeout=5).read()
             image = QtGui.QImage()
             image.loadFromData(album_cover_data)
             self.album_cover.setPixmap(QtGui.QPixmap(image))
@@ -223,33 +235,17 @@ class SpotifyWidget(SpotifyUi):
 
         duration_ms = self.curr_playing['item']['duration_ms']
         self.music_slider.setMaximum(duration_ms)
-
-        duration_str = str(timedelta(seconds=int(duration_ms/1000)))
-        if duration_ms >= 60*60*1000:
-            self.duration_time_label.setText(duration_str)
-        elif duration_ms < 60*1000:
-            self.duration_time_label.setText(duration_str[3:])
-        else:
-            self.duration_time_label.setText(duration_str[2:])
+        self.duration_time_label.setText(format_time(duration_ms, duration_ms))
 
     def update_progress_time(self, progress_ms=None):
         duration_ms = self.curr_playing['item']['duration_ms']
-        if not progress_ms:
+        if progress_ms is None:
             delta_time = datetime.now() - self.curr_playing_last_updated
             progress_ms = delta_time.total_seconds()*1000 + self.curr_playing['progress_ms']
+        progress_ms = min(progress_ms, duration_ms)
 
         self.music_slider.setValue(progress_ms)
-
-        progress_str = str(timedelta(seconds=int(progress_ms/1000)))
-        if duration_ms >= 60*60*1000:
-            self.progress_time_label.setText(progress_str)
-        elif duration_ms < 60*1000:
-            self.progress_time_label.setText(progress_str[3:])
-        else:
-            self.progress_time_label.setText(progress_str[2:])
-
-        if duration_ms - progress_ms < 1500:
-            self.update_currently_playing()
+        self.progress_time_label.setText(format_time(progress_ms, duration_ms))
 
     def update_shuffle_button(self):
         pass
@@ -269,14 +265,7 @@ class SpotifyWidget(SpotifyUi):
     def music_slider_moved(self):
         duration_ms = self.curr_playing['item']['duration_ms']
         progress_ms = self.music_slider.value()
-
-        progress_str = str(timedelta(seconds=int(progress_ms/1000)))
-        if duration_ms >= 60*60*1000:
-            self.progress_time_label.setText(progress_str)
-        elif duration_ms < 60*1000:
-            self.progress_time_label.setText(progress_str[3:])
-        else:
-            self.progress_time_label.setText(progress_str[2:])
+        self.progress_time_label.setText(format_time(progress_ms, duration_ms))
     
     def play_button_clicked(self):
         if self.curr_playing.get('is_playing'):

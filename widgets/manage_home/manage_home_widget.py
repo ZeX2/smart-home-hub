@@ -94,13 +94,15 @@ class ManageHomeWidget(ManageHomeUi):
         try:
             with open(CONFIG_PATH, 'r') as f:
                 self.config = json.load(f)
-        except:
+        except FileNotFoundError:
             self.config = {}
             self.save_config()
 
         self.status_online = False
         self.initialize_hub()
         self.initialize_devices()
+
+        QtWidgets.QApplication.instance().aboutToQuit.connect(self.stop_listener)
 
     def drag_button_pressed(self):
         for id, b in self.buttons.items():
@@ -126,8 +128,10 @@ class ManageHomeWidget(ManageHomeUi):
         self.buttons[id].set_state(state)
 
     def save_config(self):
-        with open(CONFIG_PATH, 'w') as f:
+        # Write a temp file and swap it in, so a power cut mid-write can't leave a half config.json
+        with open(CONFIG_PATH + '.tmp', 'w') as f:
             f.write(json.dumps(self.config, indent=4, sort_keys=True))
+        os.replace(CONFIG_PATH + '.tmp', CONFIG_PATH)
 
     def toggle_device(self, id):
         if self.config[id]['type'] == 'light':
@@ -135,12 +139,15 @@ class ManageHomeWidget(ManageHomeUi):
         if self.config[id]['type'] == 'outlet':
             self.dh_devices[id].set_on(outlet_on=self.buttons[id].is_active())
 
+    def stop_listener(self):
+        # QThread.quit() can't end the websocket loop, and a QThread still running when Python exits makes Qt abort
+        if self.status_online:
+            self.dh.stop_event_listener()
+            self.dlistener.wait(2000)
+
     def restart_hub(self):
-        try:
-            self.dlistener.quit()
-        except Exception as e:
-            print(e)
-        
+        self.stop_listener()
+
         for b in self.buttons.values():
             self.scene.removeItem(b)
         

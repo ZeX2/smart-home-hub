@@ -39,42 +39,13 @@ class UnlockGateWidget(QtWidgets.QWidget):
                 ''')
                 self.layout.addWidget(label, i, j)
 
-        button = QTimedToggleButton(os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_closed.svg'), 
-                                    os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open.svg'),
-                                    os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open_red.svg'),
-                                    os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open_green.svg'),
-                                    lambda : self.unlock_gate.unlock_door(self.unlock_gate.get_gates()[0]))
-        button.setFixedSize(self.width()/columns, self.height()/rows)
-        self.layout.addWidget(button, 8, 13)
-
-        button = QTimedToggleButton(os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_closed.svg'), 
-                                    os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open.svg'),
-                                    os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open_red.svg'),
-                                    os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open_green.svg'),
-                                    lambda : self.unlock_gate.unlock_door(self.unlock_gate.get_gates()[1]))
-        button.setFixedSize(self.width()/columns, self.height()/rows)
-        self.layout.addWidget(button, 8, 8)
-
-        button = QTimedToggleButton(os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_closed.svg'), 
-                                    os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open.svg'),
-                                    os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open_red.svg'),
-                                    os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open_green.svg'),
-                                    lambda : self.unlock_gate.unlock_door(self.unlock_gate.get_gates()[2]))
-        button.setFixedSize(self.width()/columns, self.height()/rows)
-        self.layout.addWidget(button, 2, 12)
-
-        button = QTimedToggleButton(os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_closed.svg'), 
-                                    os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open.svg'),
-                                    os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open_red.svg'),
-                                    os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open_green.svg'),
-                                    lambda : self.unlock_gate.unlock_door(self.unlock_gate.get_gates()[3]))
-        button.setFixedSize(self.width()/columns, self.height()/rows)
-        self.layout.addWidget(button, 4, 14)
-
-        button = QTimedToggleButton(os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_closed.svg'), 
-                                    os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open.svg'),
-                                    os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open_red.svg'),
-                                    os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open_green.svg'),
-                                    lambda : self.unlock_gate.unlock_door(self.unlock_gate.get_gates()[4]))
-        button.setFixedSize(self.width()/columns, self.height()/rows)
-        self.layout.addWidget(button, 3, 6)
+        # (gate index, row, column) of each door on the block image
+        for gate_index, row, column in [(0, 8, 13), (1, 8, 8), (2, 2, 12), (3, 4, 14), (4, 3, 6)]:
+            button = QTimedToggleButton(os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_closed.svg'),
+                                        os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open.svg'),
+                                        os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open_red.svg'),
+                                        os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open_green.svg'),
+                                        # i=gate_index fixes the index now, else every button would open the last gate
+                                        lambda i=gate_index: self.unlock_gate.unlock_door(self.unlock_gate.get_gates()[i]))
+            button.setFixedSize(self.width()/columns, self.height()/rows)
+            self.layout.addWidget(button, row, column)

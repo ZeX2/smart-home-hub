@@ -43,6 +43,7 @@ class QTimedToggleButton(QtWidgets.QLabel):
 
         worker = Worker(self.func)
         worker.signals.result.connect(self.function_finished)
+        worker.signals.error.connect(lambda _: self.function_finished(False))
         self.thread_pool.start(worker)
 
         super().mousePressEvent(event)

@@ -1,5 +1,6 @@
 import io
 import os
+import json
 
 try:
     from PySide6 import QtGui, QtCore, QtWidgets, QtWebEngineWidgets, QtWebEngineCore # type: ignore
@@ -38,7 +39,7 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
         self.web_map.load(url)
         self.web_map.loadFinished.connect(self.get_and_update_web_map)
 
-        self.since_last_clean_up = 0
+        self.loading = False
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.get_and_update_web_map)
@@ -49,42 +50,21 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
 
     def update_web_map(self, vehicles):
         self.map_initialized = True
-        if self.since_last_clean_up > 120:
-            self.web_map.page().runJavaScript(f'''
-                                              Object.values(layerGroups).forEach(layerGroup => {{layerGroup.clearLayers();}});
-                                              for (var marker in markers) delete markers[marker];
-                                              markers = {{}};         
-            ''')
-            self.since_last_clean_up = 0
-        else:
-            self.since_last_clean_up += 1
-
-        for vehicle in vehicles:
-            mode = vehicle['line']['transportMode']
-            id = vehicle['detailsReference']
-            name = vehicle['line']['name']#.replace('Bus', '').replace('Spå ', '').replace('Fär', '').strip()
-            icon_html = f'''<div style="border: 1px solid transparent; border-radius: 0.25rem;
-                color: {vehicle["line"]["foregroundColor"]}; background-color: {vehicle["line"]["backgroundColor"]}; width: fit-content;
-                height: fit-content; text-align: center; font-weight: bold;
-                min-height: 1rem; min-width: 1rem;">{name}</div>'''
-
-            x = vehicle['longitude']
-            y = vehicle['latitude']
-            javascript = f'''if ('{id}' in markers) {{
-                    markers['{id}'].setLatLng([{y}, {x}]).update()
-                }} else {{
-                    var icon_{id} = L.divIcon({{html: `{icon_html}` }});
-                    markers['{id}'] = L.marker([{y}, {x}], {{icon: icon_{id} }}).addTo(layerGroups['{mode}']);
-                }}'''
-            
-            self.web_map.page().runJavaScript(javascript)
+        # One call with all vehicles; updateVehicles in livemap.html moves, adds and removes markers
+        self.web_map.page().runJavaScript(f'updateVehicles({json.dumps(vehicles)})')
 
     def get_and_update_web_map(self):
         if self.visibleRegion().isEmpty() and self.map_initialized:
             return
-        
+
+        # Skip while the last request is still running, so slow answers don't pile up in the shared thread pool
+        if self.loading:
+            return
+
+        self.loading = True
         self.worker = Worker(self.get_web_map_data)
         self.worker.signals.result.connect(self.update_web_map)
+        self.worker.signals.finished.connect(lambda: setattr(self, 'loading', False))
         self.thread_pool.start(self.worker)
 
     def tab_changed(self):

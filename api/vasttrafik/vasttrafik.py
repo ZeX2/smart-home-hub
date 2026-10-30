@@ -5,13 +5,13 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 from requests import Session, Request
-from requests.adapters import HTTPAdapter, SSLError
+from requests.adapters import HTTPAdapter
 
 from .key_and_secret import KEY, SECRET
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 STOPS_PATH_JSON = os.path.join(FILE_DIR, 'stops.json')
-TIMEOUT = 100
+TIMEOUT = 10
 TOKEN_API = 'https://ext-api.vasttrafik.se/token'
 API = 'https://ext-api.vasttrafik.se/pr/v4'
 GEO_API = 'https://ext-api.vasttrafik.se/geo/v3'
@@ -23,25 +23,19 @@ class VasttrafikApi():
         self.s.mount('http://', adapter)
         self.s.mount('https://', adapter)
 
-        self.last_updated_token = datetime.now() - timedelta(hours=2)
+        self.token_expires = datetime.min
         self.access_token = ''
         self.token_type = ''
         self.headers = {}
 
-        self.update_token_and_headers()
-
     def send(self, request):
-        if datetime.now() - self.last_updated_token > timedelta(hours=1):
+        if datetime.now() > self.token_expires:
             self.update_token_and_headers()
+        request.headers.update(self.headers)
         return self._send(request)
 
     def _send(self, request):
-        try:
-            response = self.s.send(request.prepare(), timeout=TIMEOUT)
-        except SSLError:
-            import urllib3
-            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-            response = self.s.send(request.prepare(), timeout=TIMEOUT, verify=False)
+        response = self.s.send(request.prepare(), timeout=TIMEOUT)
 
         if response.status_code != 200:
             try:
@@ -60,7 +54,7 @@ class VasttrafikApi():
         data = self._send(request).json()
         self.access_token = data['access_token']
         self.token_type = data['token_type']
-        self.last_updated_token = datetime.now() - timedelta(seconds=data['expires_in'])
+        self.token_expires = datetime.now() + timedelta(seconds=data['expires_in'] - 60)
 
         self.headers = {'Authorization' : f'Bearer {self.access_token}'}
 
@@ -73,7 +67,7 @@ class VasttrafikReseplanerarenApi(VasttrafikApi):
 
     def set_stops_data(self):
         def get_stops_data():
-            request = Request('GET', f'{GEO_API}/StopPoints', headers=self.headers)
+            request = Request('GET', f'{GEO_API}/StopPoints')
             data = self.send(request).json()
             data = data['stopPoints']
 
@@ -93,7 +87,10 @@ class VasttrafikReseplanerarenApi(VasttrafikApi):
         last_modified = datetime.fromtimestamp(os.path.getmtime(STOPS_PATH_JSON))
 
         if datetime.now() - last_modified > timedelta(weeks=1):
-            get_stops_data()
+            try:
+                get_stops_data()
+            except Exception as e:
+                print(f'VasttrafikReseplanerarenApi: failed to refresh stops, using old ones: {e}')
             with open(STOPS_PATH_JSON, encoding='utf-8') as f:
                 stop_locations = json.load(f)
 
@@ -147,14 +144,14 @@ class VasttrafikReseplanerarenApi(VasttrafikApi):
 
     def _get_departures_data(self, stop_id, time_span_minutes=None):
         params = {'stopPointGid': stop_id, 'timeSpanInMinutes': time_span_minutes, 'limit': 1000, 'maxDeparturesPerLineAndDirection': 10}
-        request = Request('GET', f'{API}/stop-areas/{stop_id}/departures', headers=self.headers, params=params)
+        request = Request('GET', f'{API}/stop-areas/{stop_id}/departures', params=params)
         data = self.send(request).json()['results']
 
         return data
 
     def get_live_map_vehicles(self, minx, maxx, miny, maxy, limit=200):
         params = {'lowerLeftLong': minx, 'upperRightLong': maxx, 'lowerLeftLat': miny, 'upperRightLat': maxy, 'limit': limit}
-        request = Request('GET', f'{API}/positions', headers=self.headers, params=params)
+        request = Request('GET', f'{API}/positions', params=params)
         data = self.send(request).json()
 
         return data

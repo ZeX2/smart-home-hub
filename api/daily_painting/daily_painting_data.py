@@ -25,7 +25,7 @@ class DailyPaintingData():
 
     def get_painting(self):
         painting = self.data[self.i][self.j]
-        painting_img_path = glob(os.path.join(FILE_DIR , f'paintings{self.i+1}', f'{self.j}*'))[0]
+        painting_img_path = glob(os.path.join(FILE_DIR , f'paintings{self.i+1}', f'{self.j}.*'))[0]
         return painting['title'], painting['painter'], painting['description'], painting_img_path
 
     def random_painting(self):
