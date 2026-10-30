@@ -112,6 +112,7 @@ class SideMenyButton(QtWidgets.QPushButton):
 
         self.setParent(parent)
         self.layout = QtWidgets.QGridLayout()
+        self.layout.setContentsMargins(SIDE_MENU_WIDTH+int((SIDE_MENU_WIDTH-SIDE_MENU_ICON_WIDTH)/2), 0, 0, 0) # Labels start just right of the icon column
         self.setLayout(self.layout)
 
         self.setGeometry(QtCore.QRect(0, self.top, SIDE_MENU_EXTENDED_WIDTH, SIDE_MENU_WIDTH))
@@ -120,8 +121,9 @@ class SideMenyButton(QtWidgets.QPushButton):
             QPushButton {{
                 background: transparent;
                 border: none;
-                text-align: left;
+                text-align: center;
                 padding-left: {int((SIDE_MENU_WIDTH-SIDE_MENU_ICON_WIDTH)/2)}px;
+                padding-right: {SIDE_MENU_EXTENDED_WIDTH-SIDE_MENU_WIDTH+int((SIDE_MENU_WIDTH-SIDE_MENU_ICON_WIDTH)/2)}px; /* Centre icons of any aspect ratio in the collapsed column */
                 padding-top: {int((SIDE_MENU_WIDTH-SIDE_MENU_ICON_WIDTH)/2)}px;
                 padding-bottom: {int((SIDE_MENU_WIDTH-SIDE_MENU_ICON_WIDTH)/2)}px;
             }}
@@ -139,10 +141,9 @@ class SideMenyButton(QtWidgets.QPushButton):
         self.label.setStyleSheet(f'''
             QLabel {{
                 background: transparent;
-                padding-left: {SIDE_MENU_ICON_WIDTH}px;
             }}
         ''')
-        self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.label.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, True)
         self.layout.addWidget(self.label)
 

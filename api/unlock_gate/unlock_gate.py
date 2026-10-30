@@ -15,6 +15,7 @@ from .unlock_gate_data import PORTAL_LOGIN_URL, GATES
 from .secrets import USR, PWD
 
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
+PI_CHROMEDRIVER_PATH = '/usr/lib/chromium-browser/chromedriver'
 
 class UnlockGateApi():
 
@@ -31,13 +32,14 @@ class UnlockGateApi():
             subprocess.run(['pkill', '-f', pattern])
         options = webdriver.ChromeOptions()
         options.add_argument("--headless=new")
-        try:
+        if os.path.exists(PI_CHROMEDRIVER_PATH):
+            # The lookups below can't find the Pi's Chromium and download x86 drivers that don't run on ARM
+            self.driver = webdriver.Chrome(service=ChromeService(executable_path=PI_CHROMEDRIVER_PATH), options=options)
+        else:
             try:
                 self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
             except Exception as e:
                 self.driver = webdriver.Chrome(options=options)
-        except Exception as e:
-            self.driver = webdriver.Chrome(service=ChromeService(executable_path='/usr/lib/chromium-browser/chromedriver'), options=options)
         # Else chromedriver and Chrome keep running after the app exits
         atexit.register(self.driver.quit)
 

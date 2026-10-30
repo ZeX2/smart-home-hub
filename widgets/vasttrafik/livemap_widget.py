@@ -36,6 +36,8 @@ class VasttrafikLiveMapWidget(VasttrafikLiveMapUi):
         # Qt 6 blocks the remote map tiles for a page loaded from a local file unless this is on (Qt 5 on the Pi loads them anyway)
         settings = self.web_map.settings()
         settings.setAttribute(settings.WebAttribute.LocalContentCanAccessRemoteUrls, True)
+        # Qt 6.12 turns off local file access when remote access is turned on, which blocks leaflet.js; turn it back on
+        settings.setAttribute(settings.WebAttribute.LocalContentCanAccessFileUrls, True)
 
         interceptor = Interceptor()
         self.web_map.page().profile().setUrlRequestInterceptor(interceptor)

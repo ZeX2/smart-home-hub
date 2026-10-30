@@ -5,7 +5,7 @@ import urllib.request
 from datetime import date, timedelta, datetime
 
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth, SpotifyOauthError
+from spotipy.oauth2 import SpotifyOAuth, SpotifyOauthError, CacheFileHandler
 
 try:
     from PySide6 import QtGui, QtCore, QtWidgets # type: ignore
@@ -301,7 +301,7 @@ class SpotifyWidget(SpotifyUi):
                                                 redirect_uri=REDIRECT_URI,
                                                 scope=' '.join(SCOPES),
                                                 open_browser=True,
-                                                cache_path=os.path.join(SPOTIFY_WIDGET_DIR, 'tokens.txt')))
+                                                cache_handler=CacheFileHandler(cache_path=os.path.join(SPOTIFY_WIDGET_DIR, 'tokens.txt'))))
 
         self.thread_pool = get_thread_pool()
         # Spotify calls run one at a time, so a skip always lands before the poll that checks it
