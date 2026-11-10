@@ -1,3 +1,5 @@
+import os
+import json
 from datetime import datetime, timezone
 
 try:
@@ -6,6 +8,9 @@ except:
     from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
 from common.qthreading import Worker, get_thread_pool
+
+VASTTRAFIK_WIDGET_DIR = os.path.dirname(os.path.realpath(__file__))
+CONFIG_PATH = os.path.join(VASTTRAFIK_WIDGET_DIR, 'config.json')
 
 VECHILE_TYPE_SORT_ORDER = {'tram': 0, 'bus': 1} # Västtrafik sends transportMode in lowercase
 
@@ -26,18 +31,40 @@ class LineIcon(QtWidgets.QLabel):
             color: {fg_color}; background-color: {bg_color}; font-size: 17px; min-height: 20px; min-width: 20px;''')
         # margin-right: 0.3125rem; margin-bottom: 0.3125rem; padding: 1px 3px; 
 
+class FingerSizedIconsStyle(QtWidgets.QProxyStyle):
+    '''Qt draws icons inside a search bar at the small icon size, 16 px, a bit small to tap on the touchscreen.'''
+
+    def pixelMetric(self, metric, option=None, widget=None):
+        if metric == QtWidgets.QStyle.PM_SmallIconSize:
+            return 20
+        return super().pixelMetric(metric, option, widget)
+
+class UnfilteredCompleter(QtWidgets.QCompleter):
+    '''Shows its list as it is. The widget filters it, since Qt would drop the pinned stops that don't match.'''
+
+    def splitPath(self, path):
+        return [''] # Nothing to match, so every row shows
+
 class VasttrafikDeparturesUi(QtWidgets.QWidget):
 
     def setup_ui(self):
         self.layout = QtWidgets.QVBoxLayout(self)
 
-        self.search_bar = QtWidgets.QLineEdit('Chalmers')
+        pinned_stops = self.config['pinned_stops']
+        self.search_bar = QtWidgets.QLineEdit(pinned_stops[0] if pinned_stops else 'Chalmers')
+        self.search_bar_style = FingerSizedIconsStyle() # Kept here, setStyle doesn't take ownership
+        self.search_bar.setStyle(self.search_bar_style)
         self.layout.addWidget(self.search_bar)
         self.search_bar.textChanged.connect(self.get_and_update_departures_table)
-        completer = QtWidgets.QCompleter(self.reseplaneraren.get_stop_names())
-        completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
-        completer.setFilterMode(QtCore.Qt.MatchContains)
-        self.search_bar.setCompleter(completer)
+        self.search_bar.textChanged.connect(self.update_pin_button)
+        self.search_bar.textEdited.connect(self.update_search_results)
+        self.stop_names_model = QtCore.QStringListModel()
+        self.search_bar.setCompleter(UnfilteredCompleter(self.stop_names_model, self))
+
+        pinned_list_action = self.search_bar.addAction(QtGui.QIcon(os.path.join(VASTTRAFIK_WIDGET_DIR, 'pinned_list.svg')), QtWidgets.QLineEdit.LeadingPosition)
+        pinned_list_action.triggered.connect(self.show_pinned_stops)
+        self.pin_action = self.search_bar.addAction(QtGui.QIcon(os.path.join(VASTTRAFIK_WIDGET_DIR, 'pin_off.svg')), QtWidgets.QLineEdit.TrailingPosition)
+        self.pin_action.triggered.connect(self.toggle_pin)
 
         self.departure_table = QtWidgets.QTreeWidget()
         #self.departure_table.setContentsMargins(100, 100, 100, 100)
@@ -52,7 +79,16 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
     def __init__(self, reseplaneraren):
         super().__init__()
         self.reseplaneraren = reseplaneraren
+        try:
+            with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
+                self.config = json.load(f)
+        except (FileNotFoundError, ValueError):
+            self.config = {}
+        stop_names = self.reseplaneraren.get_stop_names()
+        # Stops Västtrafik has renamed or removed since they were pinned drop out
+        self.config['pinned_stops'] = [stop for stop in self.config.get('pinned_stops', ['Chalmers']) if stop in stop_names]
         self.setup_ui()
+        self.update_pins()
         self.thread_pool = get_thread_pool()
         self.table_initialized = False
 
@@ -123,3 +159,42 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
 
     def tab_changed(self):
         self.get_and_update_departures_table()
+
+    def toggle_pin(self):
+        stop = self.search_bar.text()
+        pinned_stops = self.config['pinned_stops']
+        if stop in pinned_stops:
+            pinned_stops.remove(stop)
+        elif stop in self.reseplaneraren.get_stop_names():
+            pinned_stops.append(stop)
+        else:
+            return
+        self.save_config()
+        self.search_bar.completer().popup().hide() # An open pinned list would otherwise fill up with every stop
+        self.update_pins()
+
+    def update_pins(self):
+        self.other_stops = sorted(self.reseplaneraren.get_stop_names() - set(self.config['pinned_stops']))
+        self.update_search_results(self.search_bar.text())
+        self.update_pin_button()
+
+    def update_search_results(self, text):
+        # Pinned stops always lead, so an empty search lists only them
+        text = text.casefold()
+        matches = [stop for stop in self.other_stops if text in stop.casefold()] if text else []
+        matches.sort(key=lambda stop: not stop.casefold().startswith(text)) # Names starting with the search first, each part still alphabetical
+        self.stop_names_model.setStringList(self.config['pinned_stops'] + matches)
+
+    def update_pin_button(self):
+        icon = 'pin_on.svg' if self.search_bar.text() in self.config['pinned_stops'] else 'pin_off.svg'
+        self.pin_action.setIcon(QtGui.QIcon(os.path.join(VASTTRAFIK_WIDGET_DIR, icon)))
+
+    def show_pinned_stops(self):
+        self.stop_names_model.setStringList(self.config['pinned_stops'])
+        self.search_bar.completer().complete()
+
+    def save_config(self):
+        # Write a temp file and swap it in, so a power cut mid-write can't leave a half config.json
+        with open(CONFIG_PATH + '.tmp', 'w', encoding='utf-8') as f:
+            f.write(json.dumps(self.config, indent=4, sort_keys=True, ensure_ascii=False))
+        os.replace(CONFIG_PATH + '.tmp', CONFIG_PATH)

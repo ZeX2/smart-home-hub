@@ -9,16 +9,20 @@ DATA_PATH = os.path.join(APPDIR_PATH, 'SE.pkl')
 
 ALL_HEADER_NAMES = ['geonameid', 'name', 'asciiname', 'alternatenames', 'latitude', 'longitude',' feature class', 'feature code', 'country code',
     'cc2', 'admin1 code', 'admin2 code', 'admin3 code', 'admin4 code', 'population', 'elevation', 'dem', 'timezone', 'modification date']
-KEEP_HEADER_NAMES = ['name', 'latitude', 'longitude']
+KEEP_HEADER_NAMES = ['name', 'latitude', 'longitude', 'population']
 
 class SEData():
     def __init__(self):
         # Check if pickle data is created or not
         if os.path.exists(DATA_PATH):
             self.data = pd.read_pickle(DATA_PATH)
-        else:
+        # Pickles from before population was kept are rebuilt once
+        if not os.path.exists(DATA_PATH) or 'population' not in self.data:
             self.data = pd.read_table(ALL_DATA_PATH, delimiter='\t', index_col=0, names=ALL_HEADER_NAMES)
-            self.data = self.data[KEEP_HEADER_NAMES]
+            # Towns before counties, parishes and airports, then biggest first, so suggestions
+            # and places sharing a name favour the one people mean ('Stockholm' before 'Stockholm County')
+            self.data['town'] = self.data[' feature class'] == 'P'
+            self.data = self.data.sort_values(['town', 'population', 'name'], ascending=[False, False, True])[KEEP_HEADER_NAMES]
             self.data.to_pickle(DATA_PATH)
 
     def get_names(self):

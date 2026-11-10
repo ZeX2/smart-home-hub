@@ -98,8 +98,8 @@ class QGraphicsPixmapItemToggleButton(QtWidgets.QGraphicsPixmapItem):
         self.setSelected(False)
 
     def long_click(self):
-        self.long_click_func()
-    
+        self.long_click_func(*self.long_click_func_args, **self.long_click_func_kwargs)
+
     def short_click(self):
         self.toggle_pixmap()
         self.short_click_func(*self.short_click_func_args, **self.short_click_func_kwargs)

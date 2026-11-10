@@ -1,5 +1,6 @@
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
+from math import acos, asin, cos, degrees, radians, sin
 
 from requests import Session, Request
 from requests.adapters import HTTPAdapter
@@ -91,6 +92,49 @@ class SMHIForecastApi(SMHIApi):
 
     def get_temperatures(self, lat, lon):
         return self.get_point_weather_data(lat, lon, 'air_temperature', 'symbol_code')
+
+    def get_forecast(self, lat, lon):
+        '''[(local time, temp, symbol, precipitation mm)], hourly at first, then 6-, 12- and 24-hourly.'''
+        return self.get_point_weather_data(lat, lon, 'air_temperature', 'symbol_code', 'precipitation_amount_mean')
+
+def daily_forecast(forecast):
+    '''[(date, min temp, max temp, symbol, precipitation mm)] per day, symbol from the time nearest noon.'''
+    days = {}
+    for entry in forecast:
+        days.setdefault(entry[0].date(), []).append(entry)
+    daily = []
+    for day, entries in days.items():
+        temps = [e[1] for e in entries]
+        noon = min(entries, key=lambda e: abs(e[0].hour - 12))
+        # shortcut: amounts are summed per period end, so a 24 h period late in the forecast lands on one day, fine for a daily glance
+        daily.append((day, min(temps), max(temps), noon[2], sum(e[3] or 0 for e in entries)))
+    return daily
+
+def sun_times(lat, lon, day):
+    '''(sunrise, sunset) as UTC datetimes, or 'Midnattssol' / 'Polarnatt' when the sun never sets or rises.
+    The sunrise equation, see https://en.wikipedia.org/wiki/Sunrise_equation'''
+    n = day.toordinal() - date(2000, 1, 1).toordinal()
+    j_star = n - lon/360
+    m = radians((357.5291 + 0.98560028*j_star) % 360)
+    c = 1.9148*sin(m) + 0.02*sin(2*m) + 0.0003*sin(3*m)
+    ecliptic_lon = radians((degrees(m) + c + 180 + 102.9372) % 360)
+    j_transit = j_star + 0.0053*sin(m) - 0.0069*sin(2*ecliptic_lon)
+    declination = asin(sin(ecliptic_lon)*sin(radians(23.4397)))
+    # -0.833° accounts for refraction and the sun's radius
+    cos_hour_angle = (sin(radians(-0.833)) - sin(radians(lat))*sin(declination)) / (cos(radians(lat))*cos(declination))
+    if cos_hour_angle < -1:
+        return 'Midnattssol'
+    if cos_hour_angle > 1:
+        return 'Polarnatt'
+    half_day = degrees(acos(cos_hour_angle))/360
+    j2000 = datetime(2000, 1, 1, 12, tzinfo=timezone.utc)
+    return j2000 + timedelta(days=j_transit - half_day), j2000 + timedelta(days=j_transit + half_day)
+
+def sun_text(lat, lon, day):
+    times = sun_times(lat, lon, day)
+    if isinstance(times, str):
+        return times
+    return '  '.join(f'{arrow} {t.astimezone():%H:%M}' for arrow, t in zip('↑↓', times))
 
 class SMHIObservationApi(SMHIApi):
     def __init__(self):

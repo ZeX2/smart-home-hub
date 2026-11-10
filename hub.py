@@ -7,6 +7,7 @@ from design import SmartHomeHubUi, SIDE_MENU_WIDTH, SIDE_MENU_EXTENDED_WIDTH
 
 from api.se_data.se_data import SEData
 from api.smhi.smhi import SMHIForecastApi
+from api.pollen.pollen import PollenApi
 from api.vasttrafik.vasttrafik import VasttrafikReseplanerarenApi
 from api.notion_note.notion_note import NotionNoteApi
 from api.daily_word.daily_word import DailyWordApi
@@ -28,6 +29,7 @@ class SmartHomeHub(SmartHomeHubUi):
         self.se_data = SEData()
         self.reseplaneraren = VasttrafikReseplanerarenApi()
         self.smhi_forecast = SMHIForecastApi()
+        self.pollen = PollenApi()
         self.notion_note = NotionNoteApi()
         self.daily_word = DailyWordApi()
         self.daily_painting_data = DailyPaintingData()

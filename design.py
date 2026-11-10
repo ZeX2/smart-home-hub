@@ -22,6 +22,7 @@ from widgets.note_board.note_board_widget import NoteBoardWidget
 from widgets.daily_painting.daily_painting_widget import DailyPaintingWidget
 from widgets.manage_home.manage_home_widget import ManageHomeWidget
 from widgets.unlock_gate.unlock_gate_widget import UnlockGateWidget
+from widgets.settings.settings_widget import SettingsWidget
 from common_widgets.virtual_keyboard import VirtualKeyboard
 
 # https://www.pythonguis.com/tutorials/creating-your-own-custom-widgets/
@@ -32,6 +33,7 @@ SIDE_MENU_WIDTH = 40
 SIDE_MENU_ICON_WIDTH = 30
 SIDE_MENU_EXTENDED_WIDTH = 170
 KEYBOARD_HEIGHT = 220
+HOME_COORDINATES = (57.71667, 12) # Göteborg
 INACTIVITY_EVENTS = [QtCore.QEvent.MouseMove, QtCore.QEvent.KeyPress, QtCore.QEvent.MouseButtonPress]
 
 icon_path = lambda fn : os.path.join(DESIGN_DIR, 'icons', fn)
@@ -210,16 +212,18 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         self.home_layout.setAlignment(QtCore.Qt.AlignAbsolute)
         self.home_layout.setSpacing(30)
 
-        self.home_layout.addWidget(CurrentWeatherWidget(self.smhi_forecast, 57.71667, 12), 0, 0, QtCore.Qt.AlignCenter)
+        self.home_layout.addWidget(CurrentWeatherWidget(self.smhi_forecast, self.pollen, *HOME_COORDINATES), 0, 0, QtCore.Qt.AlignCenter)
         self.home_layout.addWidget(AnalogClockWidget(), 0, 1, QtCore.Qt.AlignCenter)
         self.home_layout.addWidget(NoteBoardWidget(self.notion_note), 1, 0, QtCore.Qt.AlignCenter)
         self.home_layout.addWidget(DailyWordWidget(self.daily_word), 1, 1, QtCore.Qt.AlignCenter)
-        #self.home_layout.addWidget(WeatherWidget(self.se_data, self.smhi_forecast))
-        
+
         # Add side meny buttons
         self.side_menu_button = SideMenyButton(self.side_menu, 'Meny', os.path.join(DESIGN_DIR, 'icons', 'bars.svg'))
         self.side_menu_button.clicked.connect(self.side_menu_animate)
         SideMenyButton(self.side_menu, 'Hemma', icon_path('home.svg'), self.stacked_widget, self.home_widget)
+        weather_widget = WeatherWidget(self.se_data, self.smhi_forecast, self.pollen, *HOME_COORDINATES)
+        self.keyboard.attach(weather_widget.search_bar)
+        SideMenyButton(self.side_menu, 'Väder', icon_path('weather.svg'), self.stacked_widget, weather_widget)
         departures_widget = VasttrafikDeparturesWidget(self.reseplaneraren)
         self.keyboard.attach(departures_widget.search_bar)
         SideMenyButton(self.side_menu, 'Reseplaneraren', icon_path('tram.svg'), self.stacked_widget, departures_widget)
@@ -229,7 +233,7 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         SideMenyButton(self.side_menu, 'Manage Home', icon_path('lightbulb.svg'), self.stacked_widget, ManageHomeWidget())
         SideMenyButton(self.side_menu, 'Unlock Gates', icon_path('lock.svg'), self.stacked_widget, UnlockGateWidget(self.unlock_gate))
         SideMenyButton(self.side_menu, 'Screensaver', icon_path('gallery.svg'), widget=Screensaver(self), top=self.height()-SIDE_MENU_WIDTH*2)
-        SideMenyButton(self.side_menu, 'Settings', icon_path('settings.svg'), top=self.height()-SIDE_MENU_WIDTH)
+        SideMenyButton(self.side_menu, 'Settings', icon_path('settings.svg'), self.stacked_widget, SettingsWidget(self.reseplaneraren), top=self.height()-SIDE_MENU_WIDTH)
 
         self.stacked_widget.raise_()
         self.keyboard.raise_()

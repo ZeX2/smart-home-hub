@@ -3,16 +3,26 @@ try:
 except:
     from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
+from datetime import date
+
+from api.smhi.smhi import sun_text
+from api.pollen.pollen import LEVELS
 from common.qthreading import Worker, get_thread_pool
 
 class CurrentWeatherUi(QtWidgets.QFrame):
     
     def setup_ui(self):
-        self.setFixedSize(275, 150)
+        self.setFixedSize(275, 190)
         self.setObjectName('CurrentWeather')
         self.setStyleSheet('QFrame#CurrentWeather {border: 0px solid black; border-radius: 25px}')
 
-        self.layout = QtWidgets.QHBoxLayout(self)
+        column = QtWidgets.QVBoxLayout(self)
+        self.layout = QtWidgets.QHBoxLayout()
+        column.addLayout(self.layout)
+        self.info_label = QtWidgets.QLabel()
+        self.info_label.setStyleSheet('font-size: 15px')
+        column.addWidget(self.info_label)
+
         self.temp_label = QtWidgets.QLabel('N/A')
         self.temp_label.setFont(QtGui.QFont('', 50))
         self.layout.addWidget(self.temp_label)
@@ -35,11 +45,13 @@ class CurrentWeatherUi(QtWidgets.QFrame):
 
 class CurrentWeatherWidget(CurrentWeatherUi):
 
-    def __init__(self, smhi_forecast, lat, lon):
+    def __init__(self, smhi_forecast, pollen, lat, lon):
         super().__init__()
         self.setup_ui()
 
         self.smhi_forecast = smhi_forecast
+        self.pollen = pollen
+        self.top_pollen = ''
         self.lat = lat
         self.lon = lon
         self.thread_pool = get_thread_pool()
@@ -54,6 +66,18 @@ class CurrentWeatherWidget(CurrentWeatherUi):
         self.worker = Worker(self.smhi_forecast.get_temperatures, self.lat, self.lon)
         self.worker.signals.result.connect(self.set_weather)
         self.thread_pool.start(self.worker)
+        self.pollen_worker = Worker(self.pollen.get_pollen, self.lat, self.lon)
+        self.pollen_worker.signals.result.connect(self.set_pollen)
+        self.thread_pool.start(self.pollen_worker)
+        self.update_info()
+
+    def update_info(self):
+        self.info_label.setText(sun_text(self.lat, self.lon, date.today()) + self.top_pollen)
+
+    def set_pollen(self, result):
+        levels = result[1]
+        self.top_pollen = f'\nPollen: {levels[0][0]} {LEVELS[levels[0][1]].lower()}' if levels else ''
+        self.update_info()
 
     def set_weather(self, forecast):
         weather_data = forecast[0]

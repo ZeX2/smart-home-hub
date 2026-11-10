@@ -65,7 +65,7 @@ class VasttrafikReseplanerarenApi(VasttrafikApi):
 
         self.set_stops_data()
 
-    def set_stops_data(self):
+    def set_stops_data(self, force=False):
         def get_stops_data():
             request = Request('GET', f'{GEO_API}/StopPoints')
             data = self.send(request).json()
@@ -86,17 +86,20 @@ class VasttrafikReseplanerarenApi(VasttrafikApi):
 
         last_modified = datetime.fromtimestamp(os.path.getmtime(STOPS_PATH_JSON))
 
-        if datetime.now() - last_modified > timedelta(weeks=1):
+        if force or datetime.now() - last_modified > timedelta(weeks=1):
             try:
                 get_stops_data()
             except Exception as e:
+                if force:
+                    raise # The settings page shows the error, the old stops stay loaded
                 print(f'VasttrafikReseplanerarenApi: failed to refresh stops, using old ones: {e}')
             with open(STOPS_PATH_JSON, encoding='utf-8') as f:
                 stop_locations = json.load(f)
 
-        self.stops_data = ((stop_location['name'], stop_location['stopAreaGid']) for stop_location in stop_locations)
-        self.stops_data = pd.DataFrame(self.stops_data, columns=['name', 'id'])
-        self.stops_data.set_index('id', inplace=True)
+        # Non-regular points are Närtrafik/flex-taxi pickup addresses with no timetabled departures
+        stops_data = ((stop_location['name'], stop_location['stopAreaGid']) for stop_location in stop_locations if stop_location['isRegularTraffic'])
+        # Swap in the finished frame in one go, a forced refresh runs on a worker thread while the UI reads it
+        self.stops_data = pd.DataFrame(stops_data, columns=['name', 'id']).set_index('id')
 
     def get_stop_names(self):
         return set(self.stops_data['name'])
