@@ -17,7 +17,7 @@ except:
     from PySide2 import QtGui, QtWidgets # type: ignore
 
 import spotipy
-from widgets.spotify.spotify_widget import MarqueeLabel, SpotifyWidget
+from widgets.spotify.spotify_widget import SPOTIFY_WIDGET_DIR, MarqueeLabel, SpotifyWidget
 
 def track(name):
     return {'type': 'track', 'uri': f'spotify:track:{name}', 'name': name, 'artists': [],
@@ -25,6 +25,12 @@ def track(name):
 
 def playback(name, progress_ms=0):
     return {'is_playing': True, 'progress_ms': progress_ms, 'item': track(name)}
+
+def device(name, is_active=False, is_restricted=False):
+    return {'id': f'{name}-id', 'name': name, 'is_active': is_active, 'is_restricted': is_restricted}
+
+def shows_icon(button, icon):
+    return button.pixmap().toImage() == QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, icon)).toImage()
 
 class PollTest(unittest.TestCase):
 
@@ -173,6 +179,77 @@ class PollTest(unittest.TestCase):
         self.widget.playback_received((0, playback('Bravo', 1_000)))
         self.assertEqual(self.widget.crossfade_ms, 0)
         self.assertEqual(self.widget.duration_time_label.text(), '03:20')
+
+    def test_device_button_is_green_while_a_device_is_connected(self):
+        self.assertTrue(shows_icon(self.widget.device_button, 'device_off.png'))
+        self.widget.playback_received((0, {**playback('Alpha'), 'device': device('Kitchen')}))
+        self.assertTrue(shows_icon(self.widget.device_button, 'device_on.png'))
+        # Nothing active, like after a long pause
+        self.widget.playback_received((0, None))
+        self.assertTrue(shows_icon(self.widget.device_button, 'device_off.png'))
+
+    def test_choosing_a_device_switches_to_it(self):
+        self.widget.show()
+        self.widget.devices_received([device('Kitchen', is_active=True), device('Phone')])
+        kitchen, phone = self.widget.device_menu.actions()
+        self.assertTrue(self.widget.device_menu.isVisible())
+        self.assertEqual(self.widget.device_menu.defaultAction(), kitchen)  # styled green
+        self.assertFalse(kitchen.isCheckable())  # no tick next to it
+
+        # Reopened with nothing active, nothing stays green
+        self.widget.devices_received([device('Kitchen'), device('Phone')])
+        self.assertIsNone(self.widget.device_menu.defaultAction())
+        kitchen, phone = self.widget.device_menu.actions()
+
+        phone.trigger()
+        self.widget.spotify_pool.waitForDone()
+        self.widget.sp.transfer_playback.assert_called_once_with('Phone-id', True)
+
+    def test_switching_while_paused_stays_paused(self):
+        self.widget.playback_received((0, {**playback('Alpha'), 'is_playing': False}))
+        self.widget.show()
+        self.widget.devices_received([device('Phone')])
+        self.widget.device_menu.actions()[0].trigger()
+        self.widget.spotify_pool.waitForDone()
+        self.widget.sp.transfer_playback.assert_called_once_with('Phone-id', False)
+
+    def test_old_device_right_after_a_switch_is_ignored(self):
+        self.widget.show()
+        self.widget.devices_received([device('Phone')])
+        self.widget.device_menu.actions()[0].trigger()
+        # Spotify may still report nothing connected for a moment
+        self.widget.playback_received((self.widget.commands_sent, None))
+        self.assertTrue(shows_icon(self.widget.device_button, 'device_on.png'))
+
+        # If it still does later, the switch failed, so show the truth
+        self.widget.device_switch_deadline = 0
+        self.widget.playback_received((self.widget.commands_sent, None))
+        self.assertTrue(shows_icon(self.widget.device_button, 'device_off.png'))
+
+    def test_device_menu_disables_what_cant_be_chosen(self):
+        self.widget.show()
+        self.widget.devices_received([device('Tom & Jerry'), device('TV', is_restricted=True)])
+        tom_and_jerry, tv = self.widget.device_menu.actions()
+        self.assertEqual(tom_and_jerry.text(), 'Tom && Jerry')
+        self.assertTrue(tom_and_jerry.isEnabled())
+        self.assertFalse(tv.isEnabled())
+
+    def test_failed_device_lookup_says_none_found(self):
+        self.widget.sp.devices.side_effect = spotipy.SpotifyException(500, -1, 'Down')
+        self.widget.show()
+        self.widget.devices_received(self.widget.fetch_devices())
+        self.assertEqual([action.text() for action in self.widget.device_menu.actions()], ['No devices found'])
+        self.assertFalse(self.widget.device_menu.actions()[0].isEnabled())
+
+    def test_device_menu_closes_with_the_page(self):
+        self.widget.show()
+        self.widget.devices_received([device('Phone')])
+        self.widget.hide()  # like when the screensaver comes on
+        self.assertFalse(self.widget.device_menu.isVisible())
+
+        # A list arriving after leaving the page doesn't open it either
+        self.widget.devices_received([device('Phone')])
+        self.assertFalse(self.widget.device_menu.isVisible())
 
 class MarqueeLabelTest(unittest.TestCase):
 

@@ -207,9 +207,21 @@ class SpotifyUi(QtWidgets.QWidget):
         self.queue_button = QLabelButton(os.path.join(SPOTIFY_WIDGET_DIR, 'music_queue.png'))
         self.queue_button.clicked.connect(self.queue_button_clicked)
         self.queue_button.setFixedSize(25, 25)
+        self.device_button = QLabelButton(os.path.join(SPOTIFY_WIDGET_DIR, 'device_off.png'))
+        self.device_button.clicked.connect(self.device_button_clicked)
+        self.device_button.setFixedSize(25, 25)
+        self.device_menu = QtWidgets.QMenu(self)
+        self.device_menu.setStyleSheet('''
+            QMenu { font-family: Verdana; font-size: 15px; }
+            QMenu::item { padding: 10px 25px; }
+            QMenu::item:default { color: #19a149; }  /* the device in use, green like the on icons */
+        ''')
+        # Tapping outside only closes the menu, rather than also pressing the control underneath
+        self.device_menu.setAttribute(QtCore.Qt.WA_NoMouseReplay)
         self.music_controls_layout.addSpacerItem(outer_left_spacer)
-        # As wide as the gap and queue button on the right, so play stays centered
-        self.music_controls_layout.addSpacerItem(QtWidgets.QSpacerItem(45, 10))
+        # The device button and its gap mirror the queue button and its gap on the right, so play stays centered
+        self.music_controls_layout.addWidget(self.device_button)
+        self.music_controls_layout.addSpacerItem(QtWidgets.QSpacerItem(20, 10))
         self.music_controls_layout.addWidget(self.shuffle_button)
         self.music_controls_layout.addSpacerItem(left_spacer)
         self.music_controls_layout.addWidget(self.prev_button)
@@ -314,6 +326,7 @@ class SpotifyWidget(SpotifyUi):
         self.commands_sent = 0
         self.skipped_from = []
         self.skip_deadline = 0
+        self.device_switch_deadline = 0
         self.queue = []
         self.queue_for = None
         self.context_names = {}
@@ -388,6 +401,10 @@ class SpotifyWidget(SpotifyUi):
         self.curr_playing = curr_playing
         self.curr_playing_last_updated = datetime.now()
 
+        # Spotify reports the old device for a moment after a switch; if the switch failed, this puts the real one back
+        if time.monotonic() >= self.device_switch_deadline:
+            self.update_device_button(self.curr_playing.get('device'))
+
         if not self.curr_playing or not self.curr_playing['item']:
             return
 
@@ -451,6 +468,48 @@ class SpotifyWidget(SpotifyUi):
         next_cover_url = pick_album_cover_url(queue[0]) if queue else None
         if next_cover_url and next_cover_url not in self.album_covers:
             self.start_album_cover_download(next_cover_url)
+
+    def device_button_clicked(self):
+        self.run_spotify(self.fetch_devices, on_result=self.devices_received)
+
+    def fetch_devices(self):
+        try:
+            return self.sp.devices()['devices']
+        except Exception as e:
+            print(f'SpotifyWidget: failed to get devices: {e}')
+            return []
+
+    def devices_received(self, devices):
+        if self.visibleRegion().isEmpty():
+            return  # left the page while waiting for Spotify
+        self.device_menu.clear()
+        for device in devices:
+            action = self.device_menu.addAction(device['name'].replace('&', '&&'))  # a lone & would underline the next letter
+            action.setEnabled(bool(device['id']) and not device['is_restricted'])  # Spotify refuses commands to restricted devices
+            action.triggered.connect(lambda checked, device=device: self.device_chosen(device))
+            if device['is_active']:
+                # Marked as the default to color it green; checkable rows would get a tick in the Mac style
+                self.device_menu.setDefaultAction(action)
+        if not devices:
+            self.device_menu.addAction('No devices found').setEnabled(False)
+        # Centered above the button, with a gap that also clears the taller play button
+        size = self.device_menu.sizeHint()
+        top_center = self.device_button.mapToGlobal(QtCore.QPoint(self.device_button.width() // 2, -10))
+        self.device_menu.popup(top_center - QtCore.QPoint(size.width() // 2, size.height()))
+
+    def device_chosen(self, device):
+        self.update_device_button(device)
+        self.device_switch_deadline = time.monotonic() + 5
+        # Keep playing or paused as it is; with nothing playing, starting it is why a device was picked
+        self.send_command(self.sp.transfer_playback, device['id'], self.curr_playing.get('is_playing', True))
+
+    def update_device_button(self, device):
+        icon = 'device_on.png' if device else 'device_off.png'
+        self.device_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, icon)))
+
+    def hideEvent(self, event):
+        super().hideEvent(event)
+        self.device_menu.close()  # it's its own window, so it would stay on top of the screensaver
 
     def queue_button_clicked(self):
         self.queue_page.setVisible(self.queue_page.isHidden())

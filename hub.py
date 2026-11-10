@@ -40,6 +40,7 @@ class SmartHomeHub(SmartHomeHubUi):
         self.show()
 
     def tab_changed(self, index):
+        self.keyboard.hide()
         widget = self.stacked_widget.currentWidget()
         tab_changed = getattr(widget, 'tab_changed', None)
         if callable(tab_changed):

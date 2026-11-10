@@ -22,6 +22,7 @@ from widgets.note_board.note_board_widget import NoteBoardWidget
 from widgets.daily_painting.daily_painting_widget import DailyPaintingWidget
 from widgets.manage_home.manage_home_widget import ManageHomeWidget
 from widgets.unlock_gate.unlock_gate_widget import UnlockGateWidget
+from common_widgets.virtual_keyboard import VirtualKeyboard
 
 # https://www.pythonguis.com/tutorials/creating-your-own-custom-widgets/
 # Jävligt nice widget?!
@@ -30,6 +31,7 @@ DESIGN_DIR = os.path.dirname(os.path.realpath(__file__))
 SIDE_MENU_WIDTH = 40
 SIDE_MENU_ICON_WIDTH = 30
 SIDE_MENU_EXTENDED_WIDTH = 170
+KEYBOARD_HEIGHT = 220
 INACTIVITY_EVENTS = [QtCore.QEvent.MouseMove, QtCore.QEvent.KeyPress, QtCore.QEvent.MouseButtonPress]
 
 icon_path = lambda fn : os.path.join(DESIGN_DIR, 'icons', fn)
@@ -196,6 +198,10 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         self.stacked_widget.setGeometry(QtCore.QRect(SIDE_MENU_WIDTH, 0, self.width()-SIDE_MENU_WIDTH, self.height()))
         self.stacked_widget.currentChanged.connect(self.tab_changed)
 
+        # Virtual keyboard, covers the bottom of the pages while a search bar is used
+        self.keyboard = VirtualKeyboard(self.hub_widget)
+        self.keyboard.setGeometry(QtCore.QRect(SIDE_MENU_WIDTH, self.height()-KEYBOARD_HEIGHT, self.width()-SIDE_MENU_WIDTH, KEYBOARD_HEIGHT))
+
         # Home Widget
         self.home_widget = QtWidgets.QWidget()
         self.home_layout = QtWidgets.QGridLayout()
@@ -214,7 +220,9 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         self.side_menu_button = SideMenyButton(self.side_menu, 'Meny', os.path.join(DESIGN_DIR, 'icons', 'bars.svg'))
         self.side_menu_button.clicked.connect(self.side_menu_animate)
         SideMenyButton(self.side_menu, 'Hemma', icon_path('home.svg'), self.stacked_widget, self.home_widget)
-        SideMenyButton(self.side_menu, 'Reseplaneraren', icon_path('tram.svg'), self.stacked_widget, VasttrafikDeparturesWidget(self.reseplaneraren))
+        departures_widget = VasttrafikDeparturesWidget(self.reseplaneraren)
+        self.keyboard.attach(departures_widget.search_bar)
+        SideMenyButton(self.side_menu, 'Reseplaneraren', icon_path('tram.svg'), self.stacked_widget, departures_widget)
         SideMenyButton(self.side_menu, 'Västtrafik Live Map', icon_path('map.svg'), self.stacked_widget, VasttrafikLiveMapWidget(self.reseplaneraren))
         SideMenyButton(self.side_menu, 'Spotify', icon_path('spotify.svg'), self.stacked_widget, SpotifyWidget())
         SideMenyButton(self.side_menu, 'Daily Painting', icon_path('paintbrush.svg'), self.stacked_widget, DailyPaintingWidget(self.daily_painting_data))
@@ -224,4 +232,5 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         SideMenyButton(self.side_menu, 'Settings', icon_path('settings.svg'), top=self.height()-SIDE_MENU_WIDTH)
 
         self.stacked_widget.raise_()
+        self.keyboard.raise_()
         self.side_menu.raise_()
