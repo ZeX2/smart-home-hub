@@ -1,6 +1,5 @@
 import os
 import json
-import __main__
 
 import dirigera
 from dirigera.devices.light import _bound_to_kelvin  # the same Kelvin/mired fix set_color_temperature() checks against
@@ -14,15 +13,14 @@ except:
 from common_widgets.toggle_buttons import QGraphicsPixmapItemToggleButton
 from common_widgets.buttons import QGraphicsPixmapItemButton
 from common.qthreading import Worker, get_thread_pool
+from common.art import art_folder
 from .dirigera_secret import TOKEN, IP_ADDRESS
 
-MAIN_ART_DIR = os.path.join(os.path.dirname(os.path.realpath(__main__.__file__)), 'common_art')
-MANAGE_HOME_ART_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'art')
+FLOOR_PLAN_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'art', 'floor_plan.svg')
 
 CONFIG_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'config.json')
 
-def art(name):
-    return os.path.join(MANAGE_HOME_ART_DIR, name)
+art = art_folder('manage_home')
 
 # Device types drawn on the floor plan: (icon when off/closed, icon when on/open)
 ICONS = {
@@ -159,7 +157,7 @@ class ManageHomeUi(QtWidgets.QWidget):
 
         self.setStyleSheet(f'''
             QGraphicsView {{
-                background-image: url("{os.path.join(MANAGE_HOME_ART_DIR, 'floor_plan.svg')}");
+                background-image: url("{FLOOR_PLAN_PATH}");
                 background-repeat: no-repeat;
                 background-position: center;
             }}
@@ -172,8 +170,8 @@ class ManageHomeUi(QtWidgets.QWidget):
 
 
         self.drag_button = QGraphicsPixmapItemToggleButton(
-            os.path.join(MANAGE_HOME_ART_DIR, 'click.svg'),
-            os.path.join(MANAGE_HOME_ART_DIR, 'drag.svg'),
+            art('click.svg'),
+            art('drag.svg'),
             w=50,
             h=50,
             active=False
@@ -183,7 +181,7 @@ class ManageHomeUi(QtWidgets.QWidget):
         self.drag_button.setPos(self.scene.width()+10, self.scene.height()-55)
 
         self.refresh_button = QGraphicsPixmapItemButton(
-            os.path.join(MAIN_ART_DIR, 'refresh.svg'),
+            art('refresh.svg'),
             lambda: self.restart_hub(),
             lambda: None,
             50,
@@ -448,6 +446,6 @@ class ManageHomeWidget(ManageHomeUi):
             if device_type == 'environmentSensor':
                 self.air_labels[id] = QtWidgets.QGraphicsTextItem()
                 self.air_labels[id].setParentItem(self.buttons[id])
-                self.air_labels[id].setPos(52, 12)
+                self.air_labels[id].setPos(42, 12)
 
             self.refresh_item(id)

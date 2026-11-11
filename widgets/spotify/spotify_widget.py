@@ -14,10 +14,12 @@ except:
 
 from common_widgets.buttons import QLabelButton
 from common.qthreading import Worker, get_thread_pool
+from common.art import art_folder
 from .spotify_tokens import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 
 SPOTIFY_WIDGET_DIR = os.path.dirname(os.path.realpath(__file__))
 CONFIG_PATH = os.path.join(SPOTIFY_WIDGET_DIR, 'config.json')
+art = art_folder('spotify')
 SCOPES = ['user-library-read', 'user-read-recently-played',
     'user-modify-playback-state', 'user-read-currently-playing',
     'user-read-playback-state', 'app-remote-control']
@@ -152,9 +154,9 @@ class SpotifyUi(QtWidgets.QWidget):
         now_playing_layout.addLayout(self.album_cover_layout)
 
         self.title_label = MarqueeLabel()
-        self.title_label.setStyleSheet('color: black; font-family: Verdana; font-size: 20px;')
+        self.title_label.setStyleSheet('color: black; font-size: 20px;')
         self.artist_label = MarqueeLabel()
-        self.artist_label.setStyleSheet('color: gray; font-family: Verdana; font-size: 15px;')
+        self.artist_label.setStyleSheet('color: gray; font-size: 15px;')
         now_playing_layout.addStretch(1)
         for label in (self.title_label, self.artist_label):
             label.setAlignment(QtCore.Qt.AlignCenter)
@@ -170,7 +172,7 @@ class SpotifyUi(QtWidgets.QWidget):
         self.queue_list = QtWidgets.QListWidget()
         self.queue_list.setStyleSheet('''
             QListWidget { border: none; }
-            QListWidget QLabel { font-family: Verdana; font-size: 13px; }
+            QListWidget QLabel { font-size: 13px; }
         ''')
         self.queue_list.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
         self.queue_list.setVerticalScrollMode(QtWidgets.QAbstractItemView.ScrollPerPixel)
@@ -189,30 +191,30 @@ class SpotifyUi(QtWidgets.QWidget):
         outer_right_spacer = QtWidgets.QSpacerItem(100, 10)
         left_spacer = QtWidgets.QSpacerItem(20, 10)
         right_spacer = QtWidgets.QSpacerItem(20, 10)
-        self.shuffle_button = QLabelButton(os.path.join(SPOTIFY_WIDGET_DIR, 'shuffle_off.png'))
+        self.shuffle_button = QLabelButton(art('shuffle_off.png'))
         self.shuffle_button.clicked.connect(self.shuffle_button_clicked)
         self.shuffle_button.setFixedSize(25, 25)
-        self.prev_button = QLabelButton(os.path.join(SPOTIFY_WIDGET_DIR, 'prev_btn.png'))
+        self.prev_button = QLabelButton(art('prev_btn.svg'))
         self.prev_button.clicked.connect(self.prev_button_clicked)
         self.prev_button.setFixedSize(40, 30)
-        self.play_button = QLabelButton(os.path.join(SPOTIFY_WIDGET_DIR, 'play_btn.png'))
+        self.play_button = QLabelButton(art('play_btn.svg'))
         self.play_button.clicked.connect(self.play_button_clicked)
         self.play_button.setFixedSize(35, 35)
-        self.next_button = QLabelButton(os.path.join(SPOTIFY_WIDGET_DIR, 'next_btn.png'))
+        self.next_button = QLabelButton(art('next_btn.svg'))
         self.next_button.clicked.connect(self.next_button_clicked)
         self.next_button.setFixedSize(40, 30)
-        self.repeat_button = QLabelButton(os.path.join(SPOTIFY_WIDGET_DIR, 'repeat_off.png'))
+        self.repeat_button = QLabelButton(art('repeat_off.png'))
         self.repeat_button.clicked.connect(self.repeat_button_clicked)
         self.repeat_button.setFixedSize(25, 25)
-        self.queue_button = QLabelButton(os.path.join(SPOTIFY_WIDGET_DIR, 'music_queue.png'))
+        self.queue_button = QLabelButton(art('music_queue.png'))
         self.queue_button.clicked.connect(self.queue_button_clicked)
         self.queue_button.setFixedSize(25, 25)
-        self.device_button = QLabelButton(os.path.join(SPOTIFY_WIDGET_DIR, 'device_off.png'))
+        self.device_button = QLabelButton(art('device_off.png'))
         self.device_button.clicked.connect(self.device_button_clicked)
         self.device_button.setFixedSize(25, 25)
         self.device_menu = QtWidgets.QMenu(self)
         self.device_menu.setStyleSheet('''
-            QMenu { font-family: Verdana; font-size: 15px; }
+            QMenu { font-size: 15px; }
             QMenu::item { padding: 10px 25px; }
             QMenu::item:default { color: #19a149; }  /* the device in use, green like the on icons */
         ''')
@@ -340,7 +342,7 @@ class SpotifyWidget(SpotifyUi):
         self.album_cover_url = None
         self.album_covers = {}
         self.album_cover_downloads = set()
-        self.no_album_cover = QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, 'no_album_cover.png'))
+        self.no_album_cover = QtGui.QPixmap(art('no_album_cover.png'))
 
         self.music_slider_timer = QtCore.QTimer()
         self.music_slider_timer.timeout.connect(self.update_progress_time)
@@ -434,9 +436,9 @@ class SpotifyWidget(SpotifyUi):
             self.update_progress_time()
 
         if self.curr_playing['is_playing']:
-            self.play_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, 'pause_btn.png')))
+            self.play_button.setPixmap(QtGui.QPixmap(art('pause_btn.svg')))
         else:
-            self.play_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, 'play_btn.png')))
+            self.play_button.setPixmap(QtGui.QPixmap(art('play_btn.svg')))
         self.update_shuffle_button()
         self.update_repeat_button()
 
@@ -505,7 +507,7 @@ class SpotifyWidget(SpotifyUi):
 
     def update_device_button(self, device):
         icon = 'device_on.png' if device else 'device_off.png'
-        self.device_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, icon)))
+        self.device_button.setPixmap(QtGui.QPixmap(art(icon)))
 
     def hideEvent(self, event):
         super().hideEvent(event)
@@ -531,8 +533,8 @@ class SpotifyWidget(SpotifyUi):
         else:
             heading, name = 'UP NEXT', ''
         self.queue_context_label.setText(f'''
-            <span style="color: gray; font-family: Verdana; font-size: 11px;">{heading}</span>
-            <span style="color: black; font-family: Verdana; font-size: 15px;">{name}</span>
+            <span style="color: gray; font-size: 11px;">{heading}</span>
+            <span style="color: black; font-size: 15px;">{name}</span>
         ''')
 
         self.queue_list.clear()
@@ -658,11 +660,11 @@ class SpotifyWidget(SpotifyUi):
 
     def update_shuffle_button(self):
         icon = 'shuffle_on.png' if self.curr_playing.get('shuffle_state') else 'shuffle_off.png'
-        self.shuffle_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, icon)))
+        self.shuffle_button.setPixmap(QtGui.QPixmap(art(icon)))
 
     def update_repeat_button(self):
         icon = {'context': 'repeat_on.png', 'track': 'reapeat_once.png'}.get(self.curr_playing.get('repeat_state'), 'repeat_off.png')
-        self.repeat_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, icon)))
+        self.repeat_button.setPixmap(QtGui.QPixmap(art(icon)))
 
     def music_slider_started_moving(self):
         self.music_slider_timer.stop()
@@ -683,12 +685,12 @@ class SpotifyWidget(SpotifyUi):
             self.music_slider_timer.stop()
             self.curr_playing['is_playing'] = False
             self.send_command(self.sp.pause_playback)
-            self.play_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, 'play_btn.png')))
+            self.play_button.setPixmap(QtGui.QPixmap(art('play_btn.svg')))
         else:
             self.music_slider_timer.start(1000)
             self.curr_playing['is_playing'] = True
             self.send_command(self.sp.start_playback)
-            self.play_button.setPixmap(QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, 'pause_btn.png')))
+            self.play_button.setPixmap(QtGui.QPixmap(art('pause_btn.svg')))
     
     def next_button_clicked(self):
         self.skip_track(self.sp.next_track, self.queue.pop(0) if self.queue else None)

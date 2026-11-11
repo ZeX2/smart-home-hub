@@ -17,7 +17,7 @@ except:
     from PySide2 import QtGui, QtWidgets # type: ignore
 
 import spotipy
-from widgets.spotify.spotify_widget import SPOTIFY_WIDGET_DIR, MarqueeLabel, SpotifyWidget
+from widgets.spotify.spotify_widget import MarqueeLabel, SpotifyWidget, art
 
 def track(name):
     return {'type': 'track', 'uri': f'spotify:track:{name}', 'name': name, 'artists': [],
@@ -30,7 +30,7 @@ def device(name, is_active=False, is_restricted=False):
     return {'id': f'{name}-id', 'name': name, 'is_active': is_active, 'is_restricted': is_restricted}
 
 def shows_icon(button, icon):
-    return button.pixmap().toImage() == QtGui.QPixmap(os.path.join(SPOTIFY_WIDGET_DIR, icon)).toImage()
+    return button.pixmap().toImage() == QtGui.QPixmap(art(icon)).toImage()
 
 class PollTest(unittest.TestCase):
 

@@ -1,6 +1,7 @@
 import sys
 
 from hub import SmartHomeHub
+from common.fonts import load_app_font
 
 try:
     from PySide6.QtWidgets import QApplication # type: ignore
@@ -9,6 +10,7 @@ except:
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    load_app_font(app)
     smart_home_hub = SmartHomeHub()
 
     if hasattr(app, 'exec'):

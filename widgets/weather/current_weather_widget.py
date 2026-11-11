@@ -8,6 +8,7 @@ from datetime import date
 from api.smhi.smhi import sun_text
 from api.pollen.pollen import LEVELS
 from common.qthreading import Worker, get_thread_pool
+from common.fonts import app_font
 
 class CurrentWeatherUi(QtWidgets.QFrame):
     
@@ -24,7 +25,7 @@ class CurrentWeatherUi(QtWidgets.QFrame):
         column.addWidget(self.info_label)
 
         self.temp_label = QtWidgets.QLabel('N/A')
-        self.temp_label.setFont(QtGui.QFont('', 50))
+        self.temp_label.setFont(app_font(67))
         self.layout.addWidget(self.temp_label)
 
         self.spacer = QtWidgets.QSpacerItem(5, 50)
@@ -34,7 +35,7 @@ class CurrentWeatherUi(QtWidgets.QFrame):
         self.layout.addLayout(self.symb_layout)
 
         self.weather_label = QtWidgets.QLabel('N/A')
-        self.weather_label.setFont(QtGui.QFont('', 18))
+        self.weather_label.setFont(app_font(24))
         self.weather_label.setWordWrap(True)
         self.symb_layout.addWidget(self.weather_label)
 

@@ -24,6 +24,7 @@ from widgets.manage_home.manage_home_widget import ManageHomeWidget
 from widgets.unlock_gate.unlock_gate_widget import UnlockGateWidget
 from widgets.settings.settings_widget import SettingsWidget
 from common_widgets.virtual_keyboard import VirtualKeyboard
+from common.art import art_folder
 
 # https://www.pythonguis.com/tutorials/creating-your-own-custom-widgets/
 # Jävligt nice widget?!
@@ -36,7 +37,7 @@ KEYBOARD_HEIGHT = 220
 HOME_COORDINATES = (57.71667, 12) # Göteborg
 INACTIVITY_EVENTS = [QtCore.QEvent.MouseMove, QtCore.QEvent.KeyPress, QtCore.QEvent.MouseButtonPress]
 
-icon_path = lambda fn : os.path.join(DESIGN_DIR, 'icons', fn)
+icon_path = art_folder('icons')
 
 class Screensaver(QtWidgets.QLabel):
 
@@ -218,7 +219,7 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
         self.home_layout.addWidget(DailyWordWidget(self.daily_word), 1, 1, QtCore.Qt.AlignCenter)
 
         # Add side meny buttons
-        self.side_menu_button = SideMenyButton(self.side_menu, 'Meny', os.path.join(DESIGN_DIR, 'icons', 'bars.svg'))
+        self.side_menu_button = SideMenyButton(self.side_menu, 'Meny', icon_path('bars.svg'))
         self.side_menu_button.clicked.connect(self.side_menu_animate)
         SideMenyButton(self.side_menu, 'Hemma', icon_path('home.svg'), self.stacked_widget, self.home_widget)
         weather_widget = WeatherWidget(self.se_data, self.smhi_forecast, self.pollen, *HOME_COORDINATES)

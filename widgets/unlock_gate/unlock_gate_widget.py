@@ -6,8 +6,10 @@ except:
     from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
 from common_widgets.timed_toggle_buttons import QTimedToggleButton
+from common.art import art_folder
 
 UNLOCK_GATE_WIDGET_DIR = os.path.dirname(os.path.realpath(__file__))
+art = art_folder('unlock_gate')
 
 class UnlockGateWidget(QtWidgets.QWidget):
 
@@ -41,10 +43,10 @@ class UnlockGateWidget(QtWidgets.QWidget):
 
         # (gate index, row, column) of each door on the block image
         for gate_index, row, column in [(0, 8, 13), (1, 8, 8), (2, 2, 12), (3, 4, 14), (4, 3, 6)]:
-            button = QTimedToggleButton(os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_closed.svg'),
-                                        os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open.svg'),
-                                        os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open_red.svg'),
-                                        os.path.join(UNLOCK_GATE_WIDGET_DIR, 'door_open_green.svg'),
+            button = QTimedToggleButton(art('door_closed.svg'),
+                                        art('door_open.svg'),
+                                        art('door_open_red.svg'),
+                                        art('door_open_green.svg'),
                                         # i=gate_index fixes the index now, else every button would open the last gate
                                         lambda i=gate_index: self.unlock_gate.unlock_door(self.unlock_gate.get_gates()[i]))
             button.setFixedSize(self.width()/columns, self.height()/rows)

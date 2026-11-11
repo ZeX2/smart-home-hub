@@ -1,6 +1,3 @@
-import os
-import __main__
-
 try:
     from PySide6 import QtGui, QtCore, QtWidgets # type: ignore
 except:
@@ -8,9 +5,10 @@ except:
 
 from common_widgets.buttons import QLabelButton
 from common.qthreading import Worker, get_thread_pool
+from common.fonts import app_font
+from common.art import art_folder
 
-MAIN_ART_DIR = os.path.join(os.path.dirname(os.path.realpath(__main__.__file__)), 'common_art')
-NOTE_BOARD_WIDGET_DIR = os.path.dirname(os.path.realpath(__file__))
+art = art_folder('common')
 
 class NoteBoardUi(QtWidgets.QFrame):
     
@@ -24,19 +22,19 @@ class NoteBoardUi(QtWidgets.QFrame):
         self.layout.addLayout(self.title_layout)
 
         self.title_label = QtWidgets.QLabel('Anslagstavla')
-        self.title_label.setFont(QtGui.QFont('', 18))
+        self.title_label.setFont(app_font(24))
         self.title_layout.addWidget(self.title_label)
 
         self.spacer = QtWidgets.QSpacerItem(5, 5, hData=QtWidgets.QSizePolicy.Expanding)
         self.title_layout.addSpacerItem(self.spacer)
 
-        self.refresh_button = QLabelButton(os.path.join(MAIN_ART_DIR, 'refresh.svg'))
+        self.refresh_button = QLabelButton(art('refresh.svg'))
         self.refresh_button.clicked.connect(self.update_note)
         self.refresh_button.setFixedSize(25, 25)
         self.title_layout.addWidget(self.refresh_button)
 
         self.note_label = QtWidgets.QLabel('N/A')
-        self.note_label.setFont(QtGui.QFont('', 11))
+        self.note_label.setFont(app_font(15))
         self.note_label.setWordWrap(True)
         self.layout.addWidget(self.note_label)
 

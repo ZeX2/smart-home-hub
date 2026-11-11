@@ -1,9 +1,10 @@
-import os
 from datetime import date, datetime, timedelta, timezone
 from math import acos, asin, cos, degrees, radians, sin
 
 from requests import Session, Request
 from requests.adapters import HTTPAdapter
+
+from common.art import art_folder
 
 WSYMB2_MEANING = [
     'Klart',
@@ -34,7 +35,7 @@ WSYMB2_MEANING = [
     'Snöfall',
     'Ymnigt snöfall'
 ]
-SMHI_DIR = os.path.dirname(os.path.realpath(__file__))
+art = art_folder('weather')
 TIMEOUT = 10
 
 class SMHIApi():
@@ -61,7 +62,7 @@ class SMHIForecastApi(SMHIApi):
         # See https://opendata.smhi.se/apidocs/metfcst/index.html for more info!
 
     def get_wsymb2_path(self, value):
-        return os.path.join(SMHI_DIR, 'wsymb2', str(value))
+        return art(f'{value}.svg')
 
     def get_wsymb2_meaning(self, value):
         return WSYMB2_MEANING[int(value)-1]

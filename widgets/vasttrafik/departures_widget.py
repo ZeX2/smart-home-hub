@@ -8,9 +8,11 @@ except:
     from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
 from common.qthreading import Worker, get_thread_pool
+from common.art import art_folder
 
 VASTTRAFIK_WIDGET_DIR = os.path.dirname(os.path.realpath(__file__))
 CONFIG_PATH = os.path.join(VASTTRAFIK_WIDGET_DIR, 'config.json')
+art = art_folder('vasttrafik')
 
 VECHILE_TYPE_SORT_ORDER = {'tram': 0, 'bus': 1} # Västtrafik sends transportMode in lowercase
 
@@ -61,9 +63,9 @@ class VasttrafikDeparturesUi(QtWidgets.QWidget):
         self.stop_names_model = QtCore.QStringListModel()
         self.search_bar.setCompleter(UnfilteredCompleter(self.stop_names_model, self))
 
-        pinned_list_action = self.search_bar.addAction(QtGui.QIcon(os.path.join(VASTTRAFIK_WIDGET_DIR, 'pinned_list.svg')), QtWidgets.QLineEdit.LeadingPosition)
+        pinned_list_action = self.search_bar.addAction(QtGui.QIcon(art('pinned_list.svg')), QtWidgets.QLineEdit.LeadingPosition)
         pinned_list_action.triggered.connect(self.show_pinned_stops)
-        self.pin_action = self.search_bar.addAction(QtGui.QIcon(os.path.join(VASTTRAFIK_WIDGET_DIR, 'pin_off.svg')), QtWidgets.QLineEdit.TrailingPosition)
+        self.pin_action = self.search_bar.addAction(QtGui.QIcon(art('pin_off.svg')), QtWidgets.QLineEdit.TrailingPosition)
         self.pin_action.triggered.connect(self.toggle_pin)
 
         self.departure_table = QtWidgets.QTreeWidget()
@@ -187,7 +189,7 @@ class VasttrafikDeparturesWidget(VasttrafikDeparturesUi):
 
     def update_pin_button(self):
         icon = 'pin_on.svg' if self.search_bar.text() in self.config['pinned_stops'] else 'pin_off.svg'
-        self.pin_action.setIcon(QtGui.QIcon(os.path.join(VASTTRAFIK_WIDGET_DIR, icon)))
+        self.pin_action.setIcon(QtGui.QIcon(art(icon)))
 
     def show_pinned_stops(self):
         self.stop_names_model.setStringList(self.config['pinned_stops'])

@@ -3,6 +3,8 @@ try:
 except:
     from PySide2 import QtGui, QtCore, QtWidgets # type: ignore
 
+from common.fonts import app_font
+
 
 class DigitalClockUi(QtWidgets.QWidget):
 
@@ -11,12 +13,12 @@ class DigitalClockUi(QtWidgets.QWidget):
 
         self.time_label = QtWidgets.QLabel()
         self.time_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.time_label.setFont(QtGui.QFont('Arial', 120, QtGui.QFont.Bold))
+        self.time_label.setFont(app_font(160, bold=True))
         self.layout.addWidget(self.time_label)
 
         self.date_label = QtWidgets.QLabel()
         self.date_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.date_label.setFont(QtGui.QFont('Arial', 50, QtGui.QFont.Bold))
+        self.date_label.setFont(app_font(67, bold=True))
         self.layout.addWidget(self.date_label)
 
 class DigitalClockWidget(DigitalClockUi):

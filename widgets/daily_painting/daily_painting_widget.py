@@ -8,9 +8,9 @@ except:
 FILE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 PAINTING_FMT = '''
-            <p style="color: black; font-family: Verdana; font-size: 20px; text-align: left;">{title}<p>
-            <p style="color: gray; font-family: Verdana; font-size: 15px; text-align: left;">{painter}<p>
-            <p style="color: black; font-family: Verdana; font-size: 10px; text-align: left;">{description}<p>
+            <p style="color: black; font-size: 20px; text-align: left;">{title}<p>
+            <p style="color: gray; font-size: 15px; text-align: left;">{painter}<p>
+            <p style="color: black; font-size: 10px; text-align: left;">{description}<p>
 '''
 
 class DailyPaintingUi(QtWidgets.QWidget):
