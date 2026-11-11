@@ -13,16 +13,13 @@ art = art_folder('common')
 class NoteBoardUi(QtWidgets.QFrame):
     
     def setup_ui(self):
-        self.setFixedSize(275, 150)
-        self.setObjectName('NoteBoard')
-        self.setStyleSheet('QFrame#NoteBoard {border: 0px solid black; border-radius: 25px}')
-
         self.layout = QtWidgets.QVBoxLayout(self)
         self.title_layout = QtWidgets.QHBoxLayout()
         self.layout.addLayout(self.title_layout)
 
         self.title_label = QtWidgets.QLabel('Anslagstavla')
-        self.title_label.setFont(app_font(24))
+        self.title_label.setFont(app_font(16, True))
+        self.title_label.setStyleSheet('color: gray')
         self.title_layout.addWidget(self.title_label)
 
         self.spacer = QtWidgets.QSpacerItem(5, 5, hData=QtWidgets.QSizePolicy.Expanding)

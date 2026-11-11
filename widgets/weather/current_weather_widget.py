@@ -13,36 +13,29 @@ from common.fonts import app_font
 class CurrentWeatherUi(QtWidgets.QFrame):
     
     def setup_ui(self):
-        self.setFixedSize(275, 190)
-        self.setObjectName('CurrentWeather')
-        self.setStyleSheet('QFrame#CurrentWeather {border: 0px solid black; border-radius: 25px}')
-
         column = QtWidgets.QVBoxLayout(self)
         self.layout = QtWidgets.QHBoxLayout()
         column.addLayout(self.layout)
-        self.info_label = QtWidgets.QLabel()
-        self.info_label.setStyleSheet('font-size: 15px')
-        column.addWidget(self.info_label)
 
         self.temp_label = QtWidgets.QLabel('N/A')
         self.temp_label.setFont(app_font(67))
         self.layout.addWidget(self.temp_label)
+        self.layout.addStretch()
 
-        self.spacer = QtWidgets.QSpacerItem(5, 50)
-        self.layout.addSpacerItem(self.spacer)
-
-        self.symb_layout = QtWidgets.QVBoxLayout()
-        self.layout.addLayout(self.symb_layout)
+        self.weather_symb = QtWidgets.QLabel()
+        self.weather_symb.setFixedSize(int(260/2.2), int(180/2.2))
+        self.weather_symb.setScaledContents(True)
+        self.layout.addWidget(self.weather_symb)
 
         self.weather_label = QtWidgets.QLabel('N/A')
         self.weather_label.setFont(app_font(24))
         self.weather_label.setWordWrap(True)
-        self.symb_layout.addWidget(self.weather_label)
+        column.addWidget(self.weather_label)
+        column.addStretch()
 
-        self.weather_symb = QtWidgets.QLabel()
-        self.weather_symb.setFixedSize(int(260/2.8), int(180/2.8))
-        self.weather_symb.setScaledContents(True)
-        self.symb_layout.addWidget(self.weather_symb)
+        self.info_label = QtWidgets.QLabel()
+        self.info_label.setStyleSheet('font-size: 15px')
+        column.addWidget(self.info_label)
 
 class CurrentWeatherWidget(CurrentWeatherUi):
 

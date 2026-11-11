@@ -207,16 +207,26 @@ class SmartHomeHubUi(QtWidgets.QMainWindow):
 
         # Home Widget
         self.home_widget = QtWidgets.QWidget()
-        self.home_layout = QtWidgets.QGridLayout()
-        self.home_layout.setContentsMargins(10, 10, 10, 10)
-        self.home_widget.setLayout(self.home_layout)
-        self.home_layout.setAlignment(QtCore.Qt.AlignAbsolute)
-        self.home_layout.setSpacing(30)
+        self.home_layout = QtWidgets.QVBoxLayout(self.home_widget)
+        self.home_layout.setContentsMargins(50, 30, 50, 30)
 
-        self.home_layout.addWidget(CurrentWeatherWidget(self.smhi_forecast, self.pollen, *HOME_COORDINATES), 0, 0, QtCore.Qt.AlignCenter)
-        self.home_layout.addWidget(AnalogClockWidget(), 0, 1, QtCore.Qt.AlignCenter)
-        self.home_layout.addWidget(NoteBoardWidget(self.notion_note), 1, 0, QtCore.Qt.AlignCenter)
-        self.home_layout.addWidget(DailyWordWidget(self.daily_word), 1, 1, QtCore.Qt.AlignCenter)
+        top_row = QtWidgets.QHBoxLayout()
+        top_row.addStretch()
+        top_row.addWidget(CurrentWeatherWidget(self.smhi_forecast, self.pollen, *HOME_COORDINATES))
+        top_row.addSpacing(80)
+        top_row.addWidget(AnalogClockWidget())
+        top_row.addStretch()
+
+        bottom_row = QtWidgets.QHBoxLayout()
+        bottom_row.setSpacing(40)
+        bottom_row.addWidget(NoteBoardWidget(self.notion_note), 1, QtCore.Qt.AlignTop)
+        bottom_row.addWidget(DailyWordWidget(self.daily_word), 1, QtCore.Qt.AlignTop)
+
+        self.home_layout.addStretch(2)
+        self.home_layout.addLayout(top_row)
+        self.home_layout.addStretch(1)
+        self.home_layout.addLayout(bottom_row)
+        self.home_layout.addStretch(2)
 
         # Add side meny buttons
         self.side_menu_button = SideMenyButton(self.side_menu, 'Meny', icon_path('bars.svg'))
