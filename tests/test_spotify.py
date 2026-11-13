@@ -12,9 +12,9 @@ sys.modules['widgets.spotify.spotify_tokens'] = types.SimpleNamespace(
     CLIENT_ID='id', CLIENT_SECRET='secret', REDIRECT_URI='http://localhost:8888/callback')
 
 try:
-    from PySide6 import QtGui, QtWidgets # type: ignore
+    from PySide6 import QtCore, QtGui, QtTest, QtWidgets # type: ignore
 except:
-    from PySide2 import QtGui, QtWidgets # type: ignore
+    from PySide2 import QtCore, QtGui, QtTest, QtWidgets # type: ignore
 
 import spotipy
 from widgets.spotify.spotify_widget import MarqueeLabel, SpotifyWidget, art
@@ -204,6 +204,33 @@ class PollTest(unittest.TestCase):
         phone.trigger()
         self.widget.spotify_pool.waitForDone()
         self.widget.sp.transfer_playback.assert_called_once_with('Phone-id', True)
+
+    def test_menu_stays_open_and_shows_how_the_switch_went(self):
+        self.widget.show()
+        self.widget.devices_received([device('Kitchen', is_active=True), device('Phone')])
+        menu = self.widget.device_menu
+        phone = menu.actions()[1]
+        QtTest.QTest.mouseClick(menu, QtCore.Qt.LeftButton, pos=menu.actionGeometry(phone).center())
+        self.assertTrue(menu.isVisible())
+        self.assertEqual(phone.text(), 'Phone (switching…)')
+        self.assertTrue(self.widget.device_poll_timer.isActive())
+
+        self.widget.devices_received([device('Kitchen', is_active=True), device('Phone')])  # not yet
+        self.assertEqual(menu.actions()[1].text(), 'Phone (switching…)')
+        self.widget.devices_received([device('Kitchen'), device('Phone', is_active=True)])
+        kitchen, phone = menu.actions()
+        self.assertEqual(phone.text(), 'Phone')
+        self.assertEqual(menu.defaultAction(), phone)  # green
+        self.assertTrue(menu.isVisible())
+
+    def test_switch_that_never_happens_says_so(self):
+        self.widget.show()
+        self.widget.devices_received([device('Kitchen', is_active=True), device('Phone')])
+        self.widget.device_menu.actions()[1].trigger()
+        self.widget.device_switch_deadline = 0
+        self.widget.devices_received([device('Kitchen', is_active=True), device('Phone')])
+        self.assertEqual(self.widget.device_menu.actions()[1].text(), "Phone (couldn't switch)")
+        self.assertIsNone(self.widget.switching_to)
 
     def test_switching_while_paused_stays_paused(self):
         self.widget.playback_received((0, {**playback('Alpha'), 'is_playing': False}))

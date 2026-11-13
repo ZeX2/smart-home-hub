@@ -125,6 +125,15 @@ class QueueRow(QtWidgets.QWidget):
 # https://programmer.group/python-developing-music-player-pyqt-making-music-player-main-interface.html
 # https://stackoverflow.com/questions/44264852/pyside-pyqt-overlay-widget
 
+class StayOpenMenu(QtWidgets.QMenu):
+    # Tapping a row runs it without closing the menu, so a device switch can be watched; tapping outside closes it
+    def mouseReleaseEvent(self, event):
+        action = self.activeAction()
+        if action and action.isEnabled():
+            action.trigger()
+        else:
+            super().mouseReleaseEvent(event)
+
 class SpotifyUi(QtWidgets.QWidget):
 
     def setup_ui(self):
@@ -212,7 +221,7 @@ class SpotifyUi(QtWidgets.QWidget):
         self.device_button = QLabelButton(art('device_off.png'))
         self.device_button.clicked.connect(self.device_button_clicked)
         self.device_button.setFixedSize(25, 25)
-        self.device_menu = QtWidgets.QMenu(self)
+        self.device_menu = StayOpenMenu(self)
         self.device_menu.setStyleSheet('''
             QMenu { font-size: 15px; }
             QMenu::item { padding: 10px 25px; }
@@ -329,6 +338,7 @@ class SpotifyWidget(SpotifyUi):
         self.skipped_from = []
         self.skip_deadline = 0
         self.device_switch_deadline = 0
+        self.switching_to = None
         self.queue = []
         self.queue_for = None
         self.context_names = {}
@@ -354,6 +364,11 @@ class SpotifyWidget(SpotifyUi):
         self.extra_poll_timer = QtCore.QTimer()
         self.extra_poll_timer.setSingleShot(True)
         self.extra_poll_timer.timeout.connect(self.update_currently_playing)
+
+        # Rechecks the device list while a switch is pending, so the open menu shows how it went
+        self.device_poll_timer = QtCore.QTimer()
+        self.device_poll_timer.setSingleShot(True)
+        self.device_poll_timer.timeout.connect(self.refresh_devices)
 
         self.update_currently_playing()
         self.curr_playing_timer.start(3*1000)
@@ -484,26 +499,55 @@ class SpotifyWidget(SpotifyUi):
     def devices_received(self, devices):
         if self.visibleRegion().isEmpty():
             return  # left the page while waiting for Spotify
+        switching = self.switching_to and time.monotonic() < self.device_switch_deadline
         self.device_menu.clear()
         for device in devices:
-            action = self.device_menu.addAction(device['name'].replace('&', '&&'))  # a lone & would underline the next letter
+            name = device['name'].replace('&', '&&')  # a lone & would underline the next letter
+            if device['id'] == self.switching_to and not device['is_active']:
+                name += ' (switching…)' if switching else " (couldn't switch)"
+            action = self.device_menu.addAction(name)
             action.setEnabled(bool(device['id']) and not device['is_restricted'])  # Spotify refuses commands to restricted devices
-            action.triggered.connect(lambda checked, device=device: self.device_chosen(device))
+            # PySide may call it with or without the checked argument
+            action.triggered.connect(lambda *_, device=device, action=action: self.device_chosen(device, action))
             if device['is_active']:
                 # Marked as the default to color it green; checkable rows would get a tick in the Mac style
                 self.device_menu.setDefaultAction(action)
         if not devices:
             self.device_menu.addAction('No devices found').setEnabled(False)
+
+        if switching and not any(d['id'] == self.switching_to and d['is_active'] for d in devices):
+            self.device_poll_timer.start(1000)
+        else:
+            self.switching_to = None
+        self.place_device_menu()
+
+    def place_device_menu(self):
         # Centered above the button, with a gap that also clears the taller play button
         size = self.device_menu.sizeHint()
         top_center = self.device_button.mapToGlobal(QtCore.QPoint(self.device_button.width() // 2, -10))
-        self.device_menu.popup(top_center - QtCore.QPoint(size.width() // 2, size.height()))
+        pos = top_center - QtCore.QPoint(size.width() // 2, size.height())
+        if self.device_menu.isVisible():
+            self.device_menu.setGeometry(QtCore.QRect(pos, size))
+        else:
+            self.device_menu.popup(pos)
 
-    def device_chosen(self, device):
+    def refresh_devices(self):
+        if self.device_menu.isVisible():
+            self.run_spotify(self.fetch_devices, on_result=self.devices_refreshed)
+
+    def devices_refreshed(self, devices):
+        if self.device_menu.isVisible():  # not reopened if it was closed while waiting
+            self.devices_received(devices)
+
+    def device_chosen(self, device, action):
+        action.setText(device['name'].replace('&', '&&') + ' (switching…)')
+        self.place_device_menu()
+        self.switching_to = device['id']
         self.update_device_button(device)
         self.device_switch_deadline = time.monotonic() + 5
         # Keep playing or paused as it is; with nothing playing, starting it is why a device was picked
         self.send_command(self.sp.transfer_playback, device['id'], self.curr_playing.get('is_playing', True))
+        self.device_poll_timer.start(1000)
 
     def update_device_button(self, device):
         icon = 'device_on.png' if device else 'device_off.png'
